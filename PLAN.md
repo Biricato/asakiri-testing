@@ -33,38 +33,38 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
 - [x] drizzle.config.ts + db scripts + .env.example
 - [x] Type-check + build passing
 
-### Phase 2: Admin System
-- [ ] Admin layout with sidebar nav
-- [ ] **Platform settings page**
+### Phase 2: Admin System `[done]`
+- [x] Admin layout with sidebar nav
+- [x] **Platform settings page**
   - Registration mode: `open` | `invite_only`
   - Course creation: `open` | `approved` | `admin_only`
   - Default new user role
-- [ ] **User management**
+- [x] **User management**
   - Paginated user table with search
   - Change role (admin / creator / learner)
   - Ban / unban users
-- [ ] **Invite system**
+- [x] **Invite system**
   - Create invite (email + role + expiry)
   - Invite list with status (pending / used / expired)
   - Revoke invites
-- [ ] **Course oversight**
+- [x] **Course oversight**
   - All courses table
   - Unpublish / feature / remove
 
-### Phase 3: Course Authoring
-- [ ] **Course CRUD**
+### Phase 3: Course Authoring `[done]`
+- [x] **Course CRUD**
   - Create course (title, languages, difficulty)
   - Course list (my courses)
   - Course settings page (metadata, cover image)
   - Delete course
-- [ ] **Unit management**
+- [x] **Unit management**
   - Create / rename / delete units
   - Drag-to-reorder units
-- [ ] **Lesson management**
+- [x] **Lesson management**
   - Create / rename / delete lessons within units
   - Lesson status (draft / published)
   - Auto-create unit_node on lesson create
-- [ ] **Section editor (TipTap)**
+- [x] **Section editor (TipTap)**
   - Section list per lesson (reorderable)
   - TipTap rich text editor with:
     - Formatting (bold, italic, underline, headings, lists)
@@ -74,10 +74,10 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
     - YouTube embeds
     - Links
   - Auto-save (debounced server action)
-- [ ] **Unit path nodes**
+- [x] **Unit path nodes**
   - Ordered interleaving of lessons + exercise groups per unit
   - Drag-to-reorder
-- [ ] **File upload**
+- [x] **File upload**
   - Upload route (`/api/upload`)
   - Vercel Blob integration
   - Image validation (type, size)
