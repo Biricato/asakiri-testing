@@ -83,24 +83,24 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
   - Image validation (type, size)
   - Audio validation (type, size)
 
-### Phase 4: Exercise System
-- [ ] **Exercise group CRUD**
+### Phase 4: Exercise System `[done]`
+- [x] **Exercise group CRUD**
   - Create group (title, description, dataset type)
   - Link to unit via unit_node
   - Delete group
-- [ ] **Exercise item editor**
+- [x] **Exercise item editor**
   - Add items (word, meaning, part of speech, example sentence)
   - Reorder items
   - Edit / delete items
-- [ ] **Variant editor** (4 types)
+- [x] **Variant editor** (4 types)
   - `word_cloze` — cloze text + hint + translation
   - `mcq` — stem + options (correct/incorrect)
   - `multi_blank` — template with blank slots + choice sets
   - `sentence_builder` — source tokens + target order + distractors
-- [ ] **Exercise option management** (for MCQ / multi_blank)
+- [x] **Exercise option management** (for MCQ / multi_blank)
   - Add / edit / delete / reorder options
   - Mark correct answer(s)
-- [ ] **AI exercise generation** (optional, requires GEMINI_API_KEY)
+- [x] **AI exercise generation** (optional, requires GEMINI_API_KEY)
   - API route: `/api/generate-exercises`
   - Gemini API call with section content as context
   - Auto-create items + variants from AI response

@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog"
 import { createLesson, deleteLesson } from "../actions/lessons"
+import { CreateExerciseGroupDialog } from "@/features/exercise/components/exercise-group-panel"
 import type { UnitNode, Lesson } from "../types"
 
 export function LessonList({
@@ -54,50 +55,71 @@ export function LessonList({
     })
   }
 
-  const lessonNodes = nodes.filter((n) => n.type === "lesson" && n.lesson)
-
   return (
     <div className="space-y-2">
-      {lessonNodes.length === 0 && (
-        <p className="text-muted-foreground text-sm">No lessons yet.</p>
+      {nodes.length === 0 && (
+        <p className="text-muted-foreground text-sm">No content yet.</p>
       )}
-      {lessonNodes.map((n) => (
-        <div
-          key={n.id}
-          className="flex items-center justify-between rounded-md border px-3 py-2"
-        >
-          <Link
-            href={`/create/${courseId}/lesson/${n.lesson!.id}`}
-            className="flex items-center gap-2 hover:underline"
-          >
-            <span className="text-sm font-medium">{n.lesson!.title}</span>
-            <Badge variant={n.lesson!.status === "published" ? "default" : "secondary"} className="text-xs">
-              {n.lesson!.status}
-            </Badge>
-          </Link>
-          <AlertDialog>
-            <AlertDialogTrigger
-              render={<Button variant="ghost" size="icon-sm" disabled={pending} />}
+      {nodes.map((n) => {
+        if (n.type === "lesson" && n.lesson) {
+          return (
+            <div
+              key={n.id}
+              className="flex items-center justify-between rounded-md border px-3 py-2"
             >
-              <HugeiconsIcon icon={Delete02Icon} size={14} />
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete &quot;{n.lesson!.title}&quot;?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will delete the lesson and all its sections.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleDelete(n.lesson!.id)}>
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      ))}
+              <Link
+                href={`/create/${courseId}/lesson/${n.lesson.id}`}
+                className="flex items-center gap-2 hover:underline"
+              >
+                <span className="text-sm font-medium">{n.lesson.title}</span>
+                <Badge variant={n.lesson.status === "published" ? "default" : "secondary"} className="text-xs">
+                  {n.lesson.status}
+                </Badge>
+              </Link>
+              <AlertDialog>
+                <AlertDialogTrigger
+                  render={<Button variant="ghost" size="icon-sm" disabled={pending} />}
+                >
+                  <HugeiconsIcon icon={Delete02Icon} size={14} />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete &quot;{n.lesson.title}&quot;?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will delete the lesson and all its sections.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleDelete(n.lesson!.id)}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )
+        }
+
+        if (n.type === "exercise_group" && n.exerciseGroupId) {
+          return (
+            <div
+              key={n.id}
+              className="flex items-center justify-between rounded-md border border-dashed px-3 py-2"
+            >
+              <Link
+                href={`/create/${courseId}/exercises/${n.exerciseGroupId}`}
+                className="flex items-center gap-2 hover:underline"
+              >
+                <Badge variant="secondary" className="text-xs">Exercises</Badge>
+                <span className="text-muted-foreground text-sm">Exercise group</span>
+              </Link>
+            </div>
+          )
+        }
+
+        return null
+      })}
 
       <div className="flex gap-2 pt-1">
         <Input
@@ -114,8 +136,9 @@ export function LessonList({
           disabled={!newTitle.trim() || pending}
         >
           <HugeiconsIcon icon={Add01Icon} size={14} className="mr-1" />
-          Add
+          Add lesson
         </Button>
+        <CreateExerciseGroupDialog courseId={courseId} unitId={unitId} />
       </div>
     </div>
   )
