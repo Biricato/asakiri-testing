@@ -4,7 +4,7 @@ import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@heroui/react"
-import { Button, Input, AlertDialog } from "@heroui/react"
+import { Button, Input, Label, AlertDialog, Modal, Select, ListBox } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Add01Icon,
@@ -32,6 +32,8 @@ export function UnitList({
   const [newUnitTitle, setNewUnitTitle] = useState("")
   const [selectedUnit, setSelectedUnit] = useState(units[0]?.id ?? "")
   const [newLessonTitle, setNewLessonTitle] = useState("")
+  const [addUnitOpen, setAddUnitOpen] = useState(false)
+  const [addLessonOpen, setAddLessonOpen] = useState(false)
   const [deleteUnitId, setDeleteUnitId] = useState<string | null>(null)
   const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null)
   const [deleteUnitTitle, setDeleteUnitTitle] = useState("")
@@ -44,6 +46,7 @@ export function UnitList({
     startTransition(async () => {
       await createUnit(courseId, newUnitTitle.trim())
       setNewUnitTitle("")
+      setAddUnitOpen(false)
       toast.success("Unit created")
       router.refresh()
     })
@@ -75,6 +78,7 @@ export function UnitList({
     startTransition(async () => {
       await createLesson(courseId, selectedUnit, newLessonTitle.trim())
       setNewLessonTitle("")
+      setAddLessonOpen(false)
       toast.success("Lesson created")
       router.refresh()
     })
@@ -100,35 +104,29 @@ export function UnitList({
               Jump into a unit to map out lessons and content.
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <HugeiconsIcon icon={ArrowUpDownIcon} size={14} className="mr-1.5" />
-              Reorder units
-            </Button>
-            <Button size="sm" onPress={() => document.getElementById("new-unit-input")?.focus()}>
-              <HugeiconsIcon icon={Add01Icon} size={14} className="mr-1.5" />
-              Add unit
-            </Button>
-          </div>
-        </div>
-
-        {/* Add unit input */}
-        <div className="mt-4 flex gap-2">
-          <Input
-            id="new-unit-input"
-            placeholder="New unit title..."
-            value={newUnitTitle}
-            onChange={(e) => setNewUnitTitle(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreateUnit()}
-          />
-          <Button
-            variant="outline"
-            onPress={handleCreateUnit}
-            isDisabled={!newUnitTitle.trim() || pending}
-          >
-            Create
+          <Button size="sm" onPress={() => setAddUnitOpen(true)}>
+            <HugeiconsIcon icon={Add01Icon} size={14} />
+            Add unit
           </Button>
         </div>
+
+        {/* Add unit modal */}
+        <Modal isOpen={addUnitOpen} onOpenChange={setAddUnitOpen}>
+          <Modal.Backdrop><Modal.Container><Modal.Dialog className="sm:max-w-sm">
+            <Modal.CloseTrigger />
+            <Modal.Header><Modal.Heading>Add unit</Modal.Heading></Modal.Header>
+            <Modal.Body>
+              <div className="grid gap-1.5">
+                <Label htmlFor="new-unit-title">Unit title</Label>
+                <Input id="new-unit-title" placeholder="e.g. Getting Started" value={newUnitTitle} onChange={(e) => setNewUnitTitle(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleCreateUnit()} className="w-full" />
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="tertiary" slot="close">Cancel</Button>
+              <Button onPress={handleCreateUnit} isDisabled={!newUnitTitle.trim() || pending}>Create</Button>
+            </Modal.Footer>
+          </Modal.Dialog></Modal.Container></Modal.Backdrop>
+        </Modal>
       </div>
 
       {/* Reorder units */}
@@ -182,15 +180,16 @@ export function UnitList({
                 Review units and switch between them using the dropdown.
               </p>
             </div>
-            <select
-              className="rounded-lg border bg-background px-3 py-2 text-sm"
-              value={selectedUnit}
-              onChange={(e) => setSelectedUnit(e.target.value)}
-            >
-              {units.map((u) => (
-                <option key={u.id} value={u.id}>{u.title}</option>
-              ))}
-            </select>
+            <Select selectedKey={selectedUnit} onSelectionChange={(key) => key && setSelectedUnit(key as string)} aria-label="Unit" className="w-40">
+              <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {units.map((u) => (
+                    <ListBox.Item key={u.id} id={u.id} textValue={u.title}>{u.title}</ListBox.Item>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+            </Select>
           </div>
 
           {activeUnit && (
@@ -276,25 +275,31 @@ export function UnitList({
               </AlertDialog>
 
               {/* Add lesson / exercise buttons */}
-              <div className="mt-4 flex items-center justify-center gap-3">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Lesson title..."
-                    value={newLessonTitle}
-                    onChange={(e) => setNewLessonTitle(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleCreateLesson()}
-                    className="w-48"
-                  />
-                  <Button
-                    variant="outline"
-                    onPress={handleCreateLesson}
-                    isDisabled={!newLessonTitle.trim() || pending}
-                  >
-                    Add New Lesson
-                  </Button>
-                </div>
+              <div className="mt-4 flex items-center gap-2">
+                <Button variant="outline" size="sm" onPress={() => setAddLessonOpen(true)}>
+                  <HugeiconsIcon icon={Add01Icon} size={14} />
+                  Add lesson
+                </Button>
                 <CreateExerciseGroupDialog courseId={courseId} unitId={selectedUnit} />
               </div>
+
+              {/* Add lesson modal */}
+              <Modal isOpen={addLessonOpen} onOpenChange={setAddLessonOpen}>
+                <Modal.Backdrop><Modal.Container><Modal.Dialog className="sm:max-w-sm">
+                  <Modal.CloseTrigger />
+                  <Modal.Header><Modal.Heading>Add lesson</Modal.Heading></Modal.Header>
+                  <Modal.Body>
+                    <div className="grid gap-1.5">
+                      <Label htmlFor="new-lesson-title">Lesson title</Label>
+                      <Input id="new-lesson-title" placeholder="e.g. Chapter 1" value={newLessonTitle} onChange={(e) => setNewLessonTitle(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleCreateLesson()} className="w-full" />
+                    </div>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="tertiary" slot="close">Cancel</Button>
+                    <Button onPress={handleCreateLesson} isDisabled={!newLessonTitle.trim() || pending}>Create</Button>
+                  </Modal.Footer>
+                </Modal.Dialog></Modal.Container></Modal.Backdrop>
+              </Modal>
             </div>
           )}
         </div>
