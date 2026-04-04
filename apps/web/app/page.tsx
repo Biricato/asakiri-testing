@@ -3,6 +3,7 @@ import Image from "next/image"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 import { getCatalog } from "@/features/publish/actions/catalog"
+import { getSettings } from "@/features/admin/actions/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
@@ -14,11 +15,17 @@ import {
 } from "@workspace/ui/components/card"
 
 export default async function HomePage() {
-  const session = await auth.api
-    .getSession({ headers: await headers() })
-    .catch(() => null)
+  const [session, courses, settings] = await Promise.all([
+    auth.api.getSession({ headers: await headers() }).catch(() => null),
+    getCatalog().catch(() => []),
+    getSettings().catch(() => null),
+  ])
 
-  const courses = await getCatalog().catch(() => [])
+  const siteName = settings?.site_name ?? "Asakiri"
+  const tagline = settings?.site_tagline ?? "Language Learning Platform"
+  const heroTitle = settings?.hero_title ?? "Master languages through interactive courses built by expert teachers"
+  const heroDesc = settings?.hero_description ?? "Create engaging courses and learn through interactive exercises with spaced repetition."
+  const showTeaching = !session && settings?.course_creation === "open"
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -26,8 +33,8 @@ export default async function HomePage() {
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
           <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Asakiri" width={32} height={32} />
-            <span className="text-lg font-semibold">Asakiri</span>
+            <Image src="/logo.svg" alt={siteName} width={32} height={32} />
+            <span className="text-lg font-semibold">{siteName}</span>
           </div>
           <nav className="flex items-center gap-2 md:gap-4">
             <ThemeToggle />
@@ -65,21 +72,19 @@ export default async function HomePage() {
         {/* Hero */}
         <section className="mx-auto max-w-6xl px-4 py-16 text-center md:px-6 md:py-24">
           <p className="text-muted-foreground mb-4 text-xs font-semibold uppercase tracking-[0.3em]">
-            Language Learning Platform
+            {tagline}
           </p>
           <h1 className="mx-auto max-w-3xl text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
-            Master languages through interactive courses built by expert teachers
+            {heroTitle}
           </h1>
           <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-balance">
-            Asakiri is where passionate language teachers create engaging courses and
-            learners practice through interactive exercises with spaced repetition.
-            Learn at your own pace, track your progress, and master vocabulary naturally.
+            {heroDesc}
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button size="lg" render={<Link href="/courses" />}>
               Browse courses
             </Button>
-            {!session && (
+            {showTeaching && (
               <Button variant="outline" size="lg" render={<Link href="/sign-up" />}>
                 Start teaching
               </Button>
@@ -159,7 +164,7 @@ export default async function HomePage() {
       {/* Footer */}
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 md:px-6">
-          <p className="text-muted-foreground text-sm">Asakiri</p>
+          <p className="text-muted-foreground text-sm">{siteName}</p>
           <p className="text-muted-foreground text-xs">
             Language learning, made open.
           </p>
