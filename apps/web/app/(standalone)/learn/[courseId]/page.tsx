@@ -6,7 +6,7 @@ import { course } from "@/schema/course"
 import { getLearningPath } from "@/features/learn/actions/enrolled"
 import { LearningPath } from "@/features/learn/components/learning-path"
 import { PageHeader } from "@/components/page-header"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@heroui/react"
 
 export default async function CourseLearningPage({
   params,
@@ -23,9 +23,9 @@ export default async function CourseLearningPage({
   return (
     <div className="flex min-h-svh flex-col">
       <PageHeader backHref="/learn" label="Learning Path" title={c.title}>
-        <Button variant="outline" size="sm" render={<Link href={`/learn/${courseId}/practice`} />}>
+        <Link href={`/learn/${courseId}/practice`}><Button variant="outline" size="sm">
           Practice
-        </Button>
+        </Button></Link>
       </PageHeader>
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-lg">

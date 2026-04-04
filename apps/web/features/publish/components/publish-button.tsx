@@ -2,8 +2,8 @@
 
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
+import { toast } from "@heroui/react"
+import { Button } from "@heroui/react"
 import { publishCourse, unpublishCourse } from "../actions/publish"
 
 export function PublishButton({
@@ -35,11 +35,11 @@ export function PublishButton({
   }
 
   return isPublished ? (
-    <Button variant="outline" onClick={handleUnpublish} disabled={pending}>
+    <Button variant="outline" onPress={handleUnpublish} isDisabled={pending}>
       {pending ? "Unpublishing..." : "Unpublish"}
     </Button>
   ) : (
-    <Button onClick={handlePublish} disabled={pending}>
+    <Button onPress={handlePublish} isDisabled={pending}>
       {pending ? "Publishing..." : "Publish course"}
     </Button>
   )

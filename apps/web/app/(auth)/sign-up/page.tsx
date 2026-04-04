@@ -4,9 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { signUp } from "@/lib/auth-client"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
+import { Button, Input, Label } from "@heroui/react"
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -122,7 +120,7 @@ export default function SignUpPage() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" isDisabled={loading}>
                 {loading ? "Creating account..." : "Create account"}
               </Button>
             </form>

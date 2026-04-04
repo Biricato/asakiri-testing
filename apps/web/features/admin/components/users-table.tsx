@@ -1,37 +1,9 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { toast } from "sonner"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table"
-import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
+import { toast } from "@heroui/react"
+import { Table, Chip, Button, Input, Select, ListBox, AlertDialog } from "@heroui/react"
 import { setUserRole, banUser, unbanUser } from "../actions/users"
 import type { PaginatedResult } from "../types"
 
@@ -52,6 +24,8 @@ export function UsersTable({
   const router = useRouter()
   const searchParams = useSearchParams()
   const [pending, startTransition] = useTransition()
+  const [banDialogOpen, setBanDialogOpen] = useState(false)
+  const [banTarget, setBanTarget] = useState<UserRow | null>(null)
 
   const currentSearch = searchParams.get("search") ?? ""
   const currentPage = Number(searchParams.get("page") ?? "1")
@@ -107,94 +81,118 @@ export function UsersTable({
       />
 
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <Table aria-label="Users">
+          <Table.Header>
+            <Table.Column>Name</Table.Column>
+            <Table.Column>Email</Table.Column>
+            <Table.Column>Role</Table.Column>
+            <Table.Column>Status</Table.Column>
+            <Table.Column>Joined</Table.Column>
+            <Table.Column>Actions</Table.Column>
+          </Table.Header>
+          <Table.Body>
             {result.data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-muted-foreground text-center">
-                  No users found.
-                </TableCell>
-              </TableRow>
+              <Table.Row>
+                <Table.Cell>No users found.</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+              </Table.Row>
             ) : (
               result.data.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell className="font-medium">{u.name}</TableCell>
-                  <TableCell>{u.email}</TableCell>
-                  <TableCell>
+                <Table.Row key={u.id}>
+                  <Table.Cell>{u.name}</Table.Cell>
+                  <Table.Cell>{u.email}</Table.Cell>
+                  <Table.Cell>
                     <Select
-                      defaultValue={u.role}
-                      onValueChange={(v) => v && handleRoleChange(u.id, v)}
-                      disabled={pending}
+                      selectedKey={u.role}
+                      onSelectionChange={(key) => key && handleRoleChange(u.id, key as string)}
+                      isDisabled={pending}
+                      aria-label="Role"
                     >
-                      <SelectTrigger className="h-8 w-28">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="creator">Creator</SelectItem>
-                        <SelectItem value="learner">Learner</SelectItem>
-                      </SelectContent>
+                      <Select.Trigger />
+                      <Select.Popover>
+                        <ListBox>
+                          <ListBox.Item id="admin" textValue="Admin">Admin</ListBox.Item>
+                          <ListBox.Item id="creator" textValue="Creator">Creator</ListBox.Item>
+                          <ListBox.Item id="learner" textValue="Learner">Learner</ListBox.Item>
+                        </ListBox>
+                      </Select.Popover>
                     </Select>
-                  </TableCell>
-                  <TableCell>
+                  </Table.Cell>
+                  <Table.Cell>
                     {u.banned ? (
-                      <Badge variant="destructive">Banned</Badge>
+                      <Chip color="danger">Banned</Chip>
                     ) : (
-                      <Badge variant="secondary">Active</Badge>
+                      <Chip variant="secondary">Active</Chip>
                     )}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  </Table.Cell>
+                  <Table.Cell>
                     {new Date(u.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
+                  </Table.Cell>
+                  <Table.Cell>
                     {u.banned ? (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleUnban(u.id)}
-                        disabled={pending}
+                        onPress={() => handleUnban(u.id)}
+                        isDisabled={pending}
                       >
                         Unban
                       </Button>
                     ) : (
-                      <AlertDialog>
-                        <AlertDialogTrigger render={<Button variant="ghost" size="sm" disabled={pending} />}>
-                          Ban
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Ban {u.name}?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will prevent the user from signing in. You can
-                              unban them later.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleBan(u.id)}>
-                              Ban user
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        isDisabled={pending}
+                        onPress={() => {
+                          setBanTarget(u)
+                          setBanDialogOpen(true)
+                        }}
+                      >
+                        Ban
+                      </Button>
                     )}
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                </Table.Row>
               ))
             )}
-          </TableBody>
+          </Table.Body>
         </Table>
       </div>
+
+      <AlertDialog isOpen={banDialogOpen} onOpenChange={setBanDialogOpen}>
+        <AlertDialog.Backdrop>
+          <AlertDialog.Container>
+            <AlertDialog.Dialog>
+              <AlertDialog.CloseTrigger />
+              <AlertDialog.Header>
+                <AlertDialog.Heading>Ban {banTarget?.name}?</AlertDialog.Heading>
+              </AlertDialog.Header>
+              <AlertDialog.Body>
+                <p>
+                  This will prevent the user from signing in. You can
+                  unban them later.
+                </p>
+              </AlertDialog.Body>
+              <AlertDialog.Footer>
+                <Button variant="tertiary" slot="close">Cancel</Button>
+                <Button
+                  variant="danger"
+                  onPress={() => {
+                    if (banTarget) handleBan(banTarget.id)
+                    setBanDialogOpen(false)
+                  }}
+                >
+                  Ban user
+                </Button>
+              </AlertDialog.Footer>
+            </AlertDialog.Dialog>
+          </AlertDialog.Container>
+        </AlertDialog.Backdrop>
+      </AlertDialog>
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
@@ -205,16 +203,16 @@ export function UsersTable({
             <Button
               variant="outline"
               size="sm"
-              disabled={currentPage <= 1}
-              onClick={() => updateParams("page", String(currentPage - 1))}
+              isDisabled={currentPage <= 1}
+              onPress={() => updateParams("page", String(currentPage - 1))}
             >
               Previous
             </Button>
             <Button
               variant="outline"
               size="sm"
-              disabled={currentPage >= totalPages}
-              onClick={() => updateParams("page", String(currentPage + 1))}
+              isDisabled={currentPage >= totalPages}
+              onPress={() => updateParams("page", String(currentPage + 1))}
             >
               Next
             </Button>

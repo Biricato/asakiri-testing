@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BookOpen02Icon, GridTableIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/cn"
 import type { LearningUnit } from "../types"
 
 export function LearningPath({

@@ -2,26 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
+import { toast } from "@heroui/react"
+import { Button, Input, Label, Modal, Select, ListBox } from "@heroui/react"
 import { createCourse } from "../actions/courses"
 
 export function CreateCourseDialog() {
@@ -48,54 +30,59 @@ export function CreateCourseDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>
+    <>
+      <Button onPress={() => setOpen(true)}>
         New course
-      </DialogTrigger>
-      <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Create course</DialogTitle>
-            <DialogDescription>
-              Set up a new language course.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" placeholder="e.g. Learn Okinawan" required />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="targetLanguage">Target language</Label>
-                <Input id="targetLanguage" name="targetLanguage" placeholder="e.g. Okinawan" required />
+      </Button>
+      <Modal isOpen={open} onOpenChange={setOpen}>
+        <Modal.Backdrop><Modal.Container><Modal.Dialog>
+          <Modal.CloseTrigger />
+          <form onSubmit={handleSubmit}>
+            <Modal.Header>
+              <Modal.Heading>Create course</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
+              <p className="text-muted-foreground text-sm mb-4">
+                Set up a new language course.
+              </p>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" name="title" placeholder="e.g. Learn Okinawan" required />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="targetLanguage">Target language</Label>
+                    <Input id="targetLanguage" name="targetLanguage" placeholder="e.g. Okinawan" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sourceLanguage">Source language</Label>
+                    <Input id="sourceLanguage" name="sourceLanguage" placeholder="e.g. English" required />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="difficulty">Difficulty</Label>
+                  <Select name="difficulty" defaultSelectedKey="beginner" aria-label="Difficulty">
+                    <Select.Trigger />
+                    <Select.Popover>
+                      <ListBox>
+                        <ListBox.Item id="beginner" textValue="Beginner">Beginner</ListBox.Item>
+                        <ListBox.Item id="intermediate" textValue="Intermediate">Intermediate</ListBox.Item>
+                        <ListBox.Item id="advanced" textValue="Advanced">Advanced</ListBox.Item>
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="sourceLanguage">Source language</Label>
-                <Input id="sourceLanguage" name="sourceLanguage" placeholder="e.g. English" required />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="difficulty">Difficulty</Label>
-              <Select name="difficulty" defaultValue="beginner">
-                <SelectTrigger id="difficulty">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="beginner">Beginner</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="advanced">Advanced</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={pending}>
-              {pending ? "Creating..." : "Create"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button type="submit" isDisabled={pending}>
+                {pending ? "Creating..." : "Create"}
+              </Button>
+            </Modal.Footer>
+          </form>
+        </Modal.Dialog></Modal.Container></Modal.Backdrop>
+      </Modal>
+    </>
   )
 }

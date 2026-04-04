@@ -2,8 +2,7 @@
 
 import { useRef } from "react"
 import type { Editor } from "@tiptap/react"
-import { Button } from "@workspace/ui/components/button"
-import { Separator } from "@workspace/ui/components/separator"
+import { Button, Separator } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   TextBoldIcon,
@@ -27,23 +26,24 @@ import {
 function ToolbarButton({
   icon,
   isActive = false,
-  onClick,
+  onPress,
   title,
-  disabled = false,
+  isDisabled = false,
 }: {
   icon: typeof TextBoldIcon
   isActive?: boolean
-  onClick: () => void
+  onPress: () => void
   title: string
-  disabled?: boolean
+  isDisabled?: boolean
 }) {
   return (
     <Button
       variant={isActive ? "secondary" : "ghost"}
-      size="icon-sm"
-      onClick={onClick}
-      title={title}
-      disabled={disabled}
+      isIconOnly
+      size="sm"
+      onPress={onPress}
+      aria-label={title}
+      isDisabled={isDisabled}
       type="button"
     >
       <HugeiconsIcon icon={icon} size={16} strokeWidth={2} />
@@ -96,31 +96,31 @@ export function Toolbar({ editor }: { editor: Editor | null }) {
 
   return (
     <div className="flex flex-wrap items-center gap-0.5 border-b p-1">
-      <ToolbarButton icon={TextBoldIcon} isActive={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} title="Bold" />
-      <ToolbarButton icon={TextItalicIcon} isActive={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()} title="Italic" />
-      <ToolbarButton icon={TextUnderlineIcon} isActive={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()} title="Underline" />
-      <ToolbarButton icon={TextStrikethroughIcon} isActive={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()} title="Strikethrough" />
+      <ToolbarButton icon={TextBoldIcon} isActive={editor.isActive("bold")} onPress={() => editor.chain().focus().toggleBold().run()} title="Bold" />
+      <ToolbarButton icon={TextItalicIcon} isActive={editor.isActive("italic")} onPress={() => editor.chain().focus().toggleItalic().run()} title="Italic" />
+      <ToolbarButton icon={TextUnderlineIcon} isActive={editor.isActive("underline")} onPress={() => editor.chain().focus().toggleUnderline().run()} title="Underline" />
+      <ToolbarButton icon={TextStrikethroughIcon} isActive={editor.isActive("strike")} onPress={() => editor.chain().focus().toggleStrike().run()} title="Strikethrough" />
 
       <Separator orientation="vertical" className="mx-1 h-6" />
 
-      <ToolbarButton icon={Heading01Icon} isActive={editor.isActive("heading", { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} title="Heading 1" />
-      <ToolbarButton icon={Heading02Icon} isActive={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} title="Heading 2" />
-      <ToolbarButton icon={Heading03Icon} isActive={editor.isActive("heading", { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} title="Heading 3" />
+      <ToolbarButton icon={Heading01Icon} isActive={editor.isActive("heading", { level: 1 })} onPress={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} title="Heading 1" />
+      <ToolbarButton icon={Heading02Icon} isActive={editor.isActive("heading", { level: 2 })} onPress={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} title="Heading 2" />
+      <ToolbarButton icon={Heading03Icon} isActive={editor.isActive("heading", { level: 3 })} onPress={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} title="Heading 3" />
 
       <Separator orientation="vertical" className="mx-1 h-6" />
 
-      <ToolbarButton icon={LeftToRightListBulletIcon} isActive={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()} title="Bullet list" />
-      <ToolbarButton icon={LeftToRightListNumberIcon} isActive={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()} title="Ordered list" />
-      <ToolbarButton icon={QuoteDownIcon} isActive={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()} title="Blockquote" />
-      <ToolbarButton icon={SourceCodeIcon} isActive={editor.isActive("codeBlock")} onClick={() => editor.chain().focus().toggleCodeBlock().run()} title="Code block" />
+      <ToolbarButton icon={LeftToRightListBulletIcon} isActive={editor.isActive("bulletList")} onPress={() => editor.chain().focus().toggleBulletList().run()} title="Bullet list" />
+      <ToolbarButton icon={LeftToRightListNumberIcon} isActive={editor.isActive("orderedList")} onPress={() => editor.chain().focus().toggleOrderedList().run()} title="Ordered list" />
+      <ToolbarButton icon={QuoteDownIcon} isActive={editor.isActive("blockquote")} onPress={() => editor.chain().focus().toggleBlockquote().run()} title="Blockquote" />
+      <ToolbarButton icon={SourceCodeIcon} isActive={editor.isActive("codeBlock")} onPress={() => editor.chain().focus().toggleCodeBlock().run()} title="Code block" />
 
       <Separator orientation="vertical" className="mx-1 h-6" />
 
-      <ToolbarButton icon={Link01Icon} isActive={editor.isActive("link")} onClick={insertLink} title="Link" />
-      <ToolbarButton icon={Image01Icon} onClick={() => imageInputRef.current?.click()} title="Image" />
-      <ToolbarButton icon={MusicNote01Icon} onClick={() => audioInputRef.current?.click()} title="Audio" />
-      <ToolbarButton icon={GridTableIcon} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} title="Table" />
-      <ToolbarButton icon={PlayIcon} onClick={insertYouTube} title="YouTube" />
+      <ToolbarButton icon={Link01Icon} isActive={editor.isActive("link")} onPress={insertLink} title="Link" />
+      <ToolbarButton icon={Image01Icon} onPress={() => imageInputRef.current?.click()} title="Image" />
+      <ToolbarButton icon={MusicNote01Icon} onPress={() => audioInputRef.current?.click()} title="Audio" />
+      <ToolbarButton icon={GridTableIcon} onPress={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} title="Table" />
+      <ToolbarButton icon={PlayIcon} onPress={insertYouTube} title="YouTube" />
 
       <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
       <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={handleAudioUpload} />

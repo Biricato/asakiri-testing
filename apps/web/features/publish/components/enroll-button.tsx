@@ -2,9 +2,8 @@
 
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Badge } from "@workspace/ui/components/badge"
+import { toast } from "@heroui/react"
+import { Button, Chip } from "@heroui/react"
 import { enroll } from "../actions/enroll"
 import type { Enrollment } from "../types"
 
@@ -21,15 +20,15 @@ export function EnrollButton({
   if (existing) {
     if (existing.status === "active") {
       return (
-        <Button render={<a href={`/learn`} />}>
-          Go to learning
-        </Button>
+        <a href="/learn">
+          <Button>Go to learning</Button>
+        </a>
       )
     }
     if (existing.status === "pending") {
-      return <Badge variant="secondary">Enrollment pending</Badge>
+      return <Chip variant="secondary">Enrollment pending</Chip>
     }
-    return <Badge variant="destructive">Enrollment revoked</Badge>
+    return <Chip color="danger">Enrollment revoked</Chip>
   }
 
   function handleEnroll() {
@@ -45,7 +44,7 @@ export function EnrollButton({
   }
 
   return (
-    <Button onClick={handleEnroll} disabled={pending}>
+    <Button onPress={handleEnroll} isDisabled={pending}>
       {pending ? "Enrolling..." : "Enroll"}
     </Button>
   )

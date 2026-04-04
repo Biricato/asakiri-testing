@@ -2,16 +2,8 @@
 
 import { useState, useRef, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Progress } from "@workspace/ui/components/progress"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { toast } from "@heroui/react"
+import { Button, Input, ProgressBar, Card } from "@heroui/react"
 import { submitAndUpdateSrs } from "../actions/srs"
 import { submitExerciseAttempt } from "../actions/progress"
 
@@ -57,10 +49,10 @@ export function ExercisePlayer({
             You scored {results.correct} out of {results.total} ({accuracy}%)
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            <Button variant="outline" onClick={() => { setCurrentIndex(0); setResults({ correct: 0, total: 0 }) }}>
+            <Button variant="outline" onPress={() => { setCurrentIndex(0); setResults({ correct: 0, total: 0 }) }}>
               Restart
             </Button>
-            <Button onClick={() => router.back()}>
+            <Button onPress={() => router.back()}>
               Done
             </Button>
           </div>
@@ -144,7 +136,7 @@ export function ExercisePlayer({
                 {remaining} left
               </p>
             </div>
-            <Progress value={progress} className="mb-6 h-2" />
+            <ProgressBar value={progress} className="mb-6 h-2" aria-label="Exercise progress" />
 
             {/* Prompt */}
             <div className="rounded-2xl border p-5">
@@ -177,12 +169,12 @@ export function ExercisePlayer({
                         key={i}
                         variant="outline"
                         size="sm"
-                        onClick={() => {
+                        onPress={() => {
                           const tokens = answer ? answer.split(",") : []
                           tokens.push(token)
                           setAnswer(tokens.join(","))
                         }}
-                        disabled={!!feedback}
+                        isDisabled={!!feedback}
                       >
                         {token}
                       </Button>
@@ -197,8 +189,8 @@ export function ExercisePlayer({
                         variant="ghost"
                         size="sm"
                         className="mt-1"
-                        onClick={() => setAnswer("")}
-                        disabled={!!feedback}
+                        onPress={() => setAnswer("")}
+                        isDisabled={!!feedback}
                       >
                         Clear
                       </Button>
@@ -258,16 +250,16 @@ export function ExercisePlayer({
           {feedback ? (
             <>
               <div />
-              <Button onClick={next}>
+              <Button onPress={next}>
                 {currentIndex < variants.length - 1 ? "Continue" : "Finish"}
               </Button>
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={skip}>
+              <Button variant="outline" onPress={skip}>
                 Skip
               </Button>
-              <Button onClick={checkAnswer} disabled={!answer || pending}>
+              <Button onPress={checkAnswer} isDisabled={!answer || pending}>
                 Submit
               </Button>
             </>

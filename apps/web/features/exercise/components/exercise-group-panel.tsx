@@ -2,26 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
+import { toast } from "@heroui/react"
+import { Button, Input, Label, Modal, Select, ListBox } from "@heroui/react"
 import { createExerciseGroup } from "../actions/groups"
 
 export function CreateExerciseGroupDialog({
@@ -53,48 +35,53 @@ export function CreateExerciseGroupDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>
+    <>
+      <Button variant="outline" size="sm" onPress={() => setOpen(true)}>
         Add exercises
-      </DialogTrigger>
-      <DialogContent>
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Create exercise group</DialogTitle>
-            <DialogDescription>
-              Add a group of exercises to this unit.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" placeholder="e.g. Vocabulary Set 1" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Input id="description" name="description" placeholder="Optional description" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="datasetType">Dataset type</Label>
-              <Select name="datasetType" defaultValue="word_pair">
-                <SelectTrigger id="datasetType">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="word_pair">Word pairs</SelectItem>
-                  <SelectItem value="sentence">Sentences</SelectItem>
-                  <SelectItem value="grammar">Grammar</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={pending}>
-              {pending ? "Creating..." : "Create"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+      </Button>
+      <Modal isOpen={open} onOpenChange={setOpen}>
+        <Modal.Backdrop><Modal.Container><Modal.Dialog>
+          <Modal.CloseTrigger />
+          <form onSubmit={handleSubmit}>
+            <Modal.Header>
+              <Modal.Heading>Create exercise group</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
+              <p className="text-muted-foreground text-sm mb-4">
+                Add a group of exercises to this unit.
+              </p>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" name="title" placeholder="e.g. Vocabulary Set 1" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input id="description" name="description" placeholder="Optional description" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="datasetType">Dataset type</Label>
+                  <Select name="datasetType" defaultSelectedKey="word_pair" aria-label="Dataset type">
+                    <Select.Trigger />
+                    <Select.Popover>
+                      <ListBox>
+                        <ListBox.Item id="word_pair" textValue="Word pairs">Word pairs</ListBox.Item>
+                        <ListBox.Item id="sentence" textValue="Sentences">Sentences</ListBox.Item>
+                        <ListBox.Item id="grammar" textValue="Grammar">Grammar</ListBox.Item>
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button type="submit" isDisabled={pending}>
+                {pending ? "Creating..." : "Create"}
+              </Button>
+            </Modal.Footer>
+          </form>
+        </Modal.Dialog></Modal.Container></Modal.Backdrop>
+      </Modal>
+    </>
   )
 }

@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { siteSetting } from "@/schema/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@heroui/react"
 import { SignOutButton } from "./sign-out-button"
 
 export default async function AppLayout({
@@ -45,21 +45,21 @@ export default async function AppLayout({
               <span className="hidden text-lg font-semibold sm:inline">{siteName}</span>
             </Link>
             <nav className="flex items-center gap-0.5 overflow-x-auto">
-              <Button variant="ghost" size="sm" render={<Link href="/learn" />}>
+              <Link href="/learn"><Button variant="ghost" size="sm">
                 Learning Hub
-              </Button>
-              <Button variant="ghost" size="sm" className="hidden sm:inline-flex" render={<Link href="/courses" />}>
+              </Button></Link>
+              <Link href="/courses"><Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 Courses
-              </Button>
+              </Button></Link>
               {canCreate && (
-                <Button variant="ghost" size="sm" render={<Link href="/create" />}>
+                <Link href="/create"><Button variant="ghost" size="sm">
                   Creator Studio
-                </Button>
+                </Button></Link>
               )}
               {session.user.role === "admin" && (
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex" render={<Link href="/admin" />}>
+                <Link href="/admin"><Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                   Admin
-                </Button>
+                </Button></Link>
               )}
             </nav>
           </div>

@@ -2,35 +2,8 @@
 
 import { useTransition } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { toast } from "sonner"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table"
-import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
+import { toast } from "@heroui/react"
+import { Table, Badge, Button, Input, Dropdown } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { MoreHorizontalIcon } from "@hugeicons/core-free-icons"
 import { togglePublish, deleteCourse } from "../actions/courses"
@@ -102,74 +75,72 @@ export function CoursesTable({
       />
 
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Languages</TableHead>
-              <TableHead>Difficulty</TableHead>
-              <TableHead>Creator</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-[60px]" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <Table aria-label="Courses">
+          <Table.Header>
+            <Table.Column>Title</Table.Column>
+            <Table.Column>Languages</Table.Column>
+            <Table.Column>Difficulty</Table.Column>
+            <Table.Column>Creator</Table.Column>
+            <Table.Column>Status</Table.Column>
+            <Table.Column>Created</Table.Column>
+            <Table.Column>{""}</Table.Column>
+          </Table.Header>
+          <Table.Body>
             {result.data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-muted-foreground text-center">
-                  No courses found.
-                </TableCell>
-              </TableRow>
+              <Table.Row>
+                <Table.Cell>No courses found.</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+                <Table.Cell>{""}</Table.Cell>
+              </Table.Row>
             ) : (
               result.data.map((c) => (
-                <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.title}</TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                <Table.Row key={c.id}>
+                  <Table.Cell>{c.title}</Table.Cell>
+                  <Table.Cell>
                     {c.sourceLanguage} → {c.targetLanguage}
-                  </TableCell>
-                  <TableCell className="capitalize">{c.difficulty}</TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  </Table.Cell>
+                  <Table.Cell className="capitalize">{c.difficulty}</Table.Cell>
+                  <Table.Cell>
                     {c.creatorName ?? "Unknown"}
-                  </TableCell>
-                  <TableCell>
+                  </Table.Cell>
+                  <Table.Cell>
                     {c.isPublished ? (
                       <Badge>Published</Badge>
                     ) : (
                       <Badge variant="secondary">Draft</Badge>
                     )}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  </Table.Cell>
+                  <Table.Cell>
                     {new Date(c.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={<Button variant="ghost" size="icon-sm" disabled={pending} />}
-                      >
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Dropdown>
+                      <Button variant="ghost" size="sm" isDisabled={pending}>
                         <HugeiconsIcon icon={MoreHorizontalIcon} size={16} />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleTogglePublish(c.id, c.isPublished)
-                          }
-                        >
-                          {c.isPublished ? "Unpublish" : "Publish"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() => handleDelete(c.id)}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                      </Button>
+                      <Dropdown.Popover>
+                        <Dropdown.Menu onAction={(key) => {
+                          if (key === "toggle") handleTogglePublish(c.id, c.isPublished)
+                          if (key === "delete") handleDelete(c.id)
+                        }}>
+                          <Dropdown.Item id="toggle">
+                            {c.isPublished ? "Unpublish" : "Publish"}
+                          </Dropdown.Item>
+                          <Dropdown.Item id="delete">
+                            Delete
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown.Popover>
+                    </Dropdown>
+                  </Table.Cell>
+                </Table.Row>
               ))
             )}
-          </TableBody>
+          </Table.Body>
         </Table>
       </div>
 
@@ -182,16 +153,16 @@ export function CoursesTable({
             <Button
               variant="outline"
               size="sm"
-              disabled={currentPage <= 1}
-              onClick={() => updateParams("page", String(currentPage - 1))}
+              isDisabled={currentPage <= 1}
+              onPress={() => updateParams("page", String(currentPage - 1))}
             >
               Previous
             </Button>
             <Button
               variant="outline"
               size="sm"
-              disabled={currentPage >= totalPages}
-              onClick={() => updateParams("page", String(currentPage + 1))}
+              isDisabled={currentPage >= totalPages}
+              onPress={() => updateParams("page", String(currentPage + 1))}
             >
               Next
             </Button>

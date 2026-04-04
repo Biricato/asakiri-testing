@@ -2,8 +2,8 @@
 
 import { useTransition, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
+import { toast } from "@heroui/react"
+import { Button } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Delete02Icon } from "@hugeicons/core-free-icons"
 import { TiptapEditor } from "@/features/tiptap/components/editor"
@@ -55,9 +55,10 @@ export function SectionEditor({
             {sections.length > 1 && (
               <Button
                 variant="ghost"
-                size="icon-sm"
-                onClick={() => handleDeleteSection(s.id)}
-                disabled={pending}
+                isIconOnly
+                size="sm"
+                onPress={() => handleDeleteSection(s.id)}
+                isDisabled={pending}
               >
                 <HugeiconsIcon icon={Delete02Icon} size={14} />
               </Button>
@@ -67,7 +68,7 @@ export function SectionEditor({
         </div>
       ))}
 
-      <Button variant="outline" onClick={handleAddSection} disabled={pending}>
+      <Button variant="outline" onPress={handleAddSection} isDisabled={pending}>
         <HugeiconsIcon icon={Add01Icon} size={16} className="mr-1" />
         Add section
       </Button>

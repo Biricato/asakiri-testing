@@ -2,13 +2,7 @@ import Link from "next/link"
 import { getEnrolledCourses } from "@/features/learn/actions/enrolled"
 import { getStats } from "@/features/learn/actions/progress"
 import { EnrolledCourses } from "@/features/learn/components/enrolled-courses"
-import { Button } from "@workspace/ui/components/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { Button, Card } from "@heroui/react"
 
 export default async function LearnPage() {
   const [courses, stats] = await Promise.all([
@@ -25,52 +19,52 @@ export default async function LearnPage() {
             Your enrolled courses and progress.
           </p>
         </div>
-        <Button variant="outline" render={<Link href="/learn/stats" />}>
-          Stats
-        </Button>
+        <Link href="/learn/stats">
+          <Button variant="outline">Stats</Button>
+        </Link>
       </div>
 
       {stats && (
         <div className="mt-6 grid gap-4 sm:grid-cols-4">
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Lessons
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-2xl font-bold">{stats.lessonsCompleted}</p>
-            </CardContent>
+            </Card.Content>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Exercises
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-2xl font-bold">{stats.totalAttempts}</p>
-            </CardContent>
+            </Card.Content>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Accuracy
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-2xl font-bold">{stats.accuracy}%</p>
-            </CardContent>
+            </Card.Content>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Due reviews
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-2xl font-bold">{stats.dueReviews}</p>
-            </CardContent>
+            </Card.Content>
           </Card>
         </div>
       )}

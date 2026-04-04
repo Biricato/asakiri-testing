@@ -10,17 +10,7 @@ import {
   Settings02Icon,
   MailSend02Icon,
 } from "@hugeicons/core-free-icons"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@workspace/ui/components/sidebar"
+import { Button } from "@heroui/react"
 
 const navItems = [
   { title: "Dashboard", href: "/admin", icon: DashboardSquare01Icon },
@@ -34,37 +24,37 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2 px-2 py-1">
+    <nav className="flex h-full w-56 flex-col border-r bg-background">
+      <div className="px-4 py-3">
+        <Link href="/" className="flex items-center gap-2">
           <span className="text-lg font-semibold">Asakiri</span>
         </Link>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Admin</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    isActive={
-                      item.href === "/admin"
-                        ? pathname === "/admin"
-                        : pathname.startsWith(item.href)
-                    }
-                    tooltip={item.title}
-                    render={<Link href={item.href} />}
+      </div>
+      <div className="flex-1 px-2 py-2">
+        <p className="px-2 py-1 text-xs font-medium text-muted-foreground">Admin</p>
+        <ul className="flex flex-col gap-1">
+          {navItems.map((item) => {
+            const isActive =
+              item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname.startsWith(item.href)
+
+            return (
+              <li key={item.href}>
+                <Link href={item.href}>
+                  <Button
+                    variant={isActive ? "secondary" : "ghost"}
+                    className="w-full justify-start"
                   >
                     <HugeiconsIcon icon={item.icon} size={18} strokeWidth={2} />
                     <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+                  </Button>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </nav>
   )
 }

@@ -2,16 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Badge } from "@workspace/ui/components/badge"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
+import { toast } from "@heroui/react"
+import { Button, Chip, Select, ListBox } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Delete02Icon } from "@hugeicons/core-free-icons"
 import { createVariant, deleteVariant } from "../actions/variants"
@@ -77,14 +69,15 @@ export function VariantList({
       {variants.map((v) => (
         <div key={v.id} className="space-y-2 rounded-md border p-2">
           <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="text-xs">
+            <Chip variant="secondary" className="text-xs">
               {v.type}
-            </Badge>
+            </Chip>
             <Button
               variant="ghost"
-              size="icon-sm"
-              onClick={() => handleDelete(v.id)}
-              disabled={pending}
+              isIconOnly
+              size="sm"
+              onPress={() => handleDelete(v.id)}
+              isDisabled={pending}
             >
               <HugeiconsIcon icon={Delete02Icon} size={12} />
             </Button>
@@ -96,23 +89,25 @@ export function VariantList({
       {addType ? (
         <div className="flex gap-2">
           <Select
-            value={addType}
-            onValueChange={(v) => v && setAddType(v as VariantType)}
+            selectedKey={addType}
+            onSelectionChange={(key) => key && setAddType(key as VariantType)}
+            aria-label="Variant type"
+            className="w-40"
           >
-            <SelectTrigger className="h-8 w-40 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="word_cloze">Word Cloze</SelectItem>
-              <SelectItem value="mcq">MCQ</SelectItem>
-              <SelectItem value="multi_blank">Multi Blank</SelectItem>
-              <SelectItem value="sentence_builder">Sentence Builder</SelectItem>
-            </SelectContent>
+            <Select.Trigger className="h-8 text-xs" />
+            <Select.Popover>
+              <ListBox>
+                <ListBox.Item id="word_cloze" textValue="Word Cloze">Word Cloze</ListBox.Item>
+                <ListBox.Item id="mcq" textValue="MCQ">MCQ</ListBox.Item>
+                <ListBox.Item id="multi_blank" textValue="Multi Blank">Multi Blank</ListBox.Item>
+                <ListBox.Item id="sentence_builder" textValue="Sentence Builder">Sentence Builder</ListBox.Item>
+              </ListBox>
+            </Select.Popover>
           </Select>
-          <Button size="sm" onClick={() => handleCreate(addType)} disabled={pending}>
+          <Button size="sm" onPress={() => handleCreate(addType)} isDisabled={pending}>
             Create
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => setAddType(null)}>
+          <Button variant="ghost" size="sm" onPress={() => setAddType(null)}>
             Cancel
           </Button>
         </div>
@@ -121,7 +116,7 @@ export function VariantList({
           variant="ghost"
           size="sm"
           className="text-xs"
-          onClick={() => setAddType("word_cloze")}
+          onPress={() => setAddType("word_cloze")}
         >
           <HugeiconsIcon icon={Add01Icon} size={12} className="mr-1" />
           Add variant

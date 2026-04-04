@@ -2,8 +2,8 @@
 
 import { useRef, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
+import { toast } from "@heroui/react"
+import { Button } from "@heroui/react"
 import { markLessonComplete } from "../actions/progress"
 
 export function LessonViewer({
@@ -70,7 +70,7 @@ export function LessonViewer({
         {isCompleted ? (
           <p className="text-muted-foreground text-sm">Lesson completed</p>
         ) : (
-          <Button onClick={handleComplete} disabled={pending} size="lg">
+          <Button onPress={handleComplete} isDisabled={pending} size="lg">
             {pending ? "Marking..." : "Mark as complete"}
           </Button>
         )}

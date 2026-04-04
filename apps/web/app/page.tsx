@@ -6,14 +6,9 @@ import { getCatalog } from "@/features/publish/actions/catalog"
 import { getSettings } from "@/features/admin/actions/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SignOutButton } from "./(app)/sign-out-button"
-import { Button } from "@workspace/ui/components/button"
-import { Badge } from "@workspace/ui/components/badge"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { Button } from "@heroui/react"
+import { Badge } from "@heroui/react"
+import { Card } from "@heroui/react"
 
 export default async function HomePage() {
   const [session, courses, settings] = await Promise.all([
@@ -45,28 +40,28 @@ export default async function HomePage() {
             <nav className="flex items-center gap-0.5">
               {session ? (
                 <>
-                  <Button variant="ghost" size="sm" render={<Link href="/learn" />}>
+                  <Link href="/learn"><Button variant="ghost" size="sm">
                     Learning Hub
-                  </Button>
-                  <Button variant="ghost" size="sm" className="hidden sm:inline-flex" render={<Link href="/courses" />}>
+                  </Button></Link>
+                  <Link href="/courses"><Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                     Courses
-                  </Button>
+                  </Button></Link>
                   {canCreate && (
-                    <Button variant="ghost" size="sm" render={<Link href="/create" />}>
+                    <Link href="/create"><Button variant="ghost" size="sm">
                       Creator Studio
-                    </Button>
+                    </Button></Link>
                   )}
                   {session.user.role === "admin" && (
-                    <Button variant="ghost" size="sm" className="hidden sm:inline-flex" render={<Link href="/admin" />}>
+                    <Link href="/admin"><Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                       Admin
-                    </Button>
+                    </Button></Link>
                   )}
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" render={<Link href="/courses" />}>
+                  <Link href="/courses"><Button variant="ghost" size="sm">
                     Courses
-                  </Button>
+                  </Button></Link>
                 </>
               )}
             </nav>
@@ -85,12 +80,12 @@ export default async function HomePage() {
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm" render={<Link href="/sign-in" />}>
+                <Link href="/sign-in"><Button variant="ghost" size="sm">
                   Sign in
-                </Button>
-                <Button size="sm" render={<Link href="/sign-up" />}>
+                </Button></Link>
+                <Link href="/sign-up"><Button size="sm">
                   Sign up
-                </Button>
+                </Button></Link>
               </>
             )}
           </div>
@@ -110,13 +105,13 @@ export default async function HomePage() {
             {heroDesc}
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="lg" render={<Link href="/courses" />}>
+            <Link href="/courses"><Button size="lg">
               Browse courses
-            </Button>
+            </Button></Link>
             {showTeaching && (
-              <Button variant="outline" size="lg" render={<Link href="/sign-up" />}>
+              <Link href="/sign-up"><Button variant="outline" size="lg">
                 Start teaching
-              </Button>
+              </Button></Link>
             )}
           </div>
         </section>
@@ -158,7 +153,7 @@ export default async function HomePage() {
                         </span>
                       </div>
                     )}
-                    <CardHeader>
+                    <Card.Header>
                       <div className="flex items-center gap-3">
                         <div className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
                           {(c.creatorName ?? "?")[0]}
@@ -167,16 +162,16 @@ export default async function HomePage() {
                           {c.creatorName ?? "Unknown"}
                         </span>
                       </div>
-                      <CardTitle className="text-lg">{c.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      <Card.Title className="text-lg">{c.title}</Card.Title>
+                    </Card.Header>
+                    <Card.Content>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary">{c.targetLanguage}</Badge>
                         <Badge variant="secondary" className="capitalize">
                           {c.difficulty}
                         </Badge>
                       </div>
-                    </CardContent>
+                    </Card.Content>
                   </Card>
                 </Link>
               ))}

@@ -4,7 +4,7 @@ import { getCourse } from "@/features/course/actions/courses"
 import { UnitList } from "@/features/course/components/unit-list"
 import { PublishButton } from "@/features/publish/components/publish-button"
 import { PageHeader } from "@/components/page-header"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Settings02Icon } from "@hugeicons/core-free-icons"
 
@@ -21,9 +21,9 @@ export default async function CourseOverviewPage({
     <div className="flex min-h-svh flex-col">
       <PageHeader backHref="/create" label="Course Builder" title={course.title}>
         <PublishButton courseId={courseId} isPublished={course.isPublished} />
-        <Button variant="outline" size="sm" render={<Link href={`/create/${courseId}/settings`} />}>
+        <Link href={`/create/${courseId}/settings`}><Button variant="outline" size="sm">
           <HugeiconsIcon icon={Settings02Icon} size={16} />
-        </Button>
+        </Button></Link>
       </PageHeader>
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-3xl">

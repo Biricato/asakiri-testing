@@ -2,10 +2,7 @@
 
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { Input } from "@workspace/ui/components/input"
-import { Button } from "@workspace/ui/components/button"
-import { Label } from "@workspace/ui/components/label"
-import { Checkbox } from "@workspace/ui/components/checkbox"
+import { Input, Button, Label, Checkbox } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Delete02Icon } from "@hugeicons/core-free-icons"
 import { updateVariant, addOption, updateOption, deleteOption } from "../actions/variants"
@@ -146,11 +143,11 @@ function McqEditor({
         {options.map((opt) => (
           <div key={opt.id} className="flex items-center gap-2">
             <Checkbox
-              checked={opt.isCorrect}
-              onCheckedChange={(checked) =>
+              isSelected={opt.isCorrect}
+              onChange={(checked) =>
                 handleUpdateOption(opt.id, "isCorrect", checked === true)
               }
-              disabled={pending}
+              isDisabled={pending}
             />
             <Input
               defaultValue={opt.label}
@@ -161,15 +158,16 @@ function McqEditor({
             />
             <Button
               variant="ghost"
-              size="icon-sm"
-              onClick={() => handleDeleteOption(opt.id)}
-              disabled={pending}
+              isIconOnly
+              size="sm"
+              onPress={() => handleDeleteOption(opt.id)}
+              isDisabled={pending}
             >
               <HugeiconsIcon icon={Delete02Icon} size={12} />
             </Button>
           </div>
         ))}
-        <Button variant="ghost" size="sm" className="text-xs" onClick={handleAddOption} disabled={pending}>
+        <Button variant="ghost" size="sm" className="text-xs" onPress={handleAddOption} isDisabled={pending}>
           <HugeiconsIcon icon={Add01Icon} size={12} className="mr-1" />
           Add option
         </Button>
@@ -249,10 +247,10 @@ function MultiBlankEditor({ variant }: { variant: ExerciseVariant }) {
         variant="ghost"
         size="sm"
         className="text-xs"
-        onClick={() => {
+        onPress={() => {
           saveBlanks([...blanks, { key: `blank${blanks.length + 1}`, correctAnswer: "", choices: [] }])
         }}
-        disabled={pending}
+        isDisabled={pending}
       >
         <HugeiconsIcon icon={Add01Icon} size={12} className="mr-1" />
         Add blank

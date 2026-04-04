@@ -1,13 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
-import { Badge } from "@workspace/ui/components/badge"
+import { Card, Badge } from "@heroui/react"
 import type { EnrolledCourse } from "../types"
 
 export function EnrolledCourses({ courses }: { courses: EnrolledCourse[] }) {
@@ -30,15 +24,15 @@ export function EnrolledCourses({ courses }: { courses: EnrolledCourse[] }) {
       {courses.map((c) => (
         <Link key={c.enrollmentId} href={`/learn/${c.courseId}`}>
           <Card className="hover:bg-muted/50 transition-colors">
-            <CardHeader>
-              <CardTitle className="text-base">{c.title}</CardTitle>
-              <CardDescription>
+            <Card.Header>
+              <Card.Title className="text-base">{c.title}</Card.Title>
+              <Card.Description>
                 {c.sourceLanguage} → {c.targetLanguage}
-              </CardDescription>
+              </Card.Description>
               <Badge variant="secondary" className="w-fit capitalize">
                 {c.difficulty}
               </Badge>
-            </CardHeader>
+            </Card.Header>
           </Card>
         </Link>
       ))}

@@ -1,11 +1,11 @@
 import { Geist_Mono, Inter } from "next/font/google"
 
-import "@workspace/ui/globals.css"
+import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@workspace/ui/components/sonner"
-import { cn } from "@workspace/ui/lib/utils";
+import { Toast } from "@heroui/react"
+import { cn } from "@/lib/cn"
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -26,7 +26,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           {children}
-          <Toaster />
+          <Toast.Provider />
         </ThemeProvider>
       </body>
     </html>

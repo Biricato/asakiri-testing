@@ -1,10 +1,5 @@
 import Link from "next/link"
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { Card } from "@heroui/react"
 
 export default function AdminPage() {
   return (
@@ -15,42 +10,42 @@ export default function AdminPage() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Link href="/admin/users">
           <Card className="hover:bg-muted/50 transition-colors">
-            <CardHeader>
-              <CardTitle>Users</CardTitle>
-              <CardDescription>
+            <Card.Header>
+              <Card.Title>Users</Card.Title>
+              <Card.Description>
                 Manage users, roles, and permissions
-              </CardDescription>
-            </CardHeader>
+              </Card.Description>
+            </Card.Header>
           </Card>
         </Link>
         <Link href="/admin/courses">
           <Card className="hover:bg-muted/50 transition-colors">
-            <CardHeader>
-              <CardTitle>Courses</CardTitle>
-              <CardDescription>
+            <Card.Header>
+              <Card.Title>Courses</Card.Title>
+              <Card.Description>
                 Oversee all courses on the platform
-              </CardDescription>
-            </CardHeader>
+              </Card.Description>
+            </Card.Header>
           </Card>
         </Link>
         <Link href="/admin/settings">
           <Card className="hover:bg-muted/50 transition-colors">
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-              <CardDescription>
+            <Card.Header>
+              <Card.Title>Settings</Card.Title>
+              <Card.Description>
                 Registration mode, course creation policy
-              </CardDescription>
-            </CardHeader>
+              </Card.Description>
+            </Card.Header>
           </Card>
         </Link>
         <Link href="/admin/invites">
           <Card className="hover:bg-muted/50 transition-colors">
-            <CardHeader>
-              <CardTitle>Invites</CardTitle>
-              <CardDescription>
+            <Card.Header>
+              <Card.Title>Invites</Card.Title>
+              <Card.Description>
                 Manage invite links for new users
-              </CardDescription>
-            </CardHeader>
+              </Card.Description>
+            </Card.Header>
           </Card>
         </Link>
       </div>

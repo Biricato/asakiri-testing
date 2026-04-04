@@ -3,23 +3,10 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Badge } from "@workspace/ui/components/badge"
+import { toast } from "@heroui/react"
+import { Button, Input, Chip, AlertDialog } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Delete02Icon } from "@hugeicons/core-free-icons"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
 import { createLesson, deleteLesson } from "../actions/lessons"
 import { CreateExerciseGroupDialog } from "@/features/exercise/components/exercise-group-panel"
 import type { UnitNode, Lesson } from "../types"
@@ -36,6 +23,8 @@ export function LessonList({
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [newTitle, setNewTitle] = useState("")
+  const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null)
+  const [deleteLessonTitle, setDeleteLessonTitle] = useState("")
 
   function handleCreate() {
     if (!newTitle.trim()) return
@@ -50,6 +39,7 @@ export function LessonList({
   function handleDelete(lessonId: string) {
     startTransition(async () => {
       await deleteLesson(lessonId)
+      setDeleteLessonId(null)
       toast.success("Lesson deleted")
       router.refresh()
     })
@@ -72,31 +62,19 @@ export function LessonList({
                 className="flex items-center gap-2 hover:underline"
               >
                 <span className="text-sm font-medium">{n.lesson.title}</span>
-                <Badge variant={n.lesson.status === "published" ? "default" : "secondary"} className="text-xs">
+                <Chip variant={n.lesson.status === "published" ? "primary" : "secondary"} className="text-xs">
                   {n.lesson.status}
-                </Badge>
+                </Chip>
               </Link>
-              <AlertDialog>
-                <AlertDialogTrigger
-                  render={<Button variant="ghost" size="icon-sm" disabled={pending} />}
-                >
-                  <HugeiconsIcon icon={Delete02Icon} size={14} />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete &quot;{n.lesson.title}&quot;?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will delete the lesson and all its sections.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleDelete(n.lesson!.id)}>
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <Button
+                variant="ghost"
+                isIconOnly
+                size="sm"
+                isDisabled={pending}
+                onPress={() => { setDeleteLessonId(n.lesson!.id); setDeleteLessonTitle(n.lesson!.title) }}
+              >
+                <HugeiconsIcon icon={Delete02Icon} size={14} />
+              </Button>
             </div>
           )
         }
@@ -111,7 +89,7 @@ export function LessonList({
                 href={`/create/${courseId}/exercises/${n.exerciseGroupId}`}
                 className="flex items-center gap-2 hover:underline"
               >
-                <Badge variant="secondary" className="text-xs">Exercises</Badge>
+                <Chip variant="secondary" className="text-xs">Exercises</Chip>
                 <span className="text-muted-foreground text-sm">Exercise group</span>
               </Link>
             </div>
@@ -120,6 +98,22 @@ export function LessonList({
 
         return null
       })}
+
+      <AlertDialog isOpen={!!deleteLessonId} onOpenChange={(open) => { if (!open) setDeleteLessonId(null) }}>
+        <AlertDialog.Backdrop><AlertDialog.Container><AlertDialog.Dialog>
+          <AlertDialog.CloseTrigger />
+          <AlertDialog.Header>
+            <AlertDialog.Heading>Delete &quot;{deleteLessonTitle}&quot;?</AlertDialog.Heading>
+          </AlertDialog.Header>
+          <AlertDialog.Body>
+            <p>This will delete the lesson and all its sections.</p>
+          </AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" slot="close">Cancel</Button>
+            <Button variant="danger" onPress={() => deleteLessonId && handleDelete(deleteLessonId)}>Delete</Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
+      </AlertDialog>
 
       <div className="flex gap-2 pt-1">
         <Input
@@ -132,8 +126,8 @@ export function LessonList({
         <Button
           variant="ghost"
           size="sm"
-          onClick={handleCreate}
-          disabled={!newTitle.trim() || pending}
+          onPress={handleCreate}
+          isDisabled={!newTitle.trim() || pending}
         >
           <HugeiconsIcon icon={Add01Icon} size={14} className="mr-1" />
           Add lesson

@@ -2,22 +2,7 @@
 
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
-import { Badge } from "@workspace/ui/components/badge"
-import { Input } from "@workspace/ui/components/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
+import { Card, Chip, Input, Select, ListBox } from "@heroui/react"
 import type { CatalogCourse } from "../types"
 
 export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
@@ -47,18 +32,20 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
           className="max-w-xs"
         />
         <Select
-          defaultValue={searchParams.get("difficulty") ?? "all"}
-          onValueChange={(v) => v && updateParam("difficulty", v)}
+          selectedKey={searchParams.get("difficulty") ?? "all"}
+          onSelectionChange={(key) => key && updateParam("difficulty", key as string)}
+          aria-label="Difficulty"
+          className="w-36"
         >
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Difficulty" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All levels</SelectItem>
-            <SelectItem value="beginner">Beginner</SelectItem>
-            <SelectItem value="intermediate">Intermediate</SelectItem>
-            <SelectItem value="advanced">Advanced</SelectItem>
-          </SelectContent>
+          <Select.Trigger />
+          <Select.Popover>
+            <ListBox>
+              <ListBox.Item id="all" textValue="All levels">All levels</ListBox.Item>
+              <ListBox.Item id="beginner" textValue="Beginner">Beginner</ListBox.Item>
+              <ListBox.Item id="intermediate" textValue="Intermediate">Intermediate</ListBox.Item>
+              <ListBox.Item id="advanced" textValue="Advanced">Advanced</ListBox.Item>
+            </ListBox>
+          </Select.Popover>
         </Select>
       </div>
 
@@ -78,16 +65,16 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
                     />
                   </div>
                 )}
-                <CardHeader>
+                <Card.Header>
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base">{c.title}</CardTitle>
-                    <Badge variant="secondary" className="shrink-0 capitalize">
+                    <Card.Title className="text-base">{c.title}</Card.Title>
+                    <Chip variant="secondary" className="shrink-0 capitalize">
                       {c.difficulty}
-                    </Badge>
+                    </Chip>
                   </div>
-                  {c.subtitle && <CardDescription>{c.subtitle}</CardDescription>}
-                </CardHeader>
-                <CardContent>
+                  {c.subtitle && <Card.Description>{c.subtitle}</Card.Description>}
+                </Card.Header>
+                <Card.Content>
                   <p className="text-muted-foreground text-sm">
                     {c.sourceLanguage} → {c.targetLanguage}
                   </p>
@@ -96,7 +83,7 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
                       by {c.creatorName}
                     </p>
                   )}
-                </CardContent>
+                </Card.Content>
               </Card>
             </Link>
           ))}

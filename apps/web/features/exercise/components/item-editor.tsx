@@ -2,27 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
+import { toast } from "@heroui/react"
+import { Button, Input, Label, Card, AlertDialog } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Delete02Icon } from "@hugeicons/core-free-icons"
 import { createItem, updateItem, deleteItem } from "../actions/items"
@@ -39,6 +20,8 @@ export function ItemEditor({
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [showAdd, setShowAdd] = useState(false)
+  const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
+  const [deleteItemWord, setDeleteItemWord] = useState("")
 
   function handleCreate(fd: FormData) {
     startTransition(async () => {
@@ -64,6 +47,7 @@ export function ItemEditor({
   function handleDelete(itemId: string) {
     startTransition(async () => {
       await deleteItem(itemId)
+      setDeleteItemId(null)
       toast.success("Item deleted")
       router.refresh()
     })
@@ -73,35 +57,23 @@ export function ItemEditor({
     <div className="space-y-4">
       {items.map((item, i) => (
         <Card key={item.id}>
-          <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm">
+          <Card.Header className="flex-row items-center justify-between space-y-0 pb-2">
+            <Card.Title className="text-sm">
               {i + 1}. {item.word} — {item.meaning}
-            </CardTitle>
+            </Card.Title>
             <div className="flex gap-1">
-              <AlertDialog>
-                <AlertDialogTrigger
-                  render={<Button variant="ghost" size="icon-sm" disabled={pending} />}
-                >
-                  <HugeiconsIcon icon={Delete02Icon} size={14} />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete item?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will delete &quot;{item.word}&quot; and all its variants.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleDelete(item.id)}>
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <Button
+                variant="ghost"
+                isIconOnly
+                size="sm"
+                isDisabled={pending}
+                onPress={() => { setDeleteItemId(item.id); setDeleteItemWord(item.word) }}
+              >
+                <HugeiconsIcon icon={Delete02Icon} size={14} />
+              </Button>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
+          </Card.Header>
+          <Card.Content className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
               <Input
                 defaultValue={item.word}
@@ -123,13 +95,29 @@ export function ItemEditor({
               />
             </div>
             <VariantList itemId={item.id} groupId={groupId} variants={item.variants} />
-          </CardContent>
+          </Card.Content>
         </Card>
       ))}
 
+      <AlertDialog isOpen={!!deleteItemId} onOpenChange={(open) => { if (!open) setDeleteItemId(null) }}>
+        <AlertDialog.Backdrop><AlertDialog.Container><AlertDialog.Dialog>
+          <AlertDialog.CloseTrigger />
+          <AlertDialog.Header>
+            <AlertDialog.Heading>Delete item?</AlertDialog.Heading>
+          </AlertDialog.Header>
+          <AlertDialog.Body>
+            <p>This will delete &quot;{deleteItemWord}&quot; and all its variants.</p>
+          </AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" slot="close">Cancel</Button>
+            <Button variant="danger" onPress={() => deleteItemId && handleDelete(deleteItemId)}>Delete</Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
+      </AlertDialog>
+
       {showAdd ? (
         <Card>
-          <CardContent className="pt-4">
+          <Card.Content className="pt-4">
             <form
               onSubmit={(e) => {
                 e.preventDefault()
@@ -152,18 +140,18 @@ export function ItemEditor({
                 <Input name="exampleSentence" placeholder="Example sentence" className="h-8 text-sm" />
               </div>
               <div className="flex gap-2">
-                <Button type="submit" size="sm" disabled={pending}>
+                <Button type="submit" size="sm" isDisabled={pending}>
                   Add
                 </Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => setShowAdd(false)}>
+                <Button type="button" variant="ghost" size="sm" onPress={() => setShowAdd(false)}>
                   Cancel
                 </Button>
               </div>
             </form>
-          </CardContent>
+          </Card.Content>
         </Card>
       ) : (
-        <Button variant="outline" onClick={() => setShowAdd(true)}>
+        <Button variant="outline" onPress={() => setShowAdd(true)}>
           <HugeiconsIcon icon={Add01Icon} size={16} className="mr-1" />
           Add item
         </Button>

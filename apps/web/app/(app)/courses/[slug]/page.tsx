@@ -3,14 +3,9 @@ import Link from "next/link"
 import { getCourseBySlug } from "@/features/publish/actions/catalog"
 import { getMyEnrollment } from "@/features/publish/actions/enroll"
 import { EnrollButton } from "@/features/publish/components/enroll-button"
-import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { Badge } from "@heroui/react"
+import { Button } from "@heroui/react"
+import { Card } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 
@@ -28,15 +23,14 @@ export default async function CourseDetailPage({
 
   return (
     <div className="p-6">
-      <Button
+      <Link href="/courses"><Button
         variant="ghost"
         size="sm"
         className="mb-4"
-        render={<Link href="/courses" />}
       >
         <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-1" />
         Back to catalog
-      </Button>
+      </Button></Link>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <div className="flex-1">
@@ -75,15 +69,15 @@ export default async function CourseDetailPage({
         </div>
 
         <Card className="w-full lg:w-72">
-          <CardHeader>
-            <CardTitle className="text-base">Enroll</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <Card.Header>
+            <Card.Title className="text-base">Enroll</Card.Title>
+          </Card.Header>
+          <Card.Content>
             <EnrollButton
               publishedCourseId={course.id}
               enrollment={enrollment}
             />
-          </CardContent>
+          </Card.Content>
         </Card>
       </div>
     </div>

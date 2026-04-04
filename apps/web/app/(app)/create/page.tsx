@@ -6,7 +6,7 @@ import { getCourse } from "@/features/course/actions/courses"
 import { UnitList } from "@/features/course/components/unit-list"
 import { CreatorSidebar } from "@/features/course/components/creator-sidebar"
 import { PublishButton } from "@/features/publish/components/publish-button"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Settings02Icon } from "@hugeicons/core-free-icons"
 
@@ -42,9 +42,9 @@ export default async function CourseOverviewPage({
             </div>
             <div className="flex items-center gap-2">
               <PublishButton courseId={courseId} isPublished={course.isPublished} />
-              <Button variant="outline" size="sm" render={<Link href={`/create/${courseId}/settings`} />}>
+              <Link href={`/create/${courseId}/settings`}><Button variant="outline" size="sm">
                 <HugeiconsIcon icon={Settings02Icon} size={16} />
-              </Button>
+              </Button></Link>
             </div>
           </div>
         </header>

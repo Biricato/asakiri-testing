@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@heroui/react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
@@ -20,9 +20,11 @@ export function PageHeader({
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="flex w-full items-center justify-between px-4 py-3 md:px-6">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon-sm" render={<Link href={backHref} />}>
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-          </Button>
+          <Link href={backHref}>
+            <Button variant="ghost" isIconOnly size="sm">
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+            </Button>
+          </Link>
           <Link href="/" className="hidden shrink-0 sm:block">
             <Image src="/logo.svg" alt="Asakiri" width={24} height={24} />
           </Link>

@@ -2,26 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
+import { toast } from "@heroui/react"
+import { Button, Input, Modal, Select, ListBox } from "@heroui/react"
 import { createInvite } from "../actions/invites"
 
 export function InviteDialog() {
@@ -52,89 +34,100 @@ export function InviteDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={(v) => (v ? setOpen(true) : handleClose())}>
-      <DialogTrigger render={<Button />}>
+    <>
+      <Button onPress={() => setOpen(true)}>
         Create invite
-      </DialogTrigger>
-      <DialogContent>
-        {generatedCode ? (
-          <>
-            <DialogHeader>
-              <DialogTitle>Invite created</DialogTitle>
-              <DialogDescription>
-                Share this invite code with the user.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="bg-muted rounded-md p-3">
-              <code className="text-sm break-all">{generatedCode}</code>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(generatedCode)
-                  toast.success("Copied to clipboard")
-                }}
-              >
-                Copy code
-              </Button>
-              <Button onClick={handleClose}>Done</Button>
-            </DialogFooter>
-          </>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>Create invite</DialogTitle>
-              <DialogDescription>
-                Invite a user to join the platform.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="user@example.com"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select name="role" defaultValue="learner">
-                  <SelectTrigger id="role">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="learner">Learner</SelectItem>
-                    <SelectItem value="creator">Creator</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="expires">Expires in</Label>
-                <Select name="expires" defaultValue="7">
-                  <SelectTrigger id="expires">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 day</SelectItem>
-                    <SelectItem value="7">7 days</SelectItem>
-                    <SelectItem value="30">30 days</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" disabled={pending}>
-                {pending ? "Creating..." : "Create invite"}
-              </Button>
-            </DialogFooter>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
+      </Button>
+      <Modal isOpen={open} onOpenChange={(v) => (v ? setOpen(true) : handleClose())}>
+        <Modal.Backdrop>
+          <Modal.Container>
+            <Modal.Dialog>
+              <Modal.CloseTrigger />
+              {generatedCode ? (
+                <>
+                  <Modal.Header>
+                    <Modal.Heading>Invite created</Modal.Heading>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <p className="text-muted-foreground text-sm mb-3">
+                      Share this invite code with the user.
+                    </p>
+                    <div className="bg-muted rounded-md p-3">
+                      <code className="text-sm break-all">{generatedCode}</code>
+                    </div>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button
+                      variant="outline"
+                      onPress={() => {
+                        navigator.clipboard.writeText(generatedCode)
+                        toast.success("Copied to clipboard")
+                      }}
+                    >
+                      Copy code
+                    </Button>
+                    <Button onPress={handleClose}>Done</Button>
+                  </Modal.Footer>
+                </>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  <Modal.Header>
+                    <Modal.Heading>Create invite</Modal.Heading>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <p className="text-muted-foreground text-sm mb-4">
+                      Invite a user to join the platform.
+                    </p>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label htmlFor="email" className="text-sm font-medium">Email</label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="user@example.com"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="role" className="text-sm font-medium">Role</label>
+                        <Select name="role" defaultSelectedKey="learner" aria-label="Role">
+                          <Select.Trigger />
+                          <Select.Popover>
+                            <ListBox>
+                              <ListBox.Item id="learner" textValue="Learner">Learner</ListBox.Item>
+                              <ListBox.Item id="creator" textValue="Creator">Creator</ListBox.Item>
+                              <ListBox.Item id="admin" textValue="Admin">Admin</ListBox.Item>
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="expires" className="text-sm font-medium">Expires in</label>
+                        <Select name="expires" defaultSelectedKey="7" aria-label="Expires in">
+                          <Select.Trigger />
+                          <Select.Popover>
+                            <ListBox>
+                              <ListBox.Item id="1" textValue="1 day">1 day</ListBox.Item>
+                              <ListBox.Item id="7" textValue="7 days">7 days</ListBox.Item>
+                              <ListBox.Item id="30" textValue="30 days">30 days</ListBox.Item>
+                            </ListBox>
+                          </Select.Popover>
+                        </Select>
+                      </div>
+                    </div>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button type="submit" isDisabled={pending}>
+                      {pending ? "Creating..." : "Create invite"}
+                    </Button>
+                  </Modal.Footer>
+                </form>
+              )}
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
+    </>
   )
 }

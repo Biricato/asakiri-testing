@@ -10,7 +10,7 @@ import {
   BarChartIcon,
   UserIcon,
 } from "@hugeicons/core-free-icons"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/cn"
 
 const navItems = [
   { id: "home", label: "Home", icon: Home01Icon, href: "" },

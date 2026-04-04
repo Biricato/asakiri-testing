@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { signOut } from "@/lib/auth-client"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@heroui/react"
 
 export function SignOutButton() {
   const router = useRouter()
@@ -11,7 +11,7 @@ export function SignOutButton() {
     <Button
       variant="outline"
       size="sm"
-      onClick={async () => {
+      onPress={async () => {
         await signOut()
         router.push("/")
         router.refresh()

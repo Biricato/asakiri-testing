@@ -2,25 +2,8 @@
 
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Textarea } from "@workspace/ui/components/textarea"
-import { Label } from "@workspace/ui/components/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { toast } from "@heroui/react"
+import { Button, Input, TextArea, Select, Card, ListBox } from "@heroui/react"
 import { updateSettings } from "../actions/settings"
 import type { SiteSettings } from "../types"
 
@@ -54,15 +37,15 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        <CardHeader>
-          <CardTitle>Platform Settings</CardTitle>
-          <CardDescription>
+        <Card.Header>
+          <Card.Title>Platform Settings</Card.Title>
+          <Card.Description>
             Configure registration, course creation, and default user roles.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          </Card.Description>
+        </Card.Header>
+        <Card.Content className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="site_name">Site Name</Label>
+            <label htmlFor="site_name" className="text-sm font-medium">Site Name</label>
             <Input
               id="site_name"
               name="site_name"
@@ -74,7 +57,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="site_tagline">Tagline</Label>
+            <label htmlFor="site_tagline" className="text-sm font-medium">Tagline</label>
             <Input
               id="site_tagline"
               name="site_tagline"
@@ -86,8 +69,8 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hero_title">Hero Title</Label>
-            <Textarea
+            <label htmlFor="hero_title" className="text-sm font-medium">Hero Title</label>
+            <TextArea
               id="hero_title"
               name="hero_title"
               defaultValue={settings.hero_title}
@@ -99,8 +82,8 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hero_description">Hero Description</Label>
-            <Textarea
+            <label htmlFor="hero_description" className="text-sm font-medium">Hero Description</label>
+            <TextArea
               id="hero_description"
               name="hero_description"
               defaultValue={settings.hero_description}
@@ -112,18 +95,19 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="registration_mode">Registration Mode</Label>
+            <label htmlFor="registration_mode" className="text-sm font-medium">Registration Mode</label>
             <Select
               name="registration_mode"
-              defaultValue={settings.registration_mode}
+              defaultSelectedKey={settings.registration_mode}
+              aria-label="Registration Mode"
             >
-              <SelectTrigger id="registration_mode">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="open">Open</SelectItem>
-                <SelectItem value="invite_only">Invite Only</SelectItem>
-              </SelectContent>
+              <Select.Trigger />
+              <Select.Popover>
+                <ListBox>
+                  <ListBox.Item id="open" textValue="Open">Open</ListBox.Item>
+                  <ListBox.Item id="invite_only" textValue="Invite Only">Invite Only</ListBox.Item>
+                </ListBox>
+              </Select.Popover>
             </Select>
             <p className="text-muted-foreground text-xs">
               Controls whether anyone can sign up or only invited users.
@@ -131,19 +115,20 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="course_creation">Course Creation Policy</Label>
+            <label htmlFor="course_creation" className="text-sm font-medium">Course Creation Policy</label>
             <Select
               name="course_creation"
-              defaultValue={settings.course_creation}
+              defaultSelectedKey={settings.course_creation}
+              aria-label="Course Creation Policy"
             >
-              <SelectTrigger id="course_creation">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="open">Open (any creator)</SelectItem>
-                <SelectItem value="approved">Approved creators only</SelectItem>
-                <SelectItem value="admin_only">Admin only</SelectItem>
-              </SelectContent>
+              <Select.Trigger />
+              <Select.Popover>
+                <ListBox>
+                  <ListBox.Item id="open" textValue="Open (any creator)">Open (any creator)</ListBox.Item>
+                  <ListBox.Item id="approved" textValue="Approved creators only">Approved creators only</ListBox.Item>
+                  <ListBox.Item id="admin_only" textValue="Admin only">Admin only</ListBox.Item>
+                </ListBox>
+              </Select.Popover>
             </Select>
             <p className="text-muted-foreground text-xs">
               Who can create new courses on the platform.
@@ -151,28 +136,29 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="default_role">Default New User Role</Label>
+            <label htmlFor="default_role" className="text-sm font-medium">Default New User Role</label>
             <Select
               name="default_role"
-              defaultValue={settings.default_role}
+              defaultSelectedKey={settings.default_role}
+              aria-label="Default New User Role"
             >
-              <SelectTrigger id="default_role">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="learner">Learner</SelectItem>
-                <SelectItem value="creator">Creator</SelectItem>
-              </SelectContent>
+              <Select.Trigger />
+              <Select.Popover>
+                <ListBox>
+                  <ListBox.Item id="learner" textValue="Learner">Learner</ListBox.Item>
+                  <ListBox.Item id="creator" textValue="Creator">Creator</ListBox.Item>
+                </ListBox>
+              </Select.Popover>
             </Select>
             <p className="text-muted-foreground text-xs">
               Role assigned to new users when they sign up.
             </p>
           </div>
 
-          <Button type="submit" disabled={pending}>
+          <Button type="submit" isDisabled={pending}>
             {pending ? "Saving..." : "Save settings"}
           </Button>
-        </CardContent>
+        </Card.Content>
       </Card>
     </form>
   )

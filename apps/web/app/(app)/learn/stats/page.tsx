@@ -1,12 +1,6 @@
 import Link from "next/link"
 import { getStats } from "@/features/learn/actions/progress"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
-import { Button } from "@workspace/ui/components/button"
+import { Card, Button } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 
@@ -15,15 +9,12 @@ export default async function StatsPage() {
 
   return (
     <div className="p-6">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mb-4"
-        render={<Link href="/learn" />}
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-1" />
-        Back
-      </Button>
+      <Link href="/learn">
+        <Button variant="ghost" size="sm" className="mb-4">
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-1" />
+          Back
+        </Button>
+      </Link>
 
       <h1 className="text-2xl font-bold">Statistics</h1>
       <p className="text-muted-foreground mt-2">Your learning progress.</p>
@@ -31,47 +22,47 @@ export default async function StatsPage() {
       {stats ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Lessons completed
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-3xl font-bold">{stats.lessonsCompleted}</p>
-            </CardContent>
+            </Card.Content>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Exercises attempted
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-3xl font-bold">{stats.totalAttempts}</p>
-            </CardContent>
+            </Card.Content>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Accuracy
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-3xl font-bold">{stats.accuracy}%</p>
               <p className="text-muted-foreground text-xs">
                 {stats.correctAttempts} correct of {stats.totalAttempts}
               </p>
-            </CardContent>
+            </Card.Content>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-normal">
+            <Card.Header className="pb-2">
+              <Card.Title className="text-muted-foreground text-sm font-normal">
                 Due for review
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </Card.Title>
+            </Card.Header>
+            <Card.Content>
               <p className="text-3xl font-bold">{stats.dueReviews}</p>
-            </CardContent>
+            </Card.Content>
           </Card>
         </div>
       ) : (
