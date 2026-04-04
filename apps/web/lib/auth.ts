@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin } from "better-auth/plugins/admin"
+import { hashPassword as defaultHash, verifyPassword as defaultVerify } from "better-auth/crypto"
+import bcrypt from "bcryptjs"
 import { db } from "./db"
 import * as schema from "@/schema"
 
@@ -19,6 +21,17 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    password: {
+      hash: defaultHash,
+      verify: async ({ hash, password }) => {
+        // Support legacy bcrypt hashes from Supabase migration
+        if (hash.startsWith("$2a$") || hash.startsWith("$2b$")) {
+          return bcrypt.compare(password, hash)
+        }
+        // Default scrypt verification for Better Auth native hashes
+        return defaultVerify({ hash, password })
+      },
+    },
   },
   socialProviders: {
     ...(process.env.GOOGLE_CLIENT_ID && {
