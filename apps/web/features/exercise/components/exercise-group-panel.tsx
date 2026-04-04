@@ -36,8 +36,8 @@ export function CreateExerciseGroupDialog({
 
   return (
     <>
-      <Button variant="outline" size="sm" onPress={() => setOpen(true)}>
-        Add exercises
+      <Button variant="secondary" size="sm" onPress={() => setOpen(true)}>
+        New Exercise Group
       </Button>
       <Modal isOpen={open} onOpenChange={setOpen}>
         <Modal.Backdrop><Modal.Container><Modal.Dialog>

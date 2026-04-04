@@ -156,9 +156,8 @@ export function UnitList({
 
           {/* Add lesson / exercise */}
           <div className="mt-3 flex items-center gap-2">
-            <Button variant="outline" size="sm" onPress={() => { setAddLessonUnitId(u.id); setNewLessonTitle("") }}>
-              <HugeiconsIcon icon={Add01Icon} size={14} />
-              Add lesson
+            <Button size="sm" onPress={() => { setAddLessonUnitId(u.id); setNewLessonTitle("") }}>
+              New Lesson
             </Button>
             <CreateExerciseGroupDialog courseId={courseId} unitId={u.id} />
           </div>
