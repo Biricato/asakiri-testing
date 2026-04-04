@@ -3,50 +3,158 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Asakiri theme — green primary, yellow secondary */
-:root, [data-theme="light"] {
-  --accent: oklch(0.42 0.15 150);          /* #017321 green */
-  --accent-foreground: oklch(1 0 0);       /* white */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --surface: oklch(1 0 0);
-  --surface-foreground: oklch(0.145 0 0);
-  --surface-secondary: oklch(0.97 0 0);
-  --muted: oklch(0.556 0 0);
-  --border: oklch(0.922 0 0);
-  --separator: oklch(0.922 0 0);
-  --success: oklch(0.42 0.15 150);         /* same green */
-  --success-foreground: oklch(1 0 0);
-  --warning: oklch(0.75 0.15 85);          /* #e6b313 yellow */
-  --warning-foreground: oklch(0.145 0 0);
-  --danger: oklch(0.6 0.25 27.3);
-  --danger-foreground: oklch(1 0 0);
-  --field-background: oklch(1 0 0);
-  --field-foreground: oklch(0.145 0 0);
-  --field-placeholder: oklch(0.556 0 0);
-  --field-border: oklch(0.922 0 0);
-  --radius: 0.625rem;
-}
+/*
+ * Asakiri Theme
+ * Green primary (#017321), flat design, no shadows
+ */
 
-[data-theme="dark"], .dark {
-  --accent: oklch(0.55 0.15 150);          /* brighter green for dark */
-  --accent-foreground: oklch(1 0 0);
-  --background: oklch(0.12 0.005 250);     /* #0e0f10 */
-  --foreground: oklch(0.985 0 0);
-  --surface: oklch(0.16 0.005 250);        /* #121314 */
-  --surface-foreground: oklch(0.985 0 0);
-  --surface-secondary: oklch(0.18 0.005 250);
-  --overlay: oklch(0.16 0.005 250);
-  --overlay-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.7 0.02 250);
-  --border: oklch(1 0 0 / 6%);
-  --separator: oklch(1 0 0 / 6%);
-  --field-background: oklch(0.16 0.005 250);
-  --field-foreground: oklch(0.985 0 0);
-  --field-placeholder: oklch(0.5 0 0);
-  --field-border: oklch(1 0 0 / 15%);
-  --warning: oklch(0.8 0.14 85);
-  --warning-foreground: oklch(0.145 0 0);
-  --danger: oklch(0.6 0.25 27.3);
-  --danger-foreground: oklch(1 0 0);
+@layer base {
+  /* Primitives (shared) */
+  :root {
+    --white: oklch(100% 0 0);
+    --black: oklch(0% 0 0);
+    --snow: oklch(0.9911 0 0);
+    --eclipse: oklch(0.2103 0.0059 285.89);
+    --spacing: 0.25rem;
+    --field-radius: calc(var(--radius) * 1.5);
+  }
+
+  /* ── Light ── */
+  :root, [data-theme="light"] {
+    color-scheme: light;
+
+    /* Layout */
+    --border-width: 1px;
+    --field-border-width: 1px;
+    --disabled-opacity: 0.5;
+    --ring-offset-width: 2px;
+    --cursor-interactive: pointer;
+    --cursor-disabled: not-allowed;
+    --radius: 0.625rem;
+
+    /* Base */
+    --background: oklch(1 0 0);
+    --foreground: var(--eclipse);
+
+    /* Surface (cards, accordions) */
+    --surface: var(--white);
+    --surface-foreground: var(--foreground);
+    --surface-secondary: oklch(0.97 0 0);
+    --surface-secondary-foreground: var(--foreground);
+    --surface-tertiary: oklch(0.94 0 0);
+    --surface-tertiary-foreground: var(--foreground);
+
+    /* Overlay (modals, popovers) */
+    --overlay: var(--white);
+    --overlay-foreground: var(--foreground);
+
+    /* Neutral */
+    --muted: oklch(0.556 0 0);
+    --scrollbar: oklch(0.87 0 0);
+    --default: oklch(0.94 0 0);
+    --default-foreground: var(--eclipse);
+
+    /* Accent — Asakiri green */
+    --accent: oklch(0.42 0.15 150);
+    --accent-foreground: var(--white);
+
+    /* Form fields */
+    --field-background: var(--white);
+    --field-foreground: var(--eclipse);
+    --field-placeholder: var(--muted);
+    --field-border: oklch(0.90 0 0);
+
+    /* Status */
+    --success: oklch(0.42 0.15 150);
+    --success-foreground: var(--white);
+    --warning: oklch(0.75 0.15 85);
+    --warning-foreground: var(--eclipse);
+    --danger: oklch(0.6 0.25 27.3);
+    --danger-foreground: var(--snow);
+
+    /* Segments */
+    --segment: var(--white);
+    --segment-foreground: var(--eclipse);
+
+    /* Borders */
+    --border: oklch(0.922 0 0);
+    --separator: oklch(0.922 0 0);
+
+    /* Focus & links */
+    --focus: var(--accent);
+    --link: var(--accent);
+
+    /* Backdrop */
+    --backdrop: rgba(0, 0, 0, 0.4);
+
+    /* ── No shadows ── */
+    --surface-shadow: none;
+    --overlay-shadow: none;
+    --field-shadow: none;
+
+    --skeleton-animation: shimmer;
+  }
+
+  /* ── Dark ── */
+  [data-theme="dark"], .dark {
+    color-scheme: dark;
+
+    /* Base */
+    --background: oklch(0.12 0.005 250);
+    --foreground: var(--snow);
+
+    /* Surface */
+    --surface: oklch(0.16 0.005 250);
+    --surface-foreground: var(--foreground);
+    --surface-secondary: oklch(0.19 0.005 250);
+    --surface-secondary-foreground: var(--foreground);
+    --surface-tertiary: oklch(0.22 0.005 250);
+    --surface-tertiary-foreground: var(--foreground);
+
+    /* Overlay */
+    --overlay: oklch(0.18 0.005 250);
+    --overlay-foreground: var(--foreground);
+
+    /* Neutral */
+    --muted: oklch(0.55 0.01 250);
+    --scrollbar: oklch(0.35 0.005 250);
+    --default: oklch(0.22 0.005 250);
+    --default-foreground: var(--snow);
+
+    /* Accent — brighter green for dark */
+    --accent: oklch(0.55 0.15 150);
+    --accent-foreground: var(--white);
+
+    /* Form fields */
+    --field-background: oklch(0.16 0.005 250);
+    --field-foreground: var(--foreground);
+    --field-placeholder: oklch(0.45 0.005 250);
+    --field-border: oklch(0.28 0.005 250);
+
+    /* Status */
+    --warning: oklch(0.8 0.14 85);
+    --warning-foreground: var(--eclipse);
+    --danger: oklch(0.6 0.25 27.3);
+    --danger-foreground: var(--snow);
+
+    /* Segments */
+    --segment: oklch(0.25 0.005 250);
+    --segment-foreground: var(--foreground);
+
+    /* Borders */
+    --border: oklch(0.25 0.005 250);
+    --separator: oklch(0.22 0.005 250);
+
+    /* Focus & links */
+    --focus: var(--accent);
+    --link: var(--accent);
+
+    /* Backdrop */
+    --backdrop: rgba(0, 0, 0, 0.6);
+
+    /* ── No shadows ── */
+    --surface-shadow: none;
+    --overlay-shadow: none;
+    --field-shadow: none;
+  }
 }
