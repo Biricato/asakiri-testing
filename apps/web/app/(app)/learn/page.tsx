@@ -11,60 +11,44 @@ export default async function LearnPage() {
   ])
 
   return (
-    <div className="p-6">
+    <div className="mx-auto max-w-4xl p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Learn</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted mt-1 text-sm">
             Your enrolled courses and progress.
           </p>
         </div>
         <Link href="/learn/stats">
-          <Button variant="outline">Stats</Button>
+          <Button variant="outline" size="sm">Stats</Button>
         </Link>
       </div>
 
       {stats && (
-        <div className="mt-6 grid gap-4 sm:grid-cols-4">
+        <div className="mt-6 grid gap-3 sm:grid-cols-4">
           <Card>
-            <Card.Header className="pb-2">
-              <Card.Title className="text-muted-foreground text-sm font-normal">
-                Lessons
-              </Card.Title>
+            <Card.Header>
+              <Card.Description>Lessons</Card.Description>
+              <Card.Title className="text-2xl">{stats.lessonsCompleted}</Card.Title>
             </Card.Header>
-            <Card.Content>
-              <p className="text-2xl font-bold">{stats.lessonsCompleted}</p>
-            </Card.Content>
           </Card>
           <Card>
-            <Card.Header className="pb-2">
-              <Card.Title className="text-muted-foreground text-sm font-normal">
-                Exercises
-              </Card.Title>
+            <Card.Header>
+              <Card.Description>Exercises</Card.Description>
+              <Card.Title className="text-2xl">{stats.totalAttempts}</Card.Title>
             </Card.Header>
-            <Card.Content>
-              <p className="text-2xl font-bold">{stats.totalAttempts}</p>
-            </Card.Content>
           </Card>
           <Card>
-            <Card.Header className="pb-2">
-              <Card.Title className="text-muted-foreground text-sm font-normal">
-                Accuracy
-              </Card.Title>
+            <Card.Header>
+              <Card.Description>Accuracy</Card.Description>
+              <Card.Title className="text-2xl">{stats.accuracy}%</Card.Title>
             </Card.Header>
-            <Card.Content>
-              <p className="text-2xl font-bold">{stats.accuracy}%</p>
-            </Card.Content>
           </Card>
           <Card>
-            <Card.Header className="pb-2">
-              <Card.Title className="text-muted-foreground text-sm font-normal">
-                Due reviews
-              </Card.Title>
+            <Card.Header>
+              <Card.Description>Due reviews</Card.Description>
+              <Card.Title className="text-2xl">{stats.dueReviews}</Card.Title>
             </Card.Header>
-            <Card.Content>
-              <p className="text-2xl font-bold">{stats.dueReviews}</p>
-            </Card.Content>
           </Card>
         </div>
       )}
