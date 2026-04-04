@@ -14,9 +14,9 @@ export default async function CourseCatalogPage({
   })
 
   return (
-    <div className="p-6">
+    <div className="mx-auto max-w-4xl p-6">
       <h1 className="text-2xl font-bold">Courses</h1>
-      <p className="text-muted-foreground mt-2">
+      <p className="text-muted mt-1 text-sm">
         Browse and enroll in language courses.
       </p>
       <div className="mt-6">
