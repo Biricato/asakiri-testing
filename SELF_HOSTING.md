@@ -4,7 +4,7 @@
 
 One-click deploy with auto-provisioned Neon Postgres and Vercel Blob:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_USERNAME%2Fasakiri&env=BETTER_AUTH_SECRET&envDescription=Generate%20with%3A%20openssl%20rand%20-base64%2032&stores=%5B%7B%22type%22%3A%22postgres%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D&root-directory=apps/web)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAsakiriLingo%2Fasakiri&env=BETTER_AUTH_SECRET&envDescription=Generate%20with%3A%20openssl%20rand%20-base64%2032&stores=%5B%7B%22type%22%3A%22postgres%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D&root-directory=apps/web)
 
 ### Required environment variables
 
