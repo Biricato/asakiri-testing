@@ -44,7 +44,7 @@ export async function createItem(
     partOfSpeech?: string
     exampleSentence?: string
   },
-): Promise<{ success: boolean }> {
+): Promise<typeof exerciseItem.$inferSelect> {
   const [maxOrder] = await db
     .select({ max: max(exerciseItem.order) })
     .from(exerciseItem)
@@ -52,16 +52,16 @@ export async function createItem(
 
   const nextOrder = (maxOrder?.max ?? -1) + 1
 
-  await db.insert(exerciseItem).values({
+  const rows = await db.insert(exerciseItem).values({
     groupId,
     word: data.word,
     meaning: data.meaning,
     partOfSpeech: data.partOfSpeech ?? null,
     exampleSentence: data.exampleSentence ?? null,
     order: nextOrder,
-  })
+  }).returning()
 
-  return { success: true }
+  return rows[0]!
 }
 
 export async function updateItem(
