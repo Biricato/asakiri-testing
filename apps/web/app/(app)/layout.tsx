@@ -27,6 +27,9 @@ export default async function AppLayout({
             <Button variant="ghost" size="sm" render={<Link href="/learn" />}>
               Learn
             </Button>
+            <Button variant="ghost" size="sm" render={<Link href="/courses" />}>
+              Courses
+            </Button>
             {["admin", "creator"].includes(session.user.role ?? "") && (
               <Button variant="ghost" size="sm" render={<Link href="/create" />}>
                 Create

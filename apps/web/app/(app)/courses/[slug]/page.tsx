@@ -1,0 +1,91 @@
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import { getCourseBySlug } from "@/features/publish/actions/catalog"
+import { getMyEnrollment } from "@/features/publish/actions/enroll"
+import { EnrollButton } from "@/features/publish/components/enroll-button"
+import { Badge } from "@workspace/ui/components/badge"
+import { Button } from "@workspace/ui/components/button"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
+
+export default async function CourseDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
+  const course = await getCourseBySlug(slug)
+
+  if (!course) notFound()
+
+  const enrollment = await getMyEnrollment(course.id)
+
+  return (
+    <div className="p-6">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="mb-4"
+        render={<Link href="/courses" />}
+      >
+        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-1" />
+        Back to catalog
+      </Button>
+
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="flex-1">
+          {course.coverImageUrl && (
+            <div className="mb-4 aspect-video overflow-hidden rounded-lg">
+              <img
+                src={course.coverImageUrl}
+                alt={course.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
+
+          <h1 className="text-3xl font-bold">{course.title}</h1>
+          {course.subtitle && (
+            <p className="text-muted-foreground mt-2 text-lg">
+              {course.subtitle}
+            </p>
+          )}
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Badge variant="secondary" className="capitalize">
+              {course.difficulty}
+            </Badge>
+            <Badge variant="secondary">
+              {course.sourceLanguage} → {course.targetLanguage}
+            </Badge>
+            <Badge variant="secondary">v{course.version}</Badge>
+          </div>
+
+          {course.creatorName && (
+            <p className="text-muted-foreground mt-4 text-sm">
+              Created by {course.creatorName}
+            </p>
+          )}
+        </div>
+
+        <Card className="w-full lg:w-72">
+          <CardHeader>
+            <CardTitle className="text-base">Enroll</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EnrollButton
+              publishedCourseId={course.id}
+              enrollment={enrollment}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}

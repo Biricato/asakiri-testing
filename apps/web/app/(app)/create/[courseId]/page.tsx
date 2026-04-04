@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getCourse } from "@/features/course/actions/courses"
 import { UnitList } from "@/features/course/components/unit-list"
+import { PublishButton } from "@/features/publish/components/publish-button"
 import { Button } from "@workspace/ui/components/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Settings02Icon } from "@hugeicons/core-free-icons"
@@ -25,10 +26,13 @@ export default async function CourseOverviewPage({
             {course.sourceLanguage} → {course.targetLanguage} · {course.difficulty}
           </p>
         </div>
-        <Button variant="outline" render={<Link href={`/create/${courseId}/settings`} />}>
-          <HugeiconsIcon icon={Settings02Icon} size={16} className="mr-1" />
-          Settings
-        </Button>
+        <div className="flex gap-2">
+          <PublishButton courseId={courseId} isPublished={course.isPublished} />
+          <Button variant="outline" render={<Link href={`/create/${courseId}/settings`} />}>
+            <HugeiconsIcon icon={Settings02Icon} size={16} className="mr-1" />
+            Settings
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6">

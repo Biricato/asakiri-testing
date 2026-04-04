@@ -106,20 +106,20 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
   - Auto-create items + variants from AI response
   - Supports all 4 variant types
 
-### Phase 5: Publishing + Catalog
-- [ ] **Publish course**
+### Phase 5: Publishing + Catalog `[done]`
+- [x] **Publish course**
   - Server action creates `published_course` snapshot
   - Auto-generate slug from title
   - Version tracking (auto-increment)
   - Toggle `is_listed`
-- [ ] **Public course catalog** (landing page)
+- [x] **Public course catalog** (landing page)
   - Grid of listed courses with cover images
   - Filter by language / difficulty
   - Search
-- [ ] **Public course detail page** (`/courses/[slug]`)
+- [x] **Public course detail page** (`/courses/[slug]`)
   - Course overview, unit structure, creator info
   - Enroll button
-- [ ] **Enrollment flow**
+- [x] **Enrollment flow**
   - If `open` enrollment: instant active enrollment
   - If `admin_managed`: creates pending enrollment, admin approves
   - Admin can revoke enrollments
