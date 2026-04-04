@@ -1,6 +1,6 @@
 "use client"
 
-import Avatar from "boring-avatars"
+import { GradientAvatar } from "./gradient-avatar"
 
 export function UserAvatar({
   name,
@@ -9,12 +9,5 @@ export function UserAvatar({
   name: string
   size?: number
 }) {
-  return (
-    <Avatar
-      size={size}
-      name={name}
-      variant="beam"
-      colors={["#017321", "#e6b313", "#264653", "#e76f51", "#2a9d8f"]}
-    />
-  )
+  return <GradientAvatar name={name} size={size} />
 }
