@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { getCatalog } from "@/features/publish/actions/catalog"
 import { getSettings } from "@/features/admin/actions/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SignOutButton } from "./(app)/sign-out-button"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
 import {
@@ -26,33 +27,61 @@ export default async function HomePage() {
   const heroTitle = settings?.hero_title ?? "Master languages through interactive courses built by expert teachers"
   const heroDesc = settings?.hero_description ?? "Create engaging courses and learn through interactive exercises with spaced repetition."
   const showTeaching = !session && settings?.course_creation === "open"
+  const canCreate = session && (
+    ["admin", "creator"].includes(session.user.role ?? "") ||
+    settings?.course_creation === "open"
+  )
 
   return (
     <div className="flex min-h-svh flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt={siteName} width={32} height={32} />
-            <span className="text-lg font-semibold">{siteName}</span>
+      <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur">
+        <div className="flex w-full items-center justify-between px-4 py-3 md:px-6">
+          <div className="flex items-center gap-3 md:gap-6">
+            <Link href="/" className="flex shrink-0 items-center gap-2">
+              <Image src="/logo.svg" alt={siteName} width={32} height={32} />
+              <span className="hidden text-lg font-semibold sm:inline">{siteName}</span>
+            </Link>
+            <nav className="flex items-center gap-0.5">
+              {session ? (
+                <>
+                  <Button variant="ghost" size="sm" render={<Link href="/learn" />}>
+                    Learning Hub
+                  </Button>
+                  <Button variant="ghost" size="sm" className="hidden sm:inline-flex" render={<Link href="/courses" />}>
+                    Courses
+                  </Button>
+                  {canCreate && (
+                    <Button variant="ghost" size="sm" render={<Link href="/create" />}>
+                      Creator Studio
+                    </Button>
+                  )}
+                  {session.user.role === "admin" && (
+                    <Button variant="ghost" size="sm" className="hidden sm:inline-flex" render={<Link href="/admin" />}>
+                      Admin
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" size="sm" render={<Link href="/courses" />}>
+                    Courses
+                  </Button>
+                </>
+              )}
+            </nav>
           </div>
-          <nav className="flex items-center gap-2 md:gap-4">
+          <div className="flex shrink-0 items-center gap-1.5">
             <ThemeToggle />
             {session ? (
               <>
-                <Button variant="ghost" size="sm" render={<Link href="/learn" />}>
-                  Learning Hub
-                </Button>
-                {["admin", "creator"].includes(session.user.role ?? "") && (
-                  <Button variant="ghost" size="sm" render={<Link href="/create" />}>
-                    Creator Studio
-                  </Button>
-                )}
-                {session.user.role === "admin" && (
-                  <Button variant="ghost" size="sm" render={<Link href="/admin" />}>
-                    Admin
-                  </Button>
-                )}
+                <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                  {session.user.name?.[0]?.toUpperCase() ?? "?"}
+                </div>
+                <span className="text-muted-foreground hidden text-sm lg:inline">
+                  {session.user.name}
+                </span>
+                <SignOutButton />
               </>
             ) : (
               <>
@@ -64,7 +93,7 @@ export default async function HomePage() {
                 </Button>
               </>
             )}
-          </nav>
+          </div>
         </div>
       </header>
 
