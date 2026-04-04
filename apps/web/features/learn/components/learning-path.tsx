@@ -2,7 +2,12 @@
 
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { BookOpen02Icon, GridTableIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import {
+  BookOpen02Icon,
+  GridTableIcon,
+  CheckmarkCircle02Icon,
+} from "@hugeicons/core-free-icons"
+import { Card } from "@heroui/react"
 import { cn } from "@/lib/cn"
 import type { LearningUnit } from "../types"
 
@@ -14,70 +19,62 @@ export function LearningPath({
   units: LearningUnit[]
 }) {
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col gap-8">
       {units.map((u, ui) => (
-        <div key={u.id} className="flex w-full flex-col items-center gap-4">
-          {/* Unit header pill */}
-          <div className="rounded-full bg-primary px-6 py-2 text-sm font-semibold text-primary-foreground">
-            {u.title}
-          </div>
+        <div key={u.id} className="flex flex-col gap-3">
+          {/* Unit header */}
+          <h3 className="text-lg font-semibold">{u.title}</h3>
 
           {/* Nodes */}
-          {u.nodes.map((n, ni) => {
-            const href =
-              n.type === "lesson"
-                ? `/learn/${courseId}/lesson/${n.lessonId}`
-                : `/learn/${courseId}/exercise/${n.exerciseGroupId}`
+          <div className="grid gap-3 sm:grid-cols-2">
+            {u.nodes.map((n) => {
+              const href =
+                n.type === "lesson"
+                  ? `/learn/${courseId}/lesson/${n.lessonId}`
+                  : `/learn/${courseId}/exercise/${n.exerciseGroupId}`
 
-            const isExercise = n.type === "exercise_group"
-            // Alternate offset for visual path feel
-            const offset = ni % 3 === 0 ? "" : ni % 3 === 1 ? "translate-x-8" : "-translate-x-8"
+              const isExercise = n.type === "exercise_group"
 
-            return (
-              <Link
-                key={n.id}
-                href={href}
-                className={cn(
-                  "group flex items-center gap-3 transition-transform hover:scale-105",
-                  offset,
-                )}
-              >
-                {/* Node circle */}
-                <div
-                  className={cn(
-                    "flex size-12 items-center justify-center rounded-full transition-colors",
-                    n.completed
-                      ? "bg-primary text-primary-foreground"
-                      : isExercise
-                        ? "bg-secondary text-secondary-foreground"
-                        : "bg-primary text-primary-foreground",
-                  )}
-                >
-                  {n.completed ? (
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} size={22} />
-                  ) : isExercise ? (
-                    <HugeiconsIcon icon={GridTableIcon} size={22} />
-                  ) : (
-                    <HugeiconsIcon icon={BookOpen02Icon} size={22} />
-                  )}
-                </div>
+              return (
+                <Link key={n.id} href={href}>
+                  <Card
+                    className={cn(
+                      "flex-row items-center gap-3 border-0",
+                      n.completed
+                        ? "bg-surface-secondary"
+                        : isExercise
+                          ? "bg-amber-50 dark:bg-amber-950/30"
+                          : "bg-emerald-50 dark:bg-emerald-950/30",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex size-10 shrink-0 items-center justify-center rounded-xl",
+                        n.completed
+                          ? "bg-surface-tertiary text-muted"
+                          : isExercise
+                            ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400"
+                            : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400",
+                      )}
+                    >
+                      {n.completed ? (
+                        <HugeiconsIcon icon={CheckmarkCircle02Icon} size={20} />
+                      ) : isExercise ? (
+                        <HugeiconsIcon icon={GridTableIcon} size={20} />
+                      ) : (
+                        <HugeiconsIcon icon={BookOpen02Icon} size={20} />
+                      )}
+                    </div>
+                    <span className="text-sm font-medium">{n.title}</span>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
 
-                {/* Node label */}
-                <span className={cn(
-                  "rounded-2xl px-4 py-2 text-sm font-medium transition-colors",
-                  isExercise
-                    ? "bg-secondary text-secondary-foreground"
-                    : "bg-primary text-primary-foreground",
-                )}>
-                  {n.title}
-                </span>
-              </Link>
-            )
-          })}
-
-          {/* Connector to next unit */}
+          {/* Separator between units */}
           {ui < units.length - 1 && (
-            <div className="h-6 w-px bg-border" />
+            <div className="my-2 h-px bg-border" />
           )}
         </div>
       ))}
