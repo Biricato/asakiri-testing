@@ -23,8 +23,7 @@ export default async function LessonEditorPage({
       <PageHeader backHref={`/create/${courseId}`} label="Lesson Editor" title={l.title} />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-3xl">
-          <p className="text-muted-foreground mb-6 text-sm">Changes are saved automatically.</p>
-          <SectionEditor lessonId={lessonId} sections={sections} />
+          <SectionEditor lessonId={lessonId} lessonTitle={l.title} sections={sections} />
         </div>
       </main>
     </div>

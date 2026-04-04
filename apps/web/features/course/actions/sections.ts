@@ -67,6 +67,17 @@ export async function reorderSections(
   return { success: true }
 }
 
+export async function updateSectionTitle(
+  sectionId: string,
+  title: string,
+): Promise<{ success: boolean }> {
+  await db
+    .update(section)
+    .set({ title, updatedAt: new Date() })
+    .where(eq(section.id, sectionId))
+  return { success: true }
+}
+
 export async function saveContent(
   sectionId: string,
   content: unknown,
