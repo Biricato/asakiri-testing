@@ -32,7 +32,6 @@ export default async function ExerciseGroupPage({
       <CreatorSidebar
         courseId={courseId}
         courseTitle={course?.title}
-        userName={session?.user.name ?? "User"}
       />
 
       <div className="flex flex-1 flex-col">

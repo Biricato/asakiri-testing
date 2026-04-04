@@ -28,7 +28,6 @@ export default async function CourseOverviewPage({
       <CreatorSidebar
         courseId={courseId}
         courseTitle={course.title}
-        userName={session?.user.name ?? "User"}
       />
 
       <div className="flex flex-1 flex-col">

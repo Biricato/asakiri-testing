@@ -10,7 +10,6 @@ import {
   BarChartIcon,
   UserIcon,
 } from "@hugeicons/core-free-icons"
-import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 const navItems = [
@@ -24,11 +23,9 @@ const navItems = [
 export function CreatorSidebar({
   courseId,
   courseTitle,
-  userName,
 }: {
   courseId?: string
   courseTitle?: string
-  userName: string
 }) {
   const pathname = usePathname()
 
@@ -91,18 +88,6 @@ export function CreatorSidebar({
           </nav>
         </div>
 
-        {/* Bottom: user + create button */}
-        <div className="space-y-4 pt-6">
-          <div className="flex items-center gap-3 rounded-2xl px-3 py-2">
-            <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
-              {userName[0]?.toUpperCase() ?? "?"}
-            </div>
-            <span className="truncate text-sm text-muted-foreground">{userName}</span>
-          </div>
-          <Button className="w-full" render={<Link href="/create" />}>
-            Create New Course
-          </Button>
-        </div>
       </div>
     </aside>
   )

@@ -1,6 +1,4 @@
 import { notFound } from "next/navigation"
-import { headers } from "next/headers"
-import { auth } from "@/lib/auth"
 import { getCourse } from "@/features/course/actions/courses"
 import { CourseSettings } from "@/features/course/components/course-settings"
 import { CreatorSidebar } from "@/features/course/components/creator-sidebar"
@@ -12,10 +10,7 @@ export default async function CourseSettingsPage({
   params: Promise<{ courseId: string }>
 }) {
   const { courseId } = await params
-  const [course, session] = await Promise.all([
-    getCourse(courseId),
-    auth.api.getSession({ headers: await headers() }).catch(() => null),
-  ])
+  const course = await getCourse(courseId)
 
   if (!course) notFound()
 
@@ -24,7 +19,6 @@ export default async function CourseSettingsPage({
       <CreatorSidebar
         courseId={courseId}
         courseTitle={course.title}
-        userName={session?.user.name ?? "User"}
       />
 
       <div className="flex flex-1 flex-col">
