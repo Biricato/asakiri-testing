@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { siteSetting } from "@/schema/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { avatarGradient } from "@/lib/avatar"
+import { UserAvatar } from "@/components/user-avatar"
 import { Button } from "@heroui/react"
 import { SignOutButton } from "./sign-out-button"
 
@@ -68,9 +68,7 @@ export default async function AppLayout({
           {/* Right: user info + actions */}
           <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
             <ThemeToggle />
-            <div className={`flex size-8 items-center justify-center rounded-full bg-gradient-to-br ${avatarGradient(session.user.name ?? "?")} text-xs font-medium text-white`}>
-              {session.user.name?.[0]?.toUpperCase() ?? "?"}
-            </div>
+            <UserAvatar name={session.user.name ?? "?"} size={32} />
             <span className="text-muted-foreground hidden text-sm lg:inline">
               {session.user.name}
             </span>

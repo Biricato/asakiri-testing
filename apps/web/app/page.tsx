@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth"
 import { getCatalog } from "@/features/publish/actions/catalog"
 import { getSettings } from "@/features/admin/actions/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { avatarGradient } from "@/lib/avatar"
+import { UserAvatar } from "@/components/user-avatar"
 import { SignOutButton } from "./(app)/sign-out-button"
 import { Button, Chip, Card } from "@heroui/react"
 
@@ -69,9 +69,7 @@ export default async function HomePage() {
             <ThemeToggle />
             {session ? (
               <>
-                <div className={`flex size-8 items-center justify-center rounded-full bg-gradient-to-br ${avatarGradient(session.user.name ?? "?")} text-xs font-medium text-white`}>
-                  {session.user.name?.[0]?.toUpperCase() ?? "?"}
-                </div>
+                <UserAvatar name={session.user.name ?? "?"} size={32} />
                 <span className="text-muted-foreground hidden text-sm lg:inline">
                   {session.user.name}
                 </span>
@@ -151,9 +149,7 @@ export default async function HomePage() {
                     </Card.Header>
                     <Card.Footer className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className={`flex size-5 items-center justify-center rounded-full bg-gradient-to-br ${avatarGradient(c.creatorName ?? "?")} text-[10px] font-medium text-white`}>
-                          {(c.creatorName ?? "?")[0]}
-                        </div>
+                        <UserAvatar name={c.creatorName ?? "?"} size={20} />
                         <span className="text-xs">{c.creatorName ?? "Unknown"}</span>
                       </div>
                       <Chip variant="soft" className="text-xs capitalize">
