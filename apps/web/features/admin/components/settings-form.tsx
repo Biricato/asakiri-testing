@@ -101,7 +101,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
               defaultSelectedKey={settings.registration_mode}
               aria-label="Registration Mode"
             >
-              <Select.Trigger />
+              <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
               <Select.Popover>
                 <ListBox>
                   <ListBox.Item id="open" textValue="Open">Open</ListBox.Item>
@@ -121,7 +121,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
               defaultSelectedKey={settings.course_creation}
               aria-label="Course Creation Policy"
             >
-              <Select.Trigger />
+              <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
               <Select.Popover>
                 <ListBox>
                   <ListBox.Item id="open" textValue="Open (any creator)">Open (any creator)</ListBox.Item>
@@ -142,7 +142,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
               defaultSelectedKey={settings.default_role}
               aria-label="Default New User Role"
             >
-              <Select.Trigger />
+              <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
               <Select.Popover>
                 <ListBox>
                   <ListBox.Item id="learner" textValue="Learner">Learner</ListBox.Item>

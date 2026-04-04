@@ -68,7 +68,7 @@ export function CourseSettings({ course }: { course: Course }) {
             <div className="space-y-2">
               <Label htmlFor="difficulty">Difficulty</Label>
               <Select name="difficulty" defaultSelectedKey={course.difficulty} aria-label="Difficulty">
-                <Select.Trigger />
+                <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                 <Select.Popover>
                   <ListBox>
                     <ListBox.Item id="beginner" textValue="Beginner">Beginner</ListBox.Item>

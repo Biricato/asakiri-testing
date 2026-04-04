@@ -63,7 +63,7 @@ export function CreateCourseDialog() {
                 <div className="space-y-2">
                   <Label htmlFor="difficulty">Difficulty</Label>
                   <Select name="difficulty" defaultSelectedKey="beginner" aria-label="Difficulty">
-                    <Select.Trigger />
+                    <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                     <Select.Popover>
                       <ListBox>
                         <ListBox.Item id="beginner" textValue="Beginner">Beginner</ListBox.Item>

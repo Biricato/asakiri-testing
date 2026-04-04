@@ -62,7 +62,7 @@ export function CreateExerciseGroupDialog({
                 <div className="space-y-2">
                   <Label htmlFor="datasetType">Dataset type</Label>
                   <Select name="datasetType" defaultSelectedKey="word_pair" aria-label="Dataset type">
-                    <Select.Trigger />
+                    <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                     <Select.Popover>
                       <ListBox>
                         <ListBox.Item id="word_pair" textValue="Word pairs">Word pairs</ListBox.Item>

@@ -114,7 +114,7 @@ export function UsersTable({
                       isDisabled={pending}
                       aria-label="Role"
                     >
-                      <Select.Trigger />
+                      <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                       <Select.Popover>
                         <ListBox>
                           <ListBox.Item id="admin" textValue="Admin">Admin</ListBox.Item>

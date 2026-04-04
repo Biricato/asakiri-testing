@@ -3,7 +3,7 @@
 import { useState, useRef, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "@heroui/react"
-import { Button, Input, ProgressBar, Card } from "@heroui/react"
+import { Button, Input, ProgressBar } from "@heroui/react"
 import { submitAndUpdateSrs } from "../actions/srs"
 import { submitExerciseAttempt } from "../actions/progress"
 

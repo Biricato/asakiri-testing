@@ -94,7 +94,7 @@ export function VariantList({
             aria-label="Variant type"
             className="w-40"
           >
-            <Select.Trigger className="h-8 text-xs" />
+            <Select.Trigger className="h-8 text-xs"><Select.Value /><Select.Indicator /></Select.Trigger>
             <Select.Popover>
               <ListBox>
                 <ListBox.Item id="word_cloze" textValue="Word Cloze">Word Cloze</ListBox.Item>

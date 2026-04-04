@@ -37,7 +37,7 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
           aria-label="Difficulty"
           className="w-36"
         >
-          <Select.Trigger />
+          <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
           <Select.Popover>
             <ListBox>
               <ListBox.Item id="all" textValue="All levels">All levels</ListBox.Item>
@@ -52,18 +52,17 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
       {courses.length === 0 ? (
         <p className="text-muted-foreground">No courses available yet.</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((c) => (
             <Link key={c.id} href={`/courses/${c.slug}`}>
-              <Card className="hover:bg-muted/50 h-full transition-colors">
+              <Card className="gap-2">
                 {c.coverImageUrl && (
-                  <div className="aspect-video overflow-hidden rounded-t-lg">
-                    <img
-                      src={c.coverImageUrl}
-                      alt={c.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
+                  <img
+                    src={c.coverImageUrl}
+                    alt={c.title}
+                    className="pointer-events-none aspect-[4/3] w-full rounded-2xl object-cover select-none"
+                    loading="lazy"
+                  />
                 )}
                 <Card.Header>
                   <div className="flex items-start justify-between gap-2">
@@ -74,16 +73,16 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
                   </div>
                   {c.subtitle && <Card.Description>{c.subtitle}</Card.Description>}
                 </Card.Header>
-                <Card.Content>
-                  <p className="text-muted-foreground text-sm">
+                <Card.Footer>
+                  <span className="text-muted text-sm">
                     {c.sourceLanguage} → {c.targetLanguage}
-                  </p>
+                  </span>
                   {c.creatorName && (
-                    <p className="text-muted-foreground mt-1 text-xs">
+                    <span className="text-muted ml-auto text-xs">
                       by {c.creatorName}
-                    </p>
+                    </span>
                   )}
-                </Card.Content>
+                </Card.Footer>
               </Card>
             </Link>
           ))}

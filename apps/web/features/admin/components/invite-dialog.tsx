@@ -92,7 +92,7 @@ export function InviteDialog() {
                       <div className="space-y-2">
                         <label htmlFor="role" className="text-sm font-medium">Role</label>
                         <Select name="role" defaultSelectedKey="learner" aria-label="Role">
-                          <Select.Trigger />
+                          <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                           <Select.Popover>
                             <ListBox>
                               <ListBox.Item id="learner" textValue="Learner">Learner</ListBox.Item>
@@ -105,7 +105,7 @@ export function InviteDialog() {
                       <div className="space-y-2">
                         <label htmlFor="expires" className="text-sm font-medium">Expires in</label>
                         <Select name="expires" defaultSelectedKey="7" aria-label="Expires in">
-                          <Select.Trigger />
+                          <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                           <Select.Popover>
                             <ListBox>
                               <ListBox.Item id="1" textValue="1 day">1 day</ListBox.Item>
