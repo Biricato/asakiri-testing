@@ -7,6 +7,7 @@ import { getSettings } from "@/features/admin/actions/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserAvatar } from "@/components/user-avatar"
 import { SignOutButton } from "./(app)/sign-out-button"
+import { CoursePlaceholder } from "@/components/course-placeholder"
 import { Button, Chip, Card } from "@heroui/react"
 
 export default async function HomePage() {
@@ -135,11 +136,7 @@ export default async function HomePage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-surface-secondary">
-                        <span className="text-4xl font-bold text-muted/30">
-                          {c.targetLanguage.slice(0, 2).toUpperCase()}
-                        </span>
-                      </div>
+                      <CoursePlaceholder title={c.title} />
                     )}
                     <Card.Header>
                       <Card.Title>{c.title}</Card.Title>

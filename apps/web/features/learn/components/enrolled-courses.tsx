@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { Card, Chip } from "@heroui/react"
+import { CoursePlaceholder } from "@/components/course-placeholder"
 import type { EnrolledCourse } from "../types"
 
 export function EnrolledCourses({ courses }: { courses: EnrolledCourse[] }) {
@@ -32,11 +33,7 @@ export function EnrolledCourses({ courses }: { courses: EnrolledCourse[] }) {
                 loading="lazy"
               />
             ) : (
-              <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-surface-secondary">
-                <span className="text-3xl font-bold text-muted/30">
-                  {c.targetLanguage.slice(0, 2).toUpperCase()}
-                </span>
-              </div>
+              <CoursePlaceholder title={c.title} />
             )}
             <Card.Header>
               <Card.Title>{c.title}</Card.Title>
