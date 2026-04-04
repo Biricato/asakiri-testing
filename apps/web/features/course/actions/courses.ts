@@ -3,6 +3,7 @@
 import { eq, desc, count } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { course, unit, unitNode, lesson } from "@/schema/course"
+import { exerciseGroup } from "@/schema/exercise"
 import { siteSetting } from "@/schema/settings"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -129,9 +130,11 @@ export async function getCourse(courseId: string): Promise<CourseWithUnits | nul
             createdAt: lesson.createdAt,
             updatedAt: lesson.updatedAt,
           },
+          exerciseGroupTitle: exerciseGroup.title,
         })
         .from(unitNode)
         .leftJoin(lesson, eq(unitNode.lessonId, lesson.id))
+        .leftJoin(exerciseGroup, eq(unitNode.exerciseGroupId, exerciseGroup.id))
         .where(eq(unitNode.unitId, u.id))
         .orderBy(unitNode.order)
 
@@ -140,6 +143,7 @@ export async function getCourse(courseId: string): Promise<CourseWithUnits | nul
         nodes: nodes.map((n) => ({
           ...n,
           lesson: n.lesson?.id ? n.lesson : null,
+          exerciseGroupTitle: n.exerciseGroupTitle,
         })),
       }
     }),

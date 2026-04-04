@@ -16,6 +16,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { createUnit, deleteUnit, reorderUnits } from "../actions/units"
 import { createLesson, deleteLesson } from "../actions/lessons"
+import { reorderNodes, deleteNode } from "../actions/nodes"
 import { CreateExerciseGroupDialog } from "@/features/exercise/components/exercise-group-panel"
 import type { UnitWithLessons } from "../types"
 
@@ -34,8 +35,10 @@ export function UnitList({
   const [addLessonUnitId, setAddLessonUnitId] = useState<string | null>(null)
   const [deleteUnitId, setDeleteUnitId] = useState<string | null>(null)
   const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null)
+  const [deleteNodeId, setDeleteNodeId] = useState<string | null>(null)
   const [deleteUnitTitle, setDeleteUnitTitle] = useState("")
   const [deleteLessonTitle, setDeleteLessonTitle] = useState("")
+  const [deleteNodeTitle, setDeleteNodeTitle] = useState("")
 
   function handleCreateUnit() {
     if (!newUnitTitle.trim()) return
@@ -89,6 +92,27 @@ export function UnitList({
     })
   }
 
+  function handleMoveNode(unitObj: typeof units[0], nodeIndex: number, direction: -1 | 1) {
+    const newIndex = nodeIndex + direction
+    if (newIndex < 0 || newIndex >= unitObj.nodes.length) return
+    const ids = unitObj.nodes.map((n) => n.id)
+    const [moved] = ids.splice(nodeIndex, 1)
+    ids.splice(newIndex, 0, moved!)
+    startTransition(async () => {
+      await reorderNodes(unitObj.id, ids)
+      router.refresh()
+    })
+  }
+
+  function handleDeleteNode(nodeId: string) {
+    startTransition(async () => {
+      await deleteNode(nodeId)
+      setDeleteNodeId(null)
+      toast.success("Deleted")
+      router.refresh()
+    })
+  }
+
   return (
     <div className="space-y-4">
       {/* Units stacked */}
@@ -112,45 +136,46 @@ export function UnitList({
 
           {/* Nodes */}
           <div className="mt-3 space-y-2">
-            {u.nodes.map((n) => {
-              if (n.type === "lesson" && n.lesson) {
-                return (
-                  <div key={n.id} className="flex items-center justify-between rounded-xl bg-accent/5 px-4 py-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-accent/15 text-accent">
-                        <HugeiconsIcon icon={BookOpen02Icon} size={16} />
-                      </div>
-                      <span className="text-sm font-medium">{n.lesson.title}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Link href={`/create/${courseId}/lesson/${n.lesson.id}`}>
-                        <Button variant="outline" size="sm">Edit</Button>
-                      </Link>
-                      <Button variant="ghost" isIconOnly size="sm" isDisabled={pending} onPress={() => { setDeleteLessonId(n.lesson!.id); setDeleteLessonTitle(n.lesson!.title) }}>
-                        <HugeiconsIcon icon={Delete02Icon} size={14} />
-                      </Button>
-                    </div>
-                  </div>
-                )
-              }
+            {u.nodes.map((n, ni) => {
+              const isLesson = n.type === "lesson" && n.lesson
+              const isExercise = n.type === "exercise_group" && n.exerciseGroupId
+              const title = isLesson
+                ? n.lesson!.title
+                : n.exerciseGroupTitle ?? "Exercises"
+              const href = isLesson
+                ? `/create/${courseId}/lesson/${n.lesson!.id}`
+                : `/create/${courseId}/exercises/${n.exerciseGroupId}`
 
-              if (n.type === "exercise_group" && n.exerciseGroupId) {
-                return (
-                  <div key={n.id} className="flex items-center justify-between rounded-xl bg-warning/5 px-4 py-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-warning/15 text-warning">
-                        <HugeiconsIcon icon={GridTableIcon} size={16} />
-                      </div>
-                      <span className="text-sm font-medium">Exercises</span>
+              return (
+                <div
+                  key={n.id}
+                  className={`flex items-center justify-between rounded-xl px-4 py-2.5 ${isExercise ? "bg-warning/5" : "bg-accent/5"}`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`flex size-8 items-center justify-center rounded-lg ${isExercise ? "bg-warning/15 text-warning" : "bg-accent/15 text-accent"}`}>
+                      <HugeiconsIcon icon={isExercise ? GridTableIcon : BookOpen02Icon} size={16} />
                     </div>
-                    <Link href={`/create/${courseId}/exercises/${n.exerciseGroupId}`}>
+                    <span className="text-sm font-medium">{title}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" isIconOnly size="sm" isDisabled={ni === 0 || pending} onPress={() => handleMoveNode(u, ni, -1)}>
+                      <HugeiconsIcon icon={ArrowUp01Icon} size={14} />
+                    </Button>
+                    <Button variant="ghost" isIconOnly size="sm" isDisabled={ni === u.nodes.length - 1 || pending} onPress={() => handleMoveNode(u, ni, 1)}>
+                      <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
+                    </Button>
+                    <Link href={href}>
                       <Button variant="outline" size="sm">Edit</Button>
                     </Link>
+                    <Button variant="ghost" isIconOnly size="sm" isDisabled={pending} onPress={() => {
+                      if (isLesson) { setDeleteLessonId(n.lesson!.id); setDeleteLessonTitle(n.lesson!.title) }
+                      else { setDeleteNodeId(n.id); setDeleteNodeTitle(title) }
+                    }}>
+                      <HugeiconsIcon icon={Delete02Icon} size={14} />
+                    </Button>
                   </div>
-                )
-              }
-
-              return null
+                </div>
+              )
             })}
           </div>
 
@@ -228,6 +253,19 @@ export function UnitList({
           <AlertDialog.Footer>
             <Button variant="tertiary" slot="close">Cancel</Button>
             <Button variant="danger" onPress={() => deleteLessonId && handleDeleteLesson(deleteLessonId)}>Delete</Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
+      </AlertDialog>
+
+      {/* Delete exercise group dialog */}
+      <AlertDialog isOpen={!!deleteNodeId} onOpenChange={(open) => { if (!open) setDeleteNodeId(null) }}>
+        <AlertDialog.Backdrop><AlertDialog.Container><AlertDialog.Dialog>
+          <AlertDialog.CloseTrigger />
+          <AlertDialog.Header><AlertDialog.Heading>Delete &quot;{deleteNodeTitle}&quot;?</AlertDialog.Heading></AlertDialog.Header>
+          <AlertDialog.Body><p>This will delete the exercise group and all its exercises.</p></AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" slot="close">Cancel</Button>
+            <Button variant="danger" onPress={() => deleteNodeId && handleDeleteNode(deleteNodeId)}>Delete</Button>
           </AlertDialog.Footer>
         </AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
       </AlertDialog>

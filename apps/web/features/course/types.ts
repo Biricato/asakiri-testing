@@ -7,7 +7,7 @@ export type Section = typeof section.$inferSelect
 export type UnitNode = typeof unitNode.$inferSelect
 
 export type UnitWithLessons = Unit & {
-  nodes: (UnitNode & { lesson: Lesson | null })[]
+  nodes: (UnitNode & { lesson: Lesson | null; exerciseGroupTitle: string | null })[]
 }
 
 export type CourseWithUnits = Course & {
