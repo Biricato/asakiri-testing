@@ -112,8 +112,10 @@ function renderNodes(nodes: unknown[]): string {
           return `<img src="${n.attrs?.src ?? ""}" alt="${n.attrs?.alt ?? ""}" />`
         case "audio":
           return `<div class="my-3 flex items-center gap-3 rounded-xl bg-muted/50 p-4"><audio controls preload="metadata" class="h-8 flex-1"><source src="${n.attrs?.src ?? ""}" /></audio></div>`
-        case "youtube":
-          return `<div class="aspect-video overflow-hidden rounded-xl"><iframe src="${n.attrs?.src ?? ""}" class="h-full w-full" frameborder="0" allowfullscreen></iframe></div>`
+        case "youtube": {
+          const embedUrl = toYouTubeEmbed(String(n.attrs?.src ?? ""))
+          return `<div class="aspect-video overflow-hidden rounded-xl"><iframe src="${embedUrl}" class="h-full w-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`
+        }
         case "table":
           return `<table class="border-collapse">${n.content ? renderNodes(n.content) : ""}</table>`
         case "tableRow":
@@ -154,6 +156,27 @@ function renderNodes(nodes: unknown[]): string {
       }
     })
     .join("")
+}
+
+function toYouTubeEmbed(url: string): string {
+  // Already an embed URL
+  if (url.includes("/embed/")) return url
+
+  // Extract video ID from various YouTube URL formats
+  let videoId = ""
+  try {
+    const u = new URL(url)
+    if (u.hostname === "youtu.be") {
+      videoId = u.pathname.slice(1)
+    } else if (u.searchParams.has("v")) {
+      videoId = u.searchParams.get("v")!
+    }
+  } catch {
+    // Not a valid URL, return as-is
+    return url
+  }
+
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : url
 }
 
 function escapeHtml(text: string): string {
