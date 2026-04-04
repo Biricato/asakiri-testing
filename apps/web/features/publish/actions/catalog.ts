@@ -1,6 +1,6 @@
 "use server"
 
-import { eq, and, ilike, or } from "drizzle-orm"
+import { eq, and, ilike, or, type SQL } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { course } from "@/schema/course"
 import { publishedCourse } from "@/schema/learning"
@@ -16,7 +16,26 @@ export async function getCatalog({
   difficulty?: string
   language?: string
 } = {}): Promise<CatalogCourse[]> {
-  let query = db
+  const conditions: SQL[] = [eq(publishedCourse.isListed, true)]
+
+  if (search) {
+    conditions.push(
+      or(
+        ilike(course.title, `%${search}%`),
+        ilike(course.targetLanguage, `%${search}%`),
+      )!,
+    )
+  }
+
+  if (difficulty) {
+    conditions.push(eq(course.difficulty, difficulty))
+  }
+
+  if (language) {
+    conditions.push(eq(course.targetLanguage, language))
+  }
+
+  return db
     .select({
       id: publishedCourse.id,
       slug: publishedCourse.slug,
@@ -35,27 +54,7 @@ export async function getCatalog({
     .from(publishedCourse)
     .innerJoin(course, eq(publishedCourse.courseId, course.id))
     .leftJoin(user, eq(course.createdBy, user.id))
-    .where(eq(publishedCourse.isListed, true))
-    .$dynamic()
-
-  if (search) {
-    query = query.where(
-      or(
-        ilike(course.title, `%${search}%`),
-        ilike(course.targetLanguage, `%${search}%`),
-      ),
-    )
-  }
-
-  if (difficulty) {
-    query = query.where(eq(course.difficulty, difficulty))
-  }
-
-  if (language) {
-    query = query.where(eq(course.targetLanguage, language))
-  }
-
-  return query
+    .where(and(...conditions))
 }
 
 export async function getCourseBySlug(
