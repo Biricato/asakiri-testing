@@ -6,10 +6,9 @@ import { toast } from "@heroui/react"
 import { Button, Card, Chip, AlertDialog } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Delete02Icon, Edit02Icon } from "@hugeicons/core-free-icons"
-import { createItem, deleteItem } from "../actions/items"
-import { createVariant } from "../actions/variants"
-import { addOption } from "../actions/variants"
-import { AddExerciseDialog } from "./add-exercise-dialog"
+import { createItem, updateItem, deleteItem } from "../actions/items"
+import { createVariant, updateVariant, addOption, deleteOption } from "../actions/variants"
+import { AddExerciseDialog, type InitialExerciseData } from "./add-exercise-dialog"
 import type { ItemWithVariants } from "../types"
 
 export function ItemEditor({
@@ -22,8 +21,36 @@ export function ItemEditor({
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<ItemWithVariants | null>(null)
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
   const [deleteItemWord, setDeleteItemWord] = useState("")
+
+  const mode = editingItem ? "edit" : "create"
+
+  function buildInitialData(item: ItemWithVariants): InitialExerciseData | null {
+    const v = item.variants[0]
+    if (!v) return null
+    return {
+      type: v.type as InitialExerciseData["type"],
+      word: item.word,
+      meaning: item.meaning,
+      partOfSpeech: item.partOfSpeech ?? "",
+      exampleSentence: item.exampleSentence ?? "",
+      prompt: v.prompt as Record<string, unknown>,
+      solution: v.solution as Record<string, unknown>,
+      options: v.options?.map((o) => ({ id: o.id, label: o.label, isCorrect: o.isCorrect })),
+    }
+  }
+
+  function openCreate() {
+    setEditingItem(null)
+    setDialogOpen(true)
+  }
+
+  function openEdit(item: ItemWithVariants) {
+    setEditingItem(item)
+    setDialogOpen(true)
+  }
 
   async function handleSave(payload: {
     type: string
@@ -35,31 +62,67 @@ export function ItemEditor({
     solution: Record<string, unknown>
     options?: { label: string; value: string; isCorrect: boolean }[]
   }) {
-    // Create the item
-    const item = await createItem(groupId, {
-      word: payload.word || "Untitled",
-      meaning: payload.meaning || "",
-      partOfSpeech: payload.partOfSpeech || undefined,
-      exampleSentence: payload.exampleSentence || undefined,
-    })
+    if (editingItem) {
+      // Update existing item
+      await updateItem(editingItem.id, {
+        word: payload.word || "Untitled",
+        meaning: payload.meaning || "",
+        partOfSpeech: payload.partOfSpeech || undefined,
+        exampleSentence: payload.exampleSentence || undefined,
+      })
 
-    // Create the variant
-    const variant = await createVariant(item.id, groupId, {
-      type: payload.type as "word_cloze" | "mcq" | "multi_blank" | "sentence_builder",
-      prompt: payload.prompt,
-      solution: payload.solution,
-    })
+      // Update variant
+      const v = editingItem.variants[0]
+      if (v) {
+        await updateVariant(v.id, {
+          prompt: payload.prompt,
+          solution: payload.solution,
+        })
 
-    // Create options for MCQ
-    if (payload.type === "mcq" && payload.options) {
-      for (const opt of payload.options) {
-        await addOption(variant.id, opt)
+        // Update MCQ options
+        if (payload.type === "mcq") {
+          // Delete old options
+          for (const opt of v.options ?? []) {
+            await deleteOption(opt.id)
+          }
+          // Create new options
+          if (payload.options) {
+            for (const opt of payload.options) {
+              await addOption(v.id, opt)
+            }
+          }
+        }
       }
-    }
 
-    setDialogOpen(false)
-    toast.success("Exercise added")
-    router.refresh()
+      setDialogOpen(false)
+      setEditingItem(null)
+      toast.success("Exercise updated")
+      router.refresh()
+    } else {
+      // Create new
+      const item = await createItem(groupId, {
+        word: payload.word || "Untitled",
+        meaning: payload.meaning || "",
+        partOfSpeech: payload.partOfSpeech || undefined,
+        exampleSentence: payload.exampleSentence || undefined,
+      })
+
+      const variant = await createVariant(item.id, groupId, {
+        type: payload.type as "word_cloze" | "mcq" | "multi_blank" | "sentence_builder",
+        prompt: payload.prompt,
+        solution: payload.solution,
+      })
+
+      if (payload.type === "mcq" && payload.options) {
+        for (const opt of payload.options) {
+          await addOption(variant.id, opt)
+        }
+      }
+
+      setDialogOpen(false)
+      toast.success("Exercise added")
+      router.refresh()
+    }
   }
 
   function handleDelete(itemId: string) {
@@ -93,6 +156,9 @@ export function ItemEditor({
         return (
           <div className="text-muted text-xs">
             <p>{String(prompt.stem ?? "")}</p>
+            {v.options && v.options.length > 0 && (
+              <p className="mt-0.5">{v.options.length} options</p>
+            )}
           </div>
         )
       case "multi_blank":
@@ -120,7 +186,7 @@ export function ItemEditor({
         <div className="rounded-2xl border border-dashed p-8 text-center">
           <p className="text-muted text-sm">No exercises yet</p>
           <p className="text-muted mt-1 text-xs">Add your first exercise to get started.</p>
-          <Button className="mt-4" onPress={() => setDialogOpen(true)}>
+          <Button className="mt-4" onPress={openCreate}>
             Add exercise
           </Button>
         </div>
@@ -147,29 +213,43 @@ export function ItemEditor({
                 )}
                 <div className="mt-1.5">{previewContent(item)}</div>
               </div>
-              <Button
-                variant="ghost"
-                isIconOnly
-                size="sm"
-                isDisabled={pending}
-                onPress={() => { setDeleteItemId(item.id); setDeleteItemWord(item.word) }}
-              >
-                <HugeiconsIcon icon={Delete02Icon} size={14} />
-              </Button>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  isIconOnly
+                  size="sm"
+                  isDisabled={pending}
+                  onPress={() => openEdit(item)}
+                >
+                  <HugeiconsIcon icon={Edit02Icon} size={14} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  isIconOnly
+                  size="sm"
+                  isDisabled={pending}
+                  onPress={() => { setDeleteItemId(item.id); setDeleteItemWord(item.word) }}
+                >
+                  <HugeiconsIcon icon={Delete02Icon} size={14} />
+                </Button>
+              </div>
             </Card>
           ))}
 
-          <Button variant="outline" onPress={() => setDialogOpen(true)} className="w-full">
+          <Button variant="outline" onPress={openCreate} className="w-full">
             Add exercise
           </Button>
         </>
       )}
 
       <AddExerciseDialog
+        key={editingItem?.id ?? "create"}
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        onOpenChange={(open) => { if (!open) { setEditingItem(null) }; setDialogOpen(open) }}
         onSave={handleSave}
         isSaving={pending}
+        mode={mode}
+        initialData={editingItem ? buildInitialData(editingItem) : null}
       />
 
       <AlertDialog isOpen={!!deleteItemId} onOpenChange={(open) => { if (!open) setDeleteItemId(null) }}>
