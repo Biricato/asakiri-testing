@@ -39,7 +39,7 @@ export function LessonViewer({
 
     return (
       <div
-        className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-p:leading-7 prose-a:text-primary prose-a:underline prose-table:border prose-th:border prose-th:px-3 prose-th:py-2 prose-td:border prose-td:px-3 prose-td:py-2 prose-img:rounded-lg"
+        className="prose max-w-none text-foreground [&_a]:text-accent [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_h1]:text-2xl [&_h1]:font-semibold [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold [&_img]:rounded-lg [&_li]:ml-4 [&_ol]:list-decimal [&_p]:leading-7 [&_pre]:rounded-lg [&_pre]:bg-surface-secondary [&_pre]:p-4 [&_ul]:list-disc"
         dangerouslySetInnerHTML={{
           __html: renderNodes(doc.content),
         }}

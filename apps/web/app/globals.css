@@ -100,6 +100,31 @@
     border: 1px solid var(--border);
   }
 
+  /* TipTap rendered content tables */
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-size: 0.875rem;
+  }
+  .prose th,
+  .prose td {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose th {
+    background: var(--surface-secondary);
+    font-weight: 600;
+    font-size: 0.8125rem;
+  }
+  .prose tr:nth-child(even) td {
+    background: var(--surface-secondary);
+  }
+
   /* ── Dark ── */
   [data-theme="dark"], .dark {
     color-scheme: dark;
