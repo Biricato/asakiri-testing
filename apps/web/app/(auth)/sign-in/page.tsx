@@ -7,14 +7,6 @@ import { signIn } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
 
 export default function SignInPage() {
   const router = useRouter()
@@ -28,10 +20,7 @@ export default function SignInPage() {
     setError("")
     setLoading(true)
 
-    const { error } = await signIn.email({
-      email,
-      password,
-    })
+    const { error } = await signIn.email({ email, password })
 
     if (error) {
       setError(error.message ?? "Failed to sign in")
@@ -44,54 +33,98 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>
-            Sign in to your account to continue
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {error && (
-              <p className="text-destructive text-sm">{error}</p>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+    <div className="flex min-h-svh">
+      {/* Sidebar — hidden on mobile */}
+      <div className="bg-muted relative hidden flex-1 lg:flex lg:flex-col lg:justify-between lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_hsl(142_84%_60%/_0.25),_transparent_60%)]" />
+        <div className="relative">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground text-lg font-bold">
+              A
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+            <span className="text-lg font-semibold">Asakiri</span>
+          </Link>
+        </div>
+        <div className="relative">
+          <div className="rounded-xl border border-border/70 bg-background/50 p-6 shadow-lg backdrop-blur">
+            <p className="text-sm leading-relaxed">
+              &ldquo;Asakiri has completely changed how I teach Okinawan.
+              The spaced repetition exercises keep my students engaged and
+              actually remembering what they learn.&rdquo;
+            </p>
+            <p className="text-muted-foreground mt-4 text-sm font-medium">
+              — Language Teacher
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main form */}
+      <div className="flex flex-1 flex-col">
+        <div className="flex items-center justify-between p-4 lg:hidden">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold">
+              A
             </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-3">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
-            </Button>
-            <p className="text-muted-foreground text-sm">
+            <span className="font-semibold">Asakiri</span>
+          </Link>
+        </div>
+
+        <div className="flex flex-1 items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <div className="mb-8">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Welcome back
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                Sign in to your account to continue learning.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in..." : "Sign in"}
+              </Button>
+            </form>
+
+            <p className="text-muted-foreground mt-6 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link href="/sign-up" className="text-foreground underline">
+              <Link href="/sign-up" className="text-foreground font-medium underline">
                 Sign up
               </Link>
             </p>
-          </CardFooter>
-        </form>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
