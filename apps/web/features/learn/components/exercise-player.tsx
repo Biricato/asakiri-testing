@@ -7,11 +7,14 @@ import { Button, Input, ProgressBar } from "@heroui/react"
 import { submitAndUpdateSrs } from "../actions/srs"
 import { submitExerciseAttempt } from "../actions/progress"
 
+type McqOption = { id: string; label: string; value: string; isCorrect: boolean }
+
 type Variant = {
   variantId: string
   type: string
   prompt: unknown
   solution: unknown
+  options?: McqOption[]
 }
 
 export function ExercisePlayer({
@@ -77,7 +80,8 @@ export function ExercisePlayer({
       const userAnswer = answer.trim().toLowerCase()
       isCorrect = userAnswer === correct || alternatives.map(a => a.toLowerCase()).includes(userAnswer)
     } else if (variant.type === "mcq") {
-      isCorrect = answer === (solution.correctOptionId as string)
+      const selectedOption = variant.options?.find((o) => o.id === answer)
+      isCorrect = selectedOption?.isCorrect ?? false
     } else if (variant.type === "sentence_builder") {
       const target = (solution.targetTokens as string[]) ?? []
       isCorrect = answer === target.join(",")
@@ -155,6 +159,34 @@ export function ExercisePlayer({
                   <p className="mt-2 text-lg font-medium">
                     {String(prompt.stem ?? "")}
                   </p>
+                  {variant.options && (
+                    <div className="mt-4 space-y-2">
+                      {variant.options.map((opt) => {
+                        const selected = answer === opt.id
+                        const showResult = !!feedback
+                        const isCorrect = opt.isCorrect
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => !feedback && setAnswer(opt.id)}
+                            disabled={!!feedback}
+                            className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                              showResult && isCorrect
+                                ? "border-green-500 bg-green-50 dark:bg-green-950"
+                                : showResult && selected && !isCorrect
+                                  ? "border-red-500 bg-red-50 dark:bg-red-950"
+                                  : selected
+                                    ? "border-accent bg-accent/5"
+                                    : "hover:bg-surface-secondary"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
                 </>
               )}
 
@@ -209,8 +241,8 @@ export function ExercisePlayer({
               )}
             </div>
 
-            {/* Answer input (for text-based variants) */}
-            {variant.type !== "sentence_builder" && (
+            {/* Answer input (for text-based variants only) */}
+            {variant.type !== "sentence_builder" && variant.type !== "mcq" && (
               <div className="mt-6">
                 <p className="mb-2 text-sm font-medium">Your answer</p>
                 <Input
@@ -230,9 +262,14 @@ export function ExercisePlayer({
                 <p className="font-medium">
                   {feedback.correct ? "Correct!" : "Incorrect"}
                 </p>
-                {!feedback.correct && typeof solution.correctAnswer === "string" && (
+                {!feedback.correct && variant.type === "word_cloze" && typeof solution.correctAnswer === "string" && (
                   <p className="mt-1 text-sm">
                     The answer was: <strong>{solution.correctAnswer}</strong>
+                  </p>
+                )}
+                {!feedback.correct && variant.type === "mcq" && variant.options && (
+                  <p className="mt-1 text-sm">
+                    The answer was: <strong>{variant.options.find((o) => o.isCorrect)?.label}</strong>
                   </p>
                 )}
                 {feedback.explanation && (

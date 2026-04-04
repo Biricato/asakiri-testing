@@ -18,49 +18,82 @@ type SavePayload = {
   options?: { label: string; value: string; isCorrect: boolean }[]
 }
 
+export type InitialExerciseData = {
+  type: ExerciseType
+  word: string
+  meaning: string
+  partOfSpeech: string
+  exampleSentence: string
+  prompt: Record<string, unknown>
+  solution: Record<string, unknown>
+  options?: { id: string; label: string; isCorrect: boolean }[]
+}
+
 export function AddExerciseDialog({
   open,
   onOpenChange,
   onSave,
   isSaving,
+  mode = "create",
+  initialData,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (payload: SavePayload) => Promise<void>
   isSaving: boolean
+  mode?: "create" | "edit"
+  initialData?: InitialExerciseData | null
 }) {
-  const [type, setType] = useState<ExerciseType | null>(null)
+  const init = initialData
+  const [type, setType] = useState<ExerciseType | null>(init?.type ?? null)
 
   // Shared metadata
-  const [word, setWord] = useState("")
-  const [meaning, setMeaning] = useState("")
-  const [partOfSpeech, setPartOfSpeech] = useState("")
-  const [exampleSentence, setExampleSentence] = useState("")
+  const [word, setWord] = useState(init?.word ?? "")
+  const [meaning, setMeaning] = useState(init?.meaning ?? "")
+  const [partOfSpeech, setPartOfSpeech] = useState(init?.partOfSpeech ?? "")
+  const [exampleSentence, setExampleSentence] = useState(init?.exampleSentence ?? "")
 
   // Word cloze
-  const [clozeText, setClozeText] = useState("")
-  const [hint, setHint] = useState("")
-  const [correctAnswer, setCorrectAnswer] = useState("")
-  const [alternatives, setAlternatives] = useState("")
+  const [clozeText, setClozeText] = useState(String(init?.prompt?.clozeText ?? ""))
+  const [hint, setHint] = useState(String(init?.prompt?.hint ?? ""))
+  const [correctAnswer, setCorrectAnswer] = useState(String(init?.solution?.correctAnswer ?? ""))
+  const [alternatives, setAlternatives] = useState(
+    Array.isArray(init?.solution?.acceptedAlternatives)
+      ? (init.solution.acceptedAlternatives as string[]).join(", ")
+      : ""
+  )
 
   // MCQ
-  const [stem, setStem] = useState("")
-  const [explanation, setExplanation] = useState("")
-  const [options, setOptions] = useState([
-    { id: "1", label: "", isCorrect: true },
-    { id: "2", label: "", isCorrect: false },
-  ])
+  const [stem, setStem] = useState(String(init?.prompt?.stem ?? ""))
+  const [explanation, setExplanation] = useState(String(init?.solution?.explanation ?? ""))
+  const [options, setOptions] = useState(
+    init?.options?.length
+      ? init.options.map((o) => ({ id: o.id, label: o.label, isCorrect: o.isCorrect }))
+      : [{ id: "1", label: "", isCorrect: true }, { id: "2", label: "", isCorrect: false }]
+  )
 
   // Multi blank
-  const [template, setTemplate] = useState("")
-  const [blanks, setBlanks] = useState([
-    { key: "blank1", correctAnswer: "", choices: "" },
-  ])
+  const [template, setTemplate] = useState(String(init?.prompt?.template ?? ""))
+  const [blanks, setBlanks] = useState(
+    Array.isArray((init?.solution as Record<string, unknown>)?.blanks)
+      ? ((init!.solution as { blanks: { key: string; correctAnswer: string; choices: string[] }[] }).blanks).map((b) => ({
+          key: b.key,
+          correctAnswer: b.correctAnswer,
+          choices: b.choices.join(", "),
+        }))
+      : [{ key: "blank1", correctAnswer: "", choices: "" }]
+  )
 
   // Sentence builder
-  const [sourceTokens, setSourceTokens] = useState("")
-  const [targetTokens, setTargetTokens] = useState("")
-  const [distractorTokens, setDistractorTokens] = useState("")
+  const [sourceTokens, setSourceTokens] = useState(
+    Array.isArray(init?.prompt?.sourceTokens) ? (init.prompt.sourceTokens as string[]).join(", ") : ""
+  )
+  const [targetTokens, setTargetTokens] = useState(
+    Array.isArray(init?.solution?.targetTokens) ? (init.solution.targetTokens as string[]).join(", ") : ""
+  )
+  const [distractorTokens, setDistractorTokens] = useState(
+    Array.isArray(init?.solution?.distractorTokens) ? (init.solution.distractorTokens as string[]).join(", ") : ""
+  )
 
   function reset() {
     setType(null)
@@ -142,7 +175,7 @@ export function AddExerciseDialog({
     <Modal isOpen={open} onOpenChange={(isOpen) => { if (!isOpen) reset(); onOpenChange(isOpen) }}>
       <Modal.Backdrop><Modal.Container><Modal.Dialog className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <Modal.CloseTrigger />
-        <Modal.Header><Modal.Heading>Add exercise</Modal.Heading></Modal.Header>
+        <Modal.Header><Modal.Heading>{mode === "edit" ? "Edit exercise" : "Add exercise"}</Modal.Heading></Modal.Header>
         <Modal.Body className="space-y-4">
           {/* Type selector */}
           <div className="grid gap-1.5">
@@ -325,7 +358,7 @@ export function AddExerciseDialog({
         <Modal.Footer>
           <Button variant="tertiary" slot="close">Cancel</Button>
           <Button onPress={handleSave} isDisabled={!canSave || isSaving}>
-            {isSaving ? "Saving..." : "Add exercise"}
+            {isSaving ? "Saving..." : mode === "edit" ? "Save changes" : "Add exercise"}
           </Button>
         </Modal.Footer>
       </Modal.Dialog></Modal.Container></Modal.Backdrop>
