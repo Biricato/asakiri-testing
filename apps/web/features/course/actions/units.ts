@@ -58,6 +58,11 @@ export async function reorderUnits(
   courseId: string,
   unitIds: string[],
 ): Promise<{ success: boolean }> {
+  // Set all to negative first to avoid unique constraint violations
+  for (let i = 0; i < unitIds.length; i++) {
+    await db.update(unit).set({ order: -(i + 1000) }).where(eq(unit.id, unitIds[i]!))
+  }
+  // Then set to correct order
   for (let i = 0; i < unitIds.length; i++) {
     await db.update(unit).set({ order: i }).where(eq(unit.id, unitIds[i]!))
   }
