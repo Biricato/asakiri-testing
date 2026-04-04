@@ -2,30 +2,31 @@
 
 ## Option 1: Vercel (Recommended)
 
-One-click deploy with auto-provisioned Neon Postgres and Vercel Blob:
+### Deploy in 3 steps
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FAsakiriLingo%2Fasakiri&env=BETTER_AUTH_SECRET&envDescription=Generate%20with%3A%20openssl%20rand%20-base64%2032&stores=%5B%7B%22type%22%3A%22postgres%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D&root-directory=apps/web)
+1. **Fork** this repo — click the "Fork" button on [AsakiriLingo/asakiri](https://github.com/AsakiriLingo/asakiri)
+2. **Import** your fork into Vercel at [vercel.com/new](https://vercel.com/new)
+   - Set the root directory to `apps/web`
+   - Add a Postgres store (Neon) and Blob store under **Storage**
+   - Set the `BETTER_AUTH_SECRET` environment variable (generate with `openssl rand -base64 32`)
+3. **Deploy** — Vercel builds and deploys automatically
 
-### Required environment variables
+### Updating
 
-| Variable | Description |
-|---|---|
-| `BETTER_AUTH_SECRET` | Random secret for session signing. Generate with: `openssl rand -base64 32` |
+When new updates are released, go to your fork on GitHub and click **"Sync fork"** → **"Update branch"**. Vercel redeploys automatically.
 
-### Auto-provisioned
+No git commands needed.
 
-| Variable | Description |
-|---|---|
-| `DATABASE_URL` | Neon Postgres connection string (auto-provisioned) |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token (auto-provisioned) |
+### Environment variables
 
-### Optional
-
-| Variable | Description |
-|---|---|
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-| `GEMINI_API_KEY` | Gemini API key for AI exercise generation |
+| Variable | Required | Description |
+|---|---|---|
+| `BETTER_AUTH_SECRET` | Yes | Session signing secret. Generate: `openssl rand -base64 32` |
+| `DATABASE_URL` | Auto | Neon Postgres (auto-provisioned via Vercel Storage) |
+| `BLOB_READ_WRITE_TOKEN` | Auto | Vercel Blob (auto-provisioned via Vercel Storage) |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
+| `GEMINI_API_KEY` | No | Gemini API key for AI exercise generation |
 
 ---
 
@@ -59,6 +60,14 @@ One-click deploy with auto-provisioned Neon Postgres and Vercel Blob:
 4. The app is running at `http://localhost:3000`.
 
 5. The first user to sign up becomes admin.
+
+### Updating
+
+```bash
+git pull
+docker compose build
+docker compose up -d
+```
 
 ### Services
 
@@ -107,10 +116,10 @@ docker compose exec -i postgres psql -U asakiri asakiri < backup.sql
 
 2. Set environment variables (see `.env.example` in `apps/web/`).
 
-3. Run database migrations:
+3. Run database setup:
    ```bash
    cd apps/web
-   bun run db:migrate
+   bun run db:push
    bun run seed
    ```
 
@@ -119,36 +128,6 @@ docker compose exec -i postgres psql -U asakiri asakiri < backup.sql
    bun run build
    bun run start
    ```
-
----
-
-## Updating
-
-The Vercel deploy button creates a copy of this repo in your GitHub account. To pull updates from upstream:
-
-```bash
-# Clone your repo locally (if you haven't already)
-git clone https://github.com/YOUR_ORG/your-asakiri-repo.git
-cd your-asakiri-repo
-
-# One-time: add upstream remote
-git remote add upstream https://github.com/AsakiriLingo/asakiri.git
-
-# Pull latest updates
-git fetch upstream
-git merge upstream/main
-git push origin main
-```
-
-Pushing to `origin main` triggers an automatic Vercel redeploy. Database schema changes are applied automatically via the postbuild script.
-
-For Docker Compose deployments:
-
-```bash
-git pull upstream main
-docker compose build
-docker compose up -d
-```
 
 ---
 
