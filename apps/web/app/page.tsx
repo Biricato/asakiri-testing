@@ -127,9 +127,9 @@ export default async function HomePage() {
             <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {courses.map((c) => (
                 <Link key={c.id} href={`/courses/${c.slug}`}>
-                  <Card className="h-full overflow-hidden">
+                  <Card className="h-full overflow-hidden !p-0">
                     {c.coverImageUrl ? (
-                      <div className="relative aspect-[4/3] overflow-hidden">
+                      <div className="aspect-[4/3] overflow-hidden">
                         <img
                           src={c.coverImageUrl}
                           alt={c.title}
@@ -143,8 +143,8 @@ export default async function HomePage() {
                         </span>
                       </div>
                     )}
-                    <Card.Header>
-                      <div className="flex items-center gap-3">
+                    <div className="p-4">
+                      <div className="flex items-center gap-2">
                         <div className="flex size-6 items-center justify-center rounded-full bg-surface-secondary text-xs font-medium">
                           {(c.creatorName ?? "?")[0]}
                         </div>
@@ -152,16 +152,14 @@ export default async function HomePage() {
                           {c.creatorName ?? "Unknown"}
                         </span>
                       </div>
-                      <Card.Title className="text-lg">{c.title}</Card.Title>
-                    </Card.Header>
-                    <Card.Content>
-                      <div className="flex items-center gap-2">
-                        <Chip variant="secondary">{c.targetLanguage}</Chip>
-                        <Chip variant="secondary" className="capitalize">
+                      <p className="mt-2 text-base font-medium">{c.title}</p>
+                      <div className="mt-3 flex items-center gap-2">
+                        <Chip variant="soft" className="text-xs">{c.targetLanguage}</Chip>
+                        <Chip variant="soft" className="text-xs capitalize">
                           {c.difficulty}
                         </Chip>
                       </div>
-                    </Card.Content>
+                    </div>
                   </Card>
                 </Link>
               ))}

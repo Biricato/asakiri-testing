@@ -32,14 +32,14 @@
     --cursor-disabled: not-allowed;
     --radius: 0.625rem;
 
-    /* Base */
-    --background: oklch(1 0 0);
+    /* Base — off-white background so cards are visible */
+    --background: oklch(0.97 0 0);
     --foreground: var(--eclipse);
 
-    /* Surface (cards, accordions) */
+    /* Surface (cards, accordions) — white on off-white bg */
     --surface: var(--white);
     --surface-foreground: var(--foreground);
-    --surface-secondary: oklch(0.97 0 0);
+    --surface-secondary: oklch(0.96 0 0);
     --surface-secondary-foreground: var(--foreground);
     --surface-tertiary: oklch(0.94 0 0);
     --surface-tertiary-foreground: var(--foreground);
@@ -77,8 +77,8 @@
     --segment-foreground: var(--eclipse);
 
     /* Borders */
-    --border: oklch(0.922 0 0);
-    --separator: oklch(0.922 0 0);
+    --border: oklch(0.90 0 0);
+    --separator: oklch(0.90 0 0);
 
     /* Focus & links */
     --focus: var(--accent);
@@ -93,6 +93,13 @@
     --field-shadow: none;
 
     --skeleton-animation: shimmer;
+  }
+
+  /* Card — border instead of shadow, tighter radius */
+  .card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: none;
   }
 
   /* ── Dark ── */
