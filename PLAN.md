@@ -124,18 +124,18 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
   - If `admin_managed`: creates pending enrollment, admin approves
   - Admin can revoke enrollments
 
-### Phase 6: Learning Experience
-- [ ] **Enrolled courses list** (`/learn`)
+### Phase 6: Learning Experience `[done]`
+- [x] **Enrolled courses list** (`/learn`)
   - Cards showing progress per course
-- [ ] **Course learning path** (`/learn/[courseId]`)
+- [x] **Course learning path** (`/learn/[courseId]`)
   - Units with ordered nodes (lessons + exercise groups)
   - Completion status per node
   - Progress indicator
-- [ ] **Lesson viewer** (`/learn/[courseId]/lesson/[id]`)
+- [x] **Lesson viewer** (`/learn/[courseId]/lesson/[id]`)
   - Render TipTap content read-only (server-side via `generateHTML`)
   - Audio player for embedded audio
   - Mark complete on scroll to bottom
-- [ ] **Exercise player** (`/learn/[courseId]/exercise/[id]`)
+- [x] **Exercise player** (`/learn/[courseId]/exercise/[id]`)
   - Variant components:
     - `WordCloze` — text input with hint
     - `MCQ` — radio/checkbox options
@@ -144,28 +144,28 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
   - Submit → evaluate → show feedback (correct/incorrect + explanation)
   - Progress bar across variants
   - Session summary on completion (accuracy, time, XP)
-- [ ] **Exercise session state machine**
+- [x] **Exercise session state machine**
   - Shuffle variants
   - Track current index, attempts, timer
   - Skip / continue / restart
 
-### Phase 7: SRS + Progress
-- [ ] **SM-2 spaced repetition algorithm**
+### Phase 7: SRS + Progress `[done]`
+- [x] **SM-2 spaced repetition algorithm**
   - Pure function: `computeSm2Update(state, isCorrect, durationMs) → newState`
   - Quality rating based on correctness + speed
   - Interval, easiness, repetition updates
-- [ ] **Practice queue** (`/learn/[courseId]/practice`)
+- [x] **Practice queue** (`/learn/[courseId]/practice`)
   - Fetch due variants (`srs_review.due_at <= now()`)
   - Ordered by most overdue first
   - "All caught up" state when empty
-- [ ] **Practice session**
+- [x] **Practice session**
   - Same exercise player components
   - Submit → record attempt + update SRS state (single transaction)
   - Show next review date after each item
-- [ ] **Lesson progress tracking**
+- [x] **Lesson progress tracking**
   - Upsert `lesson_progress` on completion
   - Query completion status for learning path UI
-- [ ] **Stats dashboard** (`/learn/stats` or per-course)
+- [x] **Stats dashboard** (`/learn/stats` or per-course)
   - Lessons completed
   - Exercises attempted / accuracy
   - Items mastered (interval > N days)
