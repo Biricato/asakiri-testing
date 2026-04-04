@@ -127,39 +127,38 @@ export default async function HomePage() {
             <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {courses.map((c) => (
                 <Link key={c.id} href={`/courses/${c.slug}`}>
-                  <Card className="h-full overflow-hidden !p-0">
+                  <Card className="h-full gap-2">
                     {c.coverImageUrl ? (
-                      <div className="aspect-[4/3] overflow-hidden">
-                        <img
-                          src={c.coverImageUrl}
-                          alt={c.title}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
+                      <img
+                        src={c.coverImageUrl}
+                        alt={c.title}
+                        className="pointer-events-none aspect-[4/3] w-full rounded-2xl object-cover select-none"
+                        loading="lazy"
+                      />
                     ) : (
-                      <div className="flex aspect-[4/3] items-center justify-center bg-surface-secondary">
+                      <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-surface-secondary">
                         <span className="text-4xl font-bold text-muted/30">
                           {c.targetLanguage.slice(0, 2).toUpperCase()}
                         </span>
                       </div>
                     )}
-                    <div className="p-4">
+                    <Card.Header>
+                      <Card.Title>{c.title}</Card.Title>
+                      <Card.Description>
+                        {c.sourceLanguage} → {c.targetLanguage}
+                      </Card.Description>
+                    </Card.Header>
+                    <Card.Footer className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-6 items-center justify-center rounded-full bg-surface-secondary text-xs font-medium">
+                        <div className="flex size-5 items-center justify-center rounded-full bg-surface-secondary text-xs font-medium">
                           {(c.creatorName ?? "?")[0]}
                         </div>
-                        <span className="text-muted text-sm">
-                          {c.creatorName ?? "Unknown"}
-                        </span>
+                        <span className="text-xs">{c.creatorName ?? "Unknown"}</span>
                       </div>
-                      <p className="mt-2 text-base font-medium">{c.title}</p>
-                      <div className="mt-3 flex items-center gap-2">
-                        <Chip variant="soft" className="text-xs">{c.targetLanguage}</Chip>
-                        <Chip variant="soft" className="text-xs capitalize">
-                          {c.difficulty}
-                        </Chip>
-                      </div>
-                    </div>
+                      <Chip variant="soft" className="text-xs capitalize">
+                        {c.difficulty}
+                      </Chip>
+                    </Card.Footer>
                   </Card>
                 </Link>
               ))}

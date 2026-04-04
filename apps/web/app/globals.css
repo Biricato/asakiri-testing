@@ -95,11 +95,9 @@
     --skeleton-animation: shimmer;
   }
 
-  /* Card — border instead of shadow, tighter radius */
+  /* Card — border instead of shadow */
   .card {
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: none;
   }
 
   /* ── Dark ── */
