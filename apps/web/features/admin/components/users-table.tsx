@@ -81,7 +81,9 @@ export function UsersTable({
       />
 
       <div className="rounded-md border">
-        <Table aria-label="Users">
+        <Table>
+          <Table.ScrollContainer>
+          <Table.Content aria-label="Users">
           <Table.Header>
             <Table.Column>Name</Table.Column>
             <Table.Column>Email</Table.Column>
@@ -160,6 +162,8 @@ export function UsersTable({
               ))
             )}
           </Table.Body>
+          </Table.Content>
+          </Table.ScrollContainer>
         </Table>
       </div>
 

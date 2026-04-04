@@ -29,7 +29,9 @@ export function InvitesTable({ invites }: { invites: InviteWithStatus[] }) {
 
   return (
     <div className="rounded-md border">
-      <Table aria-label="Invites">
+      <Table>
+        <Table.ScrollContainer>
+        <Table.Content aria-label="Invites">
         <Table.Header>
           <Table.Column>Email</Table.Column>
           <Table.Column>Role</Table.Column>
@@ -90,6 +92,8 @@ export function InvitesTable({ invites }: { invites: InviteWithStatus[] }) {
             ))
           )}
         </Table.Body>
+        </Table.Content>
+        </Table.ScrollContainer>
       </Table>
 
       <AlertDialog isOpen={revokeDialogOpen} onOpenChange={setRevokeDialogOpen}>

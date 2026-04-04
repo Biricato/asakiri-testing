@@ -75,7 +75,9 @@ export function CoursesTable({
       />
 
       <div className="rounded-md border">
-        <Table aria-label="Courses">
+        <Table>
+          <Table.ScrollContainer>
+          <Table.Content aria-label="Courses">
           <Table.Header>
             <Table.Column>Title</Table.Column>
             <Table.Column>Languages</Table.Column>
@@ -141,6 +143,8 @@ export function CoursesTable({
               ))
             )}
           </Table.Body>
+          </Table.Content>
+          </Table.ScrollContainer>
         </Table>
       </div>
 

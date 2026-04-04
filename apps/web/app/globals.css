@@ -2,3 +2,51 @@
 @import "@heroui/styles";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Asakiri theme — green primary, yellow secondary */
+:root, [data-theme="light"] {
+  --accent: oklch(0.42 0.15 150);          /* #017321 green */
+  --accent-foreground: oklch(1 0 0);       /* white */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --surface: oklch(1 0 0);
+  --surface-foreground: oklch(0.145 0 0);
+  --surface-secondary: oklch(0.97 0 0);
+  --muted: oklch(0.556 0 0);
+  --border: oklch(0.922 0 0);
+  --separator: oklch(0.922 0 0);
+  --success: oklch(0.42 0.15 150);         /* same green */
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.75 0.15 85);          /* #e6b313 yellow */
+  --warning-foreground: oklch(0.145 0 0);
+  --danger: oklch(0.6 0.25 27.3);
+  --danger-foreground: oklch(1 0 0);
+  --field-background: oklch(1 0 0);
+  --field-foreground: oklch(0.145 0 0);
+  --field-placeholder: oklch(0.556 0 0);
+  --field-border: oklch(0.922 0 0);
+  --radius: 0.625rem;
+}
+
+[data-theme="dark"], .dark {
+  --accent: oklch(0.55 0.15 150);          /* brighter green for dark */
+  --accent-foreground: oklch(1 0 0);
+  --background: oklch(0.12 0.005 250);     /* #0e0f10 */
+  --foreground: oklch(0.985 0 0);
+  --surface: oklch(0.16 0.005 250);        /* #121314 */
+  --surface-foreground: oklch(0.985 0 0);
+  --surface-secondary: oklch(0.18 0.005 250);
+  --overlay: oklch(0.16 0.005 250);
+  --overlay-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.7 0.02 250);
+  --border: oklch(1 0 0 / 6%);
+  --separator: oklch(1 0 0 / 6%);
+  --field-background: oklch(0.16 0.005 250);
+  --field-foreground: oklch(0.985 0 0);
+  --field-placeholder: oklch(0.5 0 0);
+  --field-border: oklch(1 0 0 / 15%);
+  --warning: oklch(0.8 0.14 85);
+  --warning-foreground: oklch(0.145 0 0);
+  --danger: oklch(0.6 0.25 27.3);
+  --danger-foreground: oklch(1 0 0);
+}
