@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Card, Chip, Input, Select, ListBox } from "@heroui/react"
+import { CoursePlaceholder } from "@/components/course-placeholder"
+import { UserAvatar } from "@/components/user-avatar"
 import type { CatalogCourse } from "../types"
 
 export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
@@ -50,38 +52,36 @@ export function CatalogGrid({ courses }: { courses: CatalogCourse[] }) {
       </div>
 
       {courses.length === 0 ? (
-        <p className="text-muted-foreground">No courses available yet.</p>
+        <p className="text-muted">No courses available yet.</p>
       ) : (
-        <div className="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((c) => (
             <Link key={c.id} href={`/courses/${c.slug}`}>
               <Card className="gap-2">
-                {c.coverImageUrl && (
+                {c.coverImageUrl ? (
                   <img
                     src={c.coverImageUrl}
                     alt={c.title}
                     className="pointer-events-none aspect-[4/3] w-full rounded-2xl object-cover select-none"
                     loading="lazy"
                   />
+                ) : (
+                  <CoursePlaceholder title={c.title} />
                 )}
                 <Card.Header>
-                  <div className="flex items-start justify-between gap-2">
-                    <Card.Title className="text-base">{c.title}</Card.Title>
-                    <Chip variant="secondary" className="shrink-0 capitalize">
-                      {c.difficulty}
-                    </Chip>
-                  </div>
-                  {c.subtitle && <Card.Description>{c.subtitle}</Card.Description>}
-                </Card.Header>
-                <Card.Footer>
-                  <span className="text-muted text-sm">
+                  <Card.Title>{c.title}</Card.Title>
+                  <Card.Description>
                     {c.sourceLanguage} → {c.targetLanguage}
-                  </span>
-                  {c.creatorName && (
-                    <span className="text-muted ml-auto text-xs">
-                      by {c.creatorName}
-                    </span>
-                  )}
+                  </Card.Description>
+                </Card.Header>
+                <Card.Footer className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <UserAvatar name={c.creatorName ?? "?"} size={20} />
+                    <span className="text-xs">{c.creatorName ?? "Unknown"}</span>
+                  </div>
+                  <Chip variant="secondary" className="capitalize">
+                    {c.difficulty}
+                  </Chip>
                 </Card.Footer>
               </Card>
             </Link>

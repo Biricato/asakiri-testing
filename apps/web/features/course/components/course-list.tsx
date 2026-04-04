@@ -2,12 +2,13 @@
 
 import Link from "next/link"
 import { Card, Chip } from "@heroui/react"
+import { CoursePlaceholder } from "@/components/course-placeholder"
 import type { Course } from "../types"
 
 export function CourseList({ courses }: { courses: Course[] }) {
   if (courses.length === 0) {
     return (
-      <p className="text-muted-foreground mt-6">
+      <p className="text-muted mt-6">
         No courses yet. Create your first course to get started.
       </p>
     )
@@ -17,20 +18,33 @@ export function CourseList({ courses }: { courses: Course[] }) {
     <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {courses.map((c) => (
         <Link key={c.id} href={`/create/${c.id}`}>
-          <Card className="hover:bg-muted/50 transition-colors">
+          <Card className="gap-2">
+            {c.coverImageUrl ? (
+              <img
+                src={c.coverImageUrl}
+                alt={c.title}
+                className="pointer-events-none aspect-[4/3] w-full rounded-2xl object-cover select-none"
+                loading="lazy"
+              />
+            ) : (
+              <CoursePlaceholder title={c.title} />
+            )}
             <Card.Header>
-              <div className="flex items-center justify-between">
-                <Card.Title className="text-base">{c.title}</Card.Title>
-                {c.isPublished ? (
-                  <Chip color="success">Published</Chip>
-                ) : (
-                  <Chip variant="secondary">Draft</Chip>
-                )}
-              </div>
+              <Card.Title>{c.title}</Card.Title>
               <Card.Description>
-                {c.sourceLanguage} → {c.targetLanguage} · {c.difficulty}
+                {c.sourceLanguage} → {c.targetLanguage}
               </Card.Description>
             </Card.Header>
+            <Card.Footer className="flex items-center justify-between">
+              <Chip variant="secondary" className="capitalize">
+                {c.difficulty}
+              </Chip>
+              {c.isPublished ? (
+                <Chip color="success">Published</Chip>
+              ) : (
+                <Chip variant="secondary">Draft</Chip>
+              )}
+            </Card.Footer>
           </Card>
         </Link>
       ))}
