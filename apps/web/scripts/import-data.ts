@@ -135,7 +135,7 @@ async function importLessons() {
         id: l.id,
         courseId: l.course_id,
         title: l.title,
-        slug: l.slug ?? l.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "").slice(0, 80) || "untitled",
+        slug: l.slug ?? (l.title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "").slice(0, 80) || "untitled"),
         status: l.status ?? "draft",
         createdAt: new Date(l.created_at),
         updatedAt: new Date(l.created_at),
