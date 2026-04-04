@@ -14,7 +14,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "postbuild": "drizzle-kit migrate"
+    "postbuild": "drizzle-kit migrate && bun run scripts/seed.ts",
+    "seed": "bun run scripts/seed.ts"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^4.1.1",

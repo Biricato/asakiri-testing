@@ -172,23 +172,23 @@ Self-hosted language learning course creator. One-click deploy on Vercel or Clou
   - Review streak
   - Charts (recharts)
 
-### Phase 8: Deploy
-- [ ] **Environment documentation**
+### Phase 8: Deploy `[done]`
+- [x] **Environment documentation**
   - `.env.example` with all vars `[done]`
   - `SELF_HOSTING.md` setup guide
-- [ ] **Migration on deploy**
+- [x] **Migration on deploy**
   - `postbuild` script runs `drizzle-kit migrate`
   - Seed default site_settings if empty
-- [ ] **Vercel deploy button**
+- [x] **Vercel deploy button**
   - `vercel.json` with build config
   - Deploy URL with `stores=[{"type":"postgres"},{"type":"blob"}]`
   - Auto-provisions Neon + Blob
-- [ ] **Docker Compose** (self-hosting)
+- [x] **Docker Compose** (self-hosting)
   - `web` service (Next.js app)
   - `postgres` service (PostgreSQL 17)
   - `minio` service (S3-compatible storage, optional)
   - Volume for persistent data
-- [ ] **Cloudflare** (alternative)
+- [ ] **Cloudflare** (alternative, deferred)
   - OpenNext adapter or static export
   - Neon via Hyperdrive
   - R2 for storage
