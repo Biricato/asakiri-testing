@@ -1,7 +1,4 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import Link from "next/link"
-import { auth } from "@/lib/auth"
 import {
   Card,
   CardDescription,
@@ -9,16 +6,10 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card"
 
-export default async function AdminPage() {
-  const session = await auth.api
-    .getSession({ headers: await headers() })
-    .catch(() => null)
-
-  if (!session || session.user.role !== "admin") redirect("/")
-
+export default function AdminPage() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">Admin</h1>
+      <h1 className="text-2xl font-bold">Dashboard</h1>
       <p className="text-muted-foreground mt-2">Manage your platform.</p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
