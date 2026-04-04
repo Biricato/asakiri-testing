@@ -282,6 +282,168 @@ GEMINI_API_KEY=                  # optional — AI exercise generation
 
 ---
 
+## Phase 9: Federation (AT Proto-style)
+
+### Principles
+
+- **AT Proto-inspired**: identity is portable, data lives at origin, clients resolve endpoints
+- **Public API, opt-in discovery**: every instance's API is addressable, but discovery in catalogs/directories is opt-in
+- **Creators are local**: you create on your instance, federation distributes
+- **Learners are mobile**: one home PDS, access courses on any instance
+- **No replication**: content stays on the course's PDS, fetched on demand by clients
+- **Access control at the PDS level**: course creator decides who gets in (open, approval, invite, paywall)
+
+### Identity
+
+Every user has a handle: `alok@learn.okinawan.org`
+Resolvable via: `GET https://learn.okinawan.org/.well-known/asakiri-did/alok` → DID document with PDS endpoint
+
+Every course has a URI: `at://learn.okinawan.org/course/okinawan-101`
+Any client can fetch content by resolving the instance URL.
+
+### Architecture
+
+```
+Mobile App / Web App
+    │
+    ├── Authenticates with user's PDS (home instance)
+    ├── Reads enrollments from user's PDS (list of course URIs)
+    ├── Fetches course content directly from each course's PDS
+    └── Writes progress back to user's PDS
+```
+
+Every Asakiri instance is both:
+- **User PDS** — stores user accounts + their learning data
+- **Course PDS** — stores courses created on this instance
+
+### Public API (always on, every instance)
+
+```
+# Identity
+GET  /.well-known/asakiri-did/:handle      → DID document
+
+# Course PDS (public, read-only)
+GET  /api/pds/info                          → instance name, logo, description
+GET  /api/pds/catalog                       → published courses with metadata
+GET  /api/pds/course/:slug                  → course detail, units, lesson count
+GET  /api/pds/course/:slug/lesson/:id       → lesson sections (TipTap content)
+GET  /api/pds/course/:slug/exercise/:id     → exercise variants + options
+
+# User PDS (authenticated, user's home instance)
+GET  /api/pds/me/enrollments                → user's enrolled courses (URIs)
+POST /api/pds/me/enroll                     → { courseUri: "at://school.tokyo/course/xyz" }
+GET  /api/pds/me/progress/:courseUri        → progress for a course
+POST /api/pds/me/attempt                    → record exercise attempt
+GET  /api/pds/me/srs/queue                  → due SRS items across all courses
+POST /api/pds/me/export                     → download all user data
+```
+
+### Discovery (opt-in)
+
+- Admin setting: "List this instance in the Asakiri directory" (boolean)
+- Admin setting: "Featured instances" (list of URLs to show in local catalog)
+- Mobile app: "Add server" (user enters URL manually)
+- No handshake protocol. No shared secrets. Trust is one-directional.
+
+### Course Access Control
+
+Each course has an **access mode** set by the creator:
+
+| Mode | Who can enroll | Who grants access |
+|---|---|---|
+| `open` | Anyone | Automatic |
+| `approval` | Anyone can request | Creator approves manually |
+| `invite` | Invited users only | Creator sends invite link/code |
+| `external` | Linked to external service | Webhook auto-grants (Patreon, Stripe, etc.) |
+
+#### Paywall flow (external mode)
+
+```
+User browses catalog → sees "Okinawan 101 🔒"
+User taps enroll → POST /api/pds/enroll (with user DID)
+  → returns { status: "pending", access_url: "https://patreon.com/..." }
+User subscribes on Patreon
+Patreon webhook fires → POST /api/webhook/course/:id/access
+  → enrollment status: active
+User can now fetch lesson/exercise content
+```
+
+Creator configures in course settings:
+- Access mode selector (open / approval / invite / external)
+- External URL (Patreon campaign, Stripe payment link)
+- Webhook URL (auto-generated, give to Patreon/Stripe)
+- Invite code management
+
+#### Data model additions
+
+```
+course (add column)
+  + access_mode         text default 'open'     (open | approval | invite | external)
+
+course_access_config
+  course_id             uuid PK FK course
+  external_url          text?                   -- shown to user (Patreon/Stripe link)
+  webhook_secret        text?                   -- verifies incoming webhooks
+
+course_invite
+  id                    uuid PK
+  course_id             uuid FK course
+  code                  text UNIQUE
+  email                 text?
+  max_uses              integer?
+  used_count            integer default 0
+  expires_at            timestamp?
+  created_at            timestamp
+```
+
+### Account Migration
+
+User moves from PDS-A to PDS-B:
+
+1. User exports on A: Settings → "Export my data" → `.asakiri-profile` bundle
+2. User creates account on B
+3. User imports on B: Settings → "Import profile" → upload bundle
+4. A stores tombstone: "alok is now at PDS-B"
+5. Enrollments use course URIs (`at://...`) so they resolve regardless of which PDS the user is on
+
+Export format:
+```json
+{
+  "format": "asakiri-profile-v1",
+  "exported_from": "https://instance-a.com",
+  "user": { "name": "...", "email": "..." },
+  "enrollments": [
+    { "course_uri": "at://school.tokyo/course/japanese-101", "enrolled_at": "..." }
+  ],
+  "lesson_progress": [
+    { "course_uri": "...", "lesson_id": "...", "completed_at": "..." }
+  ],
+  "srs_reviews": [
+    { "variant_id": "...", "course_uri": "...", "due_at": "...", "interval_days": 7, "easiness": 2.6, "repetition": 4 }
+  ]
+}
+```
+
+### Creator Course Migration
+
+1. Export course as `.asakiri` bundle (content + exercises + media)
+2. Import on new instance under new account
+3. Course URI changes (new instance) — old instance can set redirect
+
+### Implementation Order
+
+- [ ] Public PDS API routes (`/api/pds/*`)
+- [ ] DID resolution (`/.well-known/asakiri-did/:handle`)
+- [ ] Course access control (access_mode, course_access_config, course_invite tables)
+- [ ] Webhook endpoint for external access grants
+- [ ] Creator UI: course access settings
+- [ ] Admin UI: "Featured instances" list, directory opt-in toggle
+- [ ] User profile export/import (`.asakiri-profile`)
+- [ ] Course export/import (`.asakiri` bundle)
+- [ ] Mobile app: add server, multi-PDS browsing
+
+---
+
 ## Key Decisions
 
 | Decision | Rationale |
@@ -290,5 +452,6 @@ GEMINI_API_KEY=                  # optional — AI exercise generation
 | Better Auth over Auth.js | Built-in admin plugin with roles/ban, TypeScript-first, simpler Drizzle integration |
 | Server Actions over tRPC | Built into Next.js, no extra abstraction, type-safe enough |
 | No separate teacher/learner tables | Single `user` table with `role` field. Simpler. |
-| No Patreon | Replaced by admin-managed access control |
+| No platform Patreon | Per-course access control via webhook (Patreon, Stripe, any provider). Creator configures per course, not platform-wide. |
+| AT Proto-style federation | Public API always on, opt-in discovery. No replication — content at origin, progress at user's PDS. Portable identity. |
 | Neon over Turso/D1 | Postgres — schema migrates 1:1, Vercel auto-provisions |
