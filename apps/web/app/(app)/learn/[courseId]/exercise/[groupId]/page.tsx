@@ -35,27 +35,19 @@ export default async function ExerciseLearningPage({
     .orderBy(exerciseVariant.order)
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background px-6 py-3">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            render={<Link href={`/learn/${courseId}`} />}
-          >
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
-          </Button>
-          <div>
-            <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-              Practice
-            </p>
-            <h1 className="text-lg font-semibold">{group.title}</h1>
-          </div>
+    <div className="p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <Button variant="ghost" size="icon-sm" render={<Link href={`/learn/${courseId}`} />}>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+        </Button>
+        <div>
+          <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+            Practice
+          </p>
+          <h1 className="text-lg font-semibold">{group.title}</h1>
         </div>
-      </header>
+      </div>
 
-      {/* Exercise player */}
       <ExercisePlayer variants={variants} />
     </div>
   )
