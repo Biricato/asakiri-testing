@@ -1,7 +1,9 @@
 import Link from "next/link"
+import Image from "next/image"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 import { getCatalog } from "@/features/publish/actions/catalog"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
 import {
@@ -24,12 +26,11 @@ export default async function HomePage() {
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
           <div className="flex items-center gap-2">
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground text-lg font-bold">
-              A
-            </div>
+            <Image src="/logo.svg" alt="Asakiri" width={32} height={32} />
             <span className="text-lg font-semibold">Asakiri</span>
           </div>
           <nav className="flex items-center gap-2 md:gap-4">
+            <ThemeToggle />
             {session ? (
               <>
                 <Button variant="ghost" size="sm" render={<Link href="/learn" />}>

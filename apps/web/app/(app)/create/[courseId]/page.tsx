@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
 import { getCourse } from "@/features/course/actions/courses"
 import { UnitList } from "@/features/course/components/unit-list"
+import { CreatorSidebar } from "@/features/course/components/creator-sidebar"
 import { PublishButton } from "@/features/publish/components/publish-button"
 import { Button } from "@workspace/ui/components/button"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -14,30 +17,55 @@ export default async function CourseOverviewPage({
 }) {
   const { courseId } = await params
   const course = await getCourse(courseId)
-
   if (!course) notFound()
 
-  return (
-    <div className="p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{course.title}</h1>
-          <p className="text-muted-foreground mt-1">
-            {course.sourceLanguage} → {course.targetLanguage} · {course.difficulty}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <PublishButton courseId={courseId} isPublished={course.isPublished} />
-          <Button variant="outline" render={<Link href={`/create/${courseId}/settings`} />}>
-            <HugeiconsIcon icon={Settings02Icon} size={16} className="mr-1" />
-            Settings
-          </Button>
-        </div>
-      </div>
+  const session = await auth.api
+    .getSession({ headers: await headers() })
+    .catch(() => null)
 
-      <div className="mt-6">
-        <h2 className="mb-4 text-lg font-semibold">Units</h2>
-        <UnitList courseId={courseId} units={course.units} />
+  return (
+    <div className="flex min-h-screen bg-background">
+      <CreatorSidebar
+        courseId={courseId}
+        courseTitle={course.title}
+        userName={session?.user.name ?? "User"}
+      />
+
+      <div className="flex flex-1 flex-col">
+        {/* Header */}
+        <header className="sticky top-0 z-40 border-b border-border bg-background">
+          <div className="flex items-center justify-between px-6 py-3">
+            <div>
+              <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                Course Builder
+              </p>
+              <h1 className="text-lg font-semibold">{course.title}</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <PublishButton courseId={courseId} isPublished={course.isPublished} />
+              <Button variant="outline" size="sm" render={<Link href={`/create/${courseId}/settings`} />}>
+                <HugeiconsIcon icon={Settings02Icon} size={16} />
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 p-6">
+          <div className="mx-auto max-w-3xl">
+            {/* Units overview */}
+            <div className="rounded-2xl border border-border p-6">
+              <h2 className="text-lg font-semibold">Units overview</h2>
+              <p className="text-muted-foreground mt-1 text-sm">
+                Jump into a unit to map out lessons and content.
+              </p>
+
+              <div className="mt-6">
+                <UnitList courseId={courseId} units={course.units} />
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   )

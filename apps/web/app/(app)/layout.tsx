@@ -1,7 +1,9 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { auth } from "@/lib/auth"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@workspace/ui/components/button"
 import { SignOutButton } from "./sign-out-button"
 
@@ -22,9 +24,7 @@ export default async function AppLayout({
         <div className="flex items-center justify-between px-4 py-3 md:px-6">
           <div className="flex items-center gap-4 md:gap-6">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold">
-                A
-              </div>
+              <Image src="/logo.svg" alt="Asakiri" width={32} height={32} />
               <span className="hidden text-lg font-semibold md:inline">Asakiri</span>
             </Link>
             <nav className="flex items-center gap-1">
@@ -47,6 +47,7 @@ export default async function AppLayout({
             </nav>
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium">
               {session.user.name?.[0]?.toUpperCase() ?? "?"}
             </div>

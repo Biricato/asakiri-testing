@@ -39,9 +39,7 @@ export default function SignInPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_hsl(142_84%_60%/_0.25),_transparent_60%)]" />
         <div className="relative">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground text-lg font-bold">
-              A
-            </div>
+            <img src="/logo.svg" alt="Asakiri" className="size-10" />
             <span className="text-lg font-semibold">Asakiri</span>
           </Link>
         </div>
@@ -63,9 +61,7 @@ export default function SignInPage() {
       <div className="flex flex-1 flex-col">
         <div className="flex items-center justify-between p-4 lg:hidden">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold">
-              A
-            </div>
+            <img src="/logo.svg" alt="Asakiri" className="size-8" />
             <span className="font-semibold">Asakiri</span>
           </Link>
         </div>
