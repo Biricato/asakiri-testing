@@ -1,6 +1,6 @@
 "use server"
 
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, count } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { course, unit, unitNode, lesson } from "@/schema/course"
 import { siteSetting } from "@/schema/settings"
@@ -34,13 +34,41 @@ async function requireCreator() {
   throw new Error("Forbidden")
 }
 
-export async function getMyCourses(): Promise<Course[]> {
+const PAGE_SIZE = 12
+
+export async function getMyCourses({ page = 1 }: { page?: number } = {}): Promise<{
+  courses: Course[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}> {
   const session = await requireCreator()
-  return db
-    .select()
-    .from(course)
-    .where(eq(course.createdBy, session.user.id))
-    .orderBy(desc(course.updatedAt))
+  const offset = (page - 1) * PAGE_SIZE
+
+  const [courses, totalResult] = await Promise.all([
+    db
+      .select()
+      .from(course)
+      .where(eq(course.createdBy, session.user.id))
+      .orderBy(desc(course.updatedAt))
+      .limit(PAGE_SIZE)
+      .offset(offset),
+    db
+      .select({ count: count() })
+      .from(course)
+      .where(eq(course.createdBy, session.user.id)),
+  ])
+
+  const total = totalResult[0]?.count ?? 0
+
+  return {
+    courses,
+    total,
+    page,
+    pageSize: PAGE_SIZE,
+    totalPages: Math.ceil(total / PAGE_SIZE),
+  }
 }
 
 export async function createCourse(data: {

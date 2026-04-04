@@ -2,11 +2,19 @@ import Link from "next/link"
 import { getEnrolledCourses } from "@/features/learn/actions/enrolled"
 import { getStats } from "@/features/learn/actions/progress"
 import { EnrolledCourses } from "@/features/learn/components/enrolled-courses"
+import { Pagination } from "@/components/pagination"
 import { Button, Card } from "@heroui/react"
 
-export default async function LearnPage() {
-  const [courses, stats] = await Promise.all([
-    getEnrolledCourses(),
+export default async function LearnPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>
+}) {
+  const params = await searchParams
+  const page = Number(params.page ?? "1")
+
+  const [result, stats] = await Promise.all([
+    getEnrolledCourses({ page }),
     getStats(),
   ])
 
@@ -53,7 +61,8 @@ export default async function LearnPage() {
         </div>
       )}
 
-      <EnrolledCourses courses={courses} />
+      <EnrolledCourses courses={result.courses} />
+      <Pagination page={page} totalPages={result.totalPages} />
     </div>
   )
 }

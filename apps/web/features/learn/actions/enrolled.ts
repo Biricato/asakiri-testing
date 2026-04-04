@@ -1,6 +1,6 @@
 "use server"
 
-import { eq, and } from "drizzle-orm"
+import { eq, and, count } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { enrollment, publishedCourse } from "@/schema/learning"
 import { course, unit, unitNode, lesson } from "@/schema/course"
@@ -10,35 +10,53 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import type { EnrolledCourse, LearningUnit } from "../types"
 
-export async function getEnrolledCourses(): Promise<EnrolledCourse[]> {
+const PAGE_SIZE = 12
+
+export async function getEnrolledCourses({ page = 1 }: { page?: number } = {}): Promise<{
+  courses: EnrolledCourse[]
+  total: number
+  page: number
+  totalPages: number
+}> {
   const session = await auth.api
     .getSession({ headers: await headers() })
     .catch(() => null)
-  if (!session) return []
+  if (!session) return { courses: [], total: 0, page: 1, totalPages: 0 }
 
-  const rows = await db
-    .select({
-      enrollmentId: enrollment.id,
-      publishedCourseId: enrollment.publishedCourseId,
-      courseId: course.id,
-      title: course.title,
-      targetLanguage: course.targetLanguage,
-      sourceLanguage: course.sourceLanguage,
-      difficulty: course.difficulty,
-      coverImageUrl: course.coverImageUrl,
-      enrolledAt: enrollment.enrolledAt,
-    })
-    .from(enrollment)
-    .innerJoin(publishedCourse, eq(enrollment.publishedCourseId, publishedCourse.id))
-    .innerJoin(course, eq(publishedCourse.courseId, course.id))
-    .where(
-      and(
-        eq(enrollment.userId, session.user.id),
-        eq(enrollment.status, "active"),
-      ),
-    )
+  const where = and(
+    eq(enrollment.userId, session.user.id),
+    eq(enrollment.status, "active"),
+  )
+  const offset = (page - 1) * PAGE_SIZE
 
-  return rows
+  const [courses, totalResult] = await Promise.all([
+    db
+      .select({
+        enrollmentId: enrollment.id,
+        publishedCourseId: enrollment.publishedCourseId,
+        courseId: course.id,
+        title: course.title,
+        targetLanguage: course.targetLanguage,
+        sourceLanguage: course.sourceLanguage,
+        difficulty: course.difficulty,
+        coverImageUrl: course.coverImageUrl,
+        enrolledAt: enrollment.enrolledAt,
+      })
+      .from(enrollment)
+      .innerJoin(publishedCourse, eq(enrollment.publishedCourseId, publishedCourse.id))
+      .innerJoin(course, eq(publishedCourse.courseId, course.id))
+      .where(where)
+      .limit(PAGE_SIZE)
+      .offset(offset),
+    db
+      .select({ count: count() })
+      .from(enrollment)
+      .where(where),
+  ])
+
+  const total = totalResult[0]?.count ?? 0
+
+  return { courses, total, page, totalPages: Math.ceil(total / PAGE_SIZE) }
 }
 
 export async function getLearningPath(
