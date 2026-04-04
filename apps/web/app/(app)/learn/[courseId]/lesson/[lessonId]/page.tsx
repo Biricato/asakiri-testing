@@ -49,26 +49,36 @@ export default async function LessonLearningPage({
   const isCompleted = progress.length > 0
 
   return (
-    <div className="p-6">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mb-4"
-        render={<Link href={`/learn/${courseId}`} />}
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-1" />
-        Back to course
-      </Button>
+    <div className="flex min-h-screen flex-col bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-border bg-background">
+        <div className="flex items-center gap-3 px-6 py-3">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            render={<Link href={`/learn/${courseId}`} />}
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+          </Button>
+          <div>
+            <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+              Lesson
+            </p>
+            <h1 className="text-lg font-semibold">{l.title}</h1>
+          </div>
+        </div>
+      </header>
 
-      <h1 className="text-2xl font-bold">{l.title}</h1>
-
-      <div className="mt-6 max-w-3xl">
-        <LessonViewer
-          lessonId={lessonId}
-          sections={sections}
-          isCompleted={isCompleted}
-        />
-      </div>
+      {/* Content */}
+      <main className="flex-1 px-4 py-8">
+        <div className="mx-auto max-w-3xl">
+          <LessonViewer
+            lessonId={lessonId}
+            sections={sections}
+            isCompleted={isCompleted}
+          />
+        </div>
+      </main>
     </div>
   )
 }

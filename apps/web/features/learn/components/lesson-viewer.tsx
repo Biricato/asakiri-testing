@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useTransition } from "react"
+import { useRef, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@workspace/ui/components/button"
@@ -12,7 +12,7 @@ export function LessonViewer({
   isCompleted,
 }: {
   lessonId: string
-  sections: { id: string; content: unknown }[]
+  sections: { id: string; title: string | null; content: unknown }[]
   isCompleted: boolean
 }) {
   const router = useRouter()
@@ -27,20 +27,19 @@ export function LessonViewer({
     })
   }
 
-  // Render TipTap JSON as HTML (simplified — renders text content)
   function renderContent(content: unknown) {
     if (!content || typeof content !== "object") {
-      return <p className="text-muted-foreground">No content yet.</p>
+      return <p className="text-muted-foreground italic">No content yet.</p>
     }
 
     const doc = content as { type: string; content?: unknown[] }
     if (doc.type !== "doc" || !doc.content) {
-      return <p className="text-muted-foreground">No content yet.</p>
+      return <p className="text-muted-foreground italic">No content yet.</p>
     }
 
     return (
       <div
-        className="prose prose-sm dark:prose-invert max-w-none"
+        className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-p:leading-7 prose-a:text-primary prose-a:underline prose-table:border prose-th:border prose-th:px-3 prose-th:py-2 prose-td:border prose-td:px-3 prose-td:py-2 prose-img:rounded-lg"
         dangerouslySetInnerHTML={{
           __html: renderNodes(doc.content),
         }}
@@ -49,19 +48,29 @@ export function LessonViewer({
   }
 
   return (
-    <div className="space-y-8">
-      {sections.map((s, i) => (
-        <div key={s.id}>
-          {renderContent(s.content)}
-          {i < sections.length - 1 && <hr className="mt-8" />}
+    <div className="space-y-6">
+      {sections.map((s) => (
+        <div key={s.id} className="rounded-2xl border border-border">
+          {/* Section title */}
+          {s.title && (
+            <div className="border-b border-border px-6 py-4">
+              <h2 className="text-base font-semibold">{s.title}</h2>
+            </div>
+          )}
+
+          {/* Section content */}
+          <div className="px-6 py-6">
+            {renderContent(s.content)}
+          </div>
         </div>
       ))}
 
-      <div ref={bottomRef} className="flex items-center gap-3 border-t pt-4">
+      {/* Mark complete */}
+      <div ref={bottomRef} className="flex items-center justify-center py-4">
         {isCompleted ? (
           <p className="text-muted-foreground text-sm">Lesson completed</p>
         ) : (
-          <Button onClick={handleComplete} disabled={pending}>
+          <Button onClick={handleComplete} disabled={pending} size="lg">
             {pending ? "Marking..." : "Mark as complete"}
           </Button>
         )}
@@ -70,11 +79,17 @@ export function LessonViewer({
   )
 }
 
-// Simple TipTap JSON to HTML renderer
+// TipTap JSON to HTML renderer
 function renderNodes(nodes: unknown[]): string {
   return nodes
     .map((node) => {
-      const n = node as { type: string; content?: unknown[]; attrs?: Record<string, unknown>; text?: string; marks?: { type: string }[] }
+      const n = node as {
+        type: string
+        content?: unknown[]
+        attrs?: Record<string, unknown>
+        text?: string
+        marks?: { type: string; attrs?: Record<string, unknown> }[]
+      }
 
       switch (n.type) {
         case "paragraph":
@@ -96,11 +111,11 @@ function renderNodes(nodes: unknown[]): string {
         case "image":
           return `<img src="${n.attrs?.src ?? ""}" alt="${n.attrs?.alt ?? ""}" />`
         case "audio":
-          return `<div class="my-2 p-3 bg-muted rounded-lg"><audio controls src="${n.attrs?.src ?? ""}"></audio></div>`
+          return `<div class="my-3 flex items-center gap-3 rounded-xl bg-muted/50 p-4"><audio controls preload="metadata" class="h-8 flex-1"><source src="${n.attrs?.src ?? ""}" /></audio></div>`
         case "youtube":
-          return `<iframe src="${n.attrs?.src ?? ""}" width="640" height="360" frameborder="0" allowfullscreen></iframe>`
+          return `<div class="aspect-video overflow-hidden rounded-xl"><iframe src="${n.attrs?.src ?? ""}" class="h-full w-full" frameborder="0" allowfullscreen></iframe></div>`
         case "table":
-          return `<table>${n.content ? renderNodes(n.content) : ""}</table>`
+          return `<table class="border-collapse">${n.content ? renderNodes(n.content) : ""}</table>`
         case "tableRow":
           return `<tr>${n.content ? renderNodes(n.content) : ""}</tr>`
         case "tableCell":
@@ -108,7 +123,7 @@ function renderNodes(nodes: unknown[]): string {
         case "tableHeader":
           return `<th>${n.content ? renderNodes(n.content) : ""}</th>`
         case "text": {
-          let text = n.text ?? ""
+          let text = escapeHtml(n.text ?? "")
           if (n.marks) {
             for (const mark of n.marks) {
               if (mark.type === "bold") text = `<strong>${text}</strong>`
@@ -117,8 +132,16 @@ function renderNodes(nodes: unknown[]): string {
               if (mark.type === "strike") text = `<s>${text}</s>`
               if (mark.type === "code") text = `<code>${text}</code>`
               if (mark.type === "link") {
-                const href = (mark as unknown as { attrs: { href: string } }).attrs?.href ?? "#"
+                const href = mark.attrs?.href ?? "#"
                 text = `<a href="${href}" target="_blank" rel="noopener">${text}</a>`
+              }
+              if (mark.type === "textStyle") {
+                const color = mark.attrs?.color as string | undefined
+                if (color) text = `<span style="color:${color}">${text}</span>`
+              }
+              if (mark.type === "highlight") {
+                const bg = (mark.attrs?.color as string) ?? "#fef08a"
+                text = `<mark style="background-color:${bg}">${text}</mark>`
               }
             }
           }
@@ -131,4 +154,12 @@ function renderNodes(nodes: unknown[]): string {
       }
     })
     .join("")
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
 }
