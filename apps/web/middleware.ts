@@ -22,8 +22,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", req.url))
   }
 
-  // For admin/create routes, fetch session to check role
-  if (path.startsWith("/admin") || path.startsWith("/create")) {
+  // Admin routes — fetch session to check role
+  if (path.startsWith("/admin")) {
     const sessionRes = await fetch(
       `${req.nextUrl.origin}/api/auth/get-session`,
       {
@@ -37,17 +37,14 @@ export async function middleware(req: NextRequest) {
 
     const session = await sessionRes.json()
 
-    if (path.startsWith("/admin") && session.user?.role !== "admin") {
-      return NextResponse.redirect(new URL("/", req.url))
-    }
-
-    if (
-      path.startsWith("/create") &&
-      !["admin", "creator"].includes(session.user?.role)
-    ) {
+    if (session.user?.role !== "admin") {
       return NextResponse.redirect(new URL("/", req.url))
     }
   }
+
+  // /create routes — allow any authenticated user through.
+  // The course_creation setting is checked at the page/action level,
+  // not middleware, since middleware can't query the DB efficiently.
 
   return NextResponse.next()
 }

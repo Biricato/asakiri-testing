@@ -2,7 +2,10 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import { eq } from "drizzle-orm"
 import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
+import { siteSetting } from "@/schema/settings"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@workspace/ui/components/button"
 import { SignOutButton } from "./sign-out-button"
@@ -17,6 +20,18 @@ export default async function AppLayout({
     .catch(() => null)
 
   if (!session) redirect("/sign-in")
+
+  // Check course_creation policy for nav visibility
+  const courseCreationRows = await db
+    .select()
+    .from(siteSetting)
+    .where(eq(siteSetting.key, "course_creation"))
+    .limit(1)
+    .catch(() => [])
+  const courseCreationPolicy = courseCreationRows[0]?.value ?? "open"
+  const canCreate =
+    ["admin", "creator"].includes(session.user.role ?? "") ||
+    courseCreationPolicy === "open"
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -34,7 +49,7 @@ export default async function AppLayout({
               <Button variant="ghost" size="sm" render={<Link href="/courses" />}>
                 Courses
               </Button>
-              {["admin", "creator"].includes(session.user.role ?? "") && (
+              {canCreate && (
                 <Button variant="ghost" size="sm" render={<Link href="/create" />}>
                   Creator Studio
                 </Button>

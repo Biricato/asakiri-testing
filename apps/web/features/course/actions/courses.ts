@@ -3,6 +3,7 @@
 import { eq, desc } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { course, unit, unitNode, lesson } from "@/schema/course"
+import { siteSetting } from "@/schema/settings"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import type { Course, CourseWithUnits } from "../types"
@@ -12,10 +13,25 @@ async function requireCreator() {
     .getSession({ headers: await headers() })
     .catch(() => null)
   if (!session) throw new Error("Unauthorized")
-  if (!["admin", "creator"].includes(session.user.role ?? "")) {
-    throw new Error("Forbidden")
+
+  // Admin and creator roles always have access
+  if (["admin", "creator"].includes(session.user.role ?? "")) {
+    return session
   }
-  return session
+
+  // Check if course_creation is "open" — any authenticated user can create
+  const rows = await db
+    .select()
+    .from(siteSetting)
+    .where(eq(siteSetting.key, "course_creation"))
+    .limit(1)
+  const policy = rows[0]?.value ?? "open"
+
+  if (policy === "open") {
+    return session
+  }
+
+  throw new Error("Forbidden")
 }
 
 export async function getMyCourses(): Promise<Course[]> {
