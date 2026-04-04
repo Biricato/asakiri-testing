@@ -122,6 +122,36 @@ docker compose exec -i postgres psql -U asakiri asakiri < backup.sql
 
 ---
 
+## Updating
+
+The Vercel deploy button creates a copy of this repo in your GitHub account. To pull updates from upstream:
+
+```bash
+# Clone your repo locally (if you haven't already)
+git clone https://github.com/YOUR_ORG/your-asakiri-repo.git
+cd your-asakiri-repo
+
+# One-time: add upstream remote
+git remote add upstream https://github.com/AsakiriLingo/asakiri.git
+
+# Pull latest updates
+git fetch upstream
+git merge upstream/main
+git push origin main
+```
+
+Pushing to `origin main` triggers an automatic Vercel redeploy. Database schema changes are applied automatically via the postbuild script.
+
+For Docker Compose deployments:
+
+```bash
+git pull upstream main
+docker compose build
+docker compose up -d
+```
+
+---
+
 ## First-time setup
 
 1. Navigate to the app in your browser.
