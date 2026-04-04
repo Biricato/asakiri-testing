@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
-import { Badge } from "@workspace/ui/components/badge"
 import { Progress } from "@workspace/ui/components/progress"
 import {
   Card,
@@ -39,26 +38,34 @@ export function ExercisePlayer({
   const startTime = useRef(Date.now())
 
   if (variants.length === 0) {
-    return <p className="text-muted-foreground">No exercises available.</p>
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <p className="text-lg font-medium">No exercises available.</p>
+        <p className="text-muted-foreground mt-1 text-sm">Check back later.</p>
+      </div>
+    )
   }
 
+  // Session complete
   if (currentIndex >= variants.length) {
     const accuracy = results.total > 0 ? Math.round((results.correct / results.total) * 100) : 0
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Session Complete</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <p>Score: {results.correct}/{results.total} ({accuracy}%)</p>
-          <Button onClick={() => { setCurrentIndex(0); setResults({ correct: 0, total: 0 }) }}>
-            Restart
-          </Button>
-          <Button variant="outline" onClick={() => router.back()} className="ml-2">
-            Back
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center">
+        <div className="w-full max-w-md rounded-3xl border p-8 text-center">
+          <h2 className="text-2xl font-semibold">Session Complete</h2>
+          <p className="text-muted-foreground mt-2">
+            You scored {results.correct} out of {results.total} ({accuracy}%)
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <Button variant="outline" onClick={() => { setCurrentIndex(0); setResults({ correct: 0, total: 0 }) }}>
+              Restart
+            </Button>
+            <Button onClick={() => router.back()}>
+              Done
+            </Button>
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -66,6 +73,7 @@ export function ExercisePlayer({
   const prompt = variant.prompt as Record<string, unknown>
   const solution = variant.solution as Record<string, unknown>
   const progress = ((currentIndex) / variants.length) * 100
+  const remaining = variants.length - currentIndex - 1
 
   function checkAnswer() {
     const durationMs = Date.now() - startTime.current
@@ -116,114 +124,156 @@ export function ExercisePlayer({
     startTime.current = Date.now()
   }
 
+  function skip() {
+    next()
+  }
+
   return (
-    <div className="space-y-4">
-      <Progress value={progress} className="h-2" />
-      <p className="text-muted-foreground text-sm">
-        {currentIndex + 1} / {variants.length}
-      </p>
-
-      <Card>
-        <CardHeader>
-          <Badge variant="secondary" className="w-fit text-xs">
-            {variant.type}
-          </Badge>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {variant.type === "word_cloze" && (
-            <div className="space-y-3">
-              <p className="text-lg">{prompt.clozeText as string}</p>
-              {typeof prompt.hint === "string" && prompt.hint && (
-                <p className="text-muted-foreground text-sm">Hint: {prompt.hint}</p>
-              )}
-              <Input
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && !feedback && checkAnswer()}
-                placeholder="Type your answer..."
-                disabled={!!feedback}
-              />
-            </div>
-          )}
-
-          {variant.type === "mcq" && (
-            <div className="space-y-3">
-              <p className="text-lg">{prompt.stem as string}</p>
-              {/* MCQ options would come from the variant's options field */}
-              <Input
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Type answer..."
-                disabled={!!feedback}
-              />
-            </div>
-          )}
-
-          {variant.type === "sentence_builder" && (
-            <div className="space-y-3">
-              <p className="text-muted-foreground text-sm">{prompt.helperText as string}</p>
-              <div className="flex flex-wrap gap-2">
-                {((prompt.sourceTokens as string[]) ?? []).map((token, i) => (
-                  <Button
-                    key={i}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const tokens = answer ? answer.split(",") : []
-                      tokens.push(token)
-                      setAnswer(tokens.join(","))
-                    }}
-                    disabled={!!feedback}
-                  >
-                    {token}
-                  </Button>
-                ))}
-              </div>
-              <p className="text-sm">
-                Your order: {answer.split(",").filter(Boolean).join(" → ")}
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col">
+      {/* Main content */}
+      <div className="flex flex-1 justify-center px-4 py-8">
+        <div className="w-full max-w-2xl">
+          {/* Exercise card */}
+          <div className="rounded-3xl border p-6">
+            {/* Progress header */}
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Exercise {currentIndex + 1} of {variants.length}
               </p>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setAnswer("")}
-                disabled={!!feedback}
-              >
-                Clear
-              </Button>
+              <p className="text-sm text-muted-foreground">
+                {remaining} left
+              </p>
             </div>
-          )}
+            <Progress value={progress} className="mb-6 h-2" />
 
-          {variant.type === "multi_blank" && (
-            <div className="space-y-3">
-              <p className="text-lg">{prompt.template as string}</p>
-              <Input
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Fill in the blanks..."
-                disabled={!!feedback}
-              />
-            </div>
-          )}
-
-          {feedback ? (
-            <div className="space-y-2">
-              <Badge variant={feedback.correct ? "default" : "destructive"}>
-                {feedback.correct ? "Correct!" : "Incorrect"}
-              </Badge>
-              {feedback.explanation && (
-                <p className="text-muted-foreground text-sm">{feedback.explanation}</p>
+            {/* Prompt */}
+            <div className="rounded-2xl border p-5">
+              {variant.type === "word_cloze" && (
+                <>
+                  <p className="text-muted-foreground text-sm">Fill in the missing word.</p>
+                  <p className="mt-2 text-lg font-medium">
+                    {String(prompt.clozeText ?? "")}
+                  </p>
+                </>
               )}
-              <Button onClick={next}>
-                {currentIndex < variants.length - 1 ? "Next" : "Finish"}
-              </Button>
+
+              {variant.type === "mcq" && (
+                <>
+                  <p className="text-muted-foreground text-sm">Choose the correct answer.</p>
+                  <p className="mt-2 text-lg font-medium">
+                    {String(prompt.stem ?? "")}
+                  </p>
+                </>
+              )}
+
+              {variant.type === "sentence_builder" && (
+                <>
+                  <p className="text-muted-foreground text-sm">
+                    {String(prompt.helperText ?? "Arrange the words in the correct order.")}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {((prompt.sourceTokens as string[]) ?? []).map((token, i) => (
+                      <Button
+                        key={i}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const tokens = answer ? answer.split(",") : []
+                          tokens.push(token)
+                          setAnswer(tokens.join(","))
+                        }}
+                        disabled={!!feedback}
+                      >
+                        {token}
+                      </Button>
+                    ))}
+                  </div>
+                  {answer && (
+                    <div className="mt-3">
+                      <p className="text-sm">
+                        {answer.split(",").filter(Boolean).join(" ")}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-1"
+                        onClick={() => setAnswer("")}
+                        disabled={!!feedback}
+                      >
+                        Clear
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {variant.type === "multi_blank" && (
+                <>
+                  <p className="text-muted-foreground text-sm">Fill in the blanks.</p>
+                  <p className="mt-2 text-lg font-medium">
+                    {String(prompt.template ?? "")}
+                  </p>
+                </>
+              )}
             </div>
+
+            {/* Answer input (for text-based variants) */}
+            {variant.type !== "sentence_builder" && (
+              <div className="mt-6">
+                <p className="mb-2 text-sm font-medium">Your answer</p>
+                <Input
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !feedback && answer && checkAnswer()}
+                  placeholder="Type the missing word"
+                  disabled={!!feedback}
+                  className="rounded-xl"
+                />
+              </div>
+            )}
+
+            {/* Feedback */}
+            {feedback && (
+              <div className={`mt-4 rounded-xl p-4 ${feedback.correct ? "bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200" : "bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200"}`}>
+                <p className="font-medium">
+                  {feedback.correct ? "Correct!" : "Incorrect"}
+                </p>
+                {!feedback.correct && typeof solution.correctAnswer === "string" && (
+                  <p className="mt-1 text-sm">
+                    The answer was: <strong>{solution.correctAnswer}</strong>
+                  </p>
+                )}
+                {feedback.explanation && (
+                  <p className="mt-1 text-sm">{feedback.explanation}</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed bottom bar */}
+      <div className="sticky bottom-0 border-t bg-background px-6 py-4">
+        <div className="mx-auto flex max-w-2xl items-center justify-between">
+          {feedback ? (
+            <>
+              <div />
+              <Button onClick={next}>
+                {currentIndex < variants.length - 1 ? "Continue" : "Finish"}
+              </Button>
+            </>
           ) : (
-            <Button onClick={checkAnswer} disabled={!answer || pending}>
-              Check
-            </Button>
+            <>
+              <Button variant="outline" onClick={skip}>
+                Skip
+              </Button>
+              <Button onClick={checkAnswer} disabled={!answer || pending}>
+                Submit
+              </Button>
+            </>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

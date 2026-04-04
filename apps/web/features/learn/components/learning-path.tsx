@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Badge } from "@workspace/ui/components/badge"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, BookOpen02Icon, GridTableIcon } from "@hugeicons/core-free-icons"
+import { BookOpen02Icon, GridTableIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { cn } from "@workspace/ui/lib/utils"
 import type { LearningUnit } from "../types"
 
 export function LearningPath({
@@ -14,60 +14,73 @@ export function LearningPath({
   units: LearningUnit[]
 }) {
   return (
-    <div className="space-y-6">
-      {units.map((u) => {
-        const completed = u.nodes.filter((n) => n.completed).length
-        const total = u.nodes.length
-
-        return (
-          <div key={u.id}>
-            <div className="mb-2 flex items-center gap-2">
-              <h3 className="font-semibold">{u.title}</h3>
-              <Badge variant="secondary" className="text-xs">
-                {completed}/{total}
-              </Badge>
-            </div>
-
-            <div className="space-y-1">
-              {u.nodes.map((n) => {
-                const href =
-                  n.type === "lesson"
-                    ? `/learn/${courseId}/lesson/${n.lessonId}`
-                    : `/learn/${courseId}/exercise/${n.exerciseGroupId}`
-
-                return (
-                  <Link
-                    key={n.id}
-                    href={href}
-                    className="hover:bg-muted/50 flex items-center gap-3 rounded-md border px-3 py-2 transition-colors"
-                  >
-                    {n.completed ? (
-                      <HugeiconsIcon
-                        icon={CheckmarkCircle02Icon}
-                        size={18}
-                        className="text-green-500"
-                      />
-                    ) : (
-                      <HugeiconsIcon
-                        icon={n.type === "lesson" ? BookOpen02Icon : GridTableIcon}
-                        size={18}
-                        className="text-muted-foreground"
-                      />
-                    )}
-                    <span className="text-sm">{n.title}</span>
-                    <Badge
-                      variant="secondary"
-                      className="ml-auto text-xs capitalize"
-                    >
-                      {n.type === "lesson" ? "Lesson" : "Exercises"}
-                    </Badge>
-                  </Link>
-                )
-              })}
-            </div>
+    <div className="flex flex-col items-center gap-4">
+      {units.map((u, ui) => (
+        <div key={u.id} className="flex w-full flex-col items-center gap-4">
+          {/* Unit header pill */}
+          <div className="rounded-full bg-primary px-6 py-2 text-sm font-semibold text-primary-foreground">
+            {u.title}
           </div>
-        )
-      })}
+
+          {/* Nodes */}
+          {u.nodes.map((n, ni) => {
+            const href =
+              n.type === "lesson"
+                ? `/learn/${courseId}/lesson/${n.lessonId}`
+                : `/learn/${courseId}/exercise/${n.exerciseGroupId}`
+
+            const isExercise = n.type === "exercise_group"
+            // Alternate offset for visual path feel
+            const offset = ni % 3 === 0 ? "" : ni % 3 === 1 ? "translate-x-8" : "-translate-x-8"
+
+            return (
+              <Link
+                key={n.id}
+                href={href}
+                className={cn(
+                  "group flex items-center gap-3 transition-transform hover:scale-105",
+                  offset,
+                )}
+              >
+                {/* Node circle */}
+                <div
+                  className={cn(
+                    "flex size-12 items-center justify-center rounded-full transition-colors",
+                    n.completed
+                      ? "bg-primary text-primary-foreground"
+                      : isExercise
+                        ? "bg-secondary text-secondary-foreground"
+                        : "bg-primary text-primary-foreground",
+                  )}
+                >
+                  {n.completed ? (
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} size={22} />
+                  ) : isExercise ? (
+                    <HugeiconsIcon icon={GridTableIcon} size={22} />
+                  ) : (
+                    <HugeiconsIcon icon={BookOpen02Icon} size={22} />
+                  )}
+                </div>
+
+                {/* Node label */}
+                <span className={cn(
+                  "rounded-2xl px-4 py-2 text-sm font-medium transition-colors",
+                  isExercise
+                    ? "bg-secondary text-secondary-foreground"
+                    : "bg-primary text-primary-foreground",
+                )}>
+                  {n.title}
+                </span>
+              </Link>
+            )
+          })}
+
+          {/* Connector to next unit */}
+          {ui < units.length - 1 && (
+            <div className="h-6 w-px bg-border" />
+          )}
+        </div>
+      ))}
     </div>
   )
 }

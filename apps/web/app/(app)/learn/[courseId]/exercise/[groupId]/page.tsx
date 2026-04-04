@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
-import { exerciseGroup, exerciseVariant, exerciseOption } from "@/schema/exercise"
+import { exerciseGroup, exerciseVariant } from "@/schema/exercise"
 import { ExercisePlayer } from "@/features/learn/components/exercise-player"
 import { Button } from "@workspace/ui/components/button"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -35,25 +35,28 @@ export default async function ExerciseLearningPage({
     .orderBy(exerciseVariant.order)
 
   return (
-    <div className="p-6">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mb-4"
-        render={<Link href={`/learn/${courseId}`} />}
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} size={16} className="mr-1" />
-        Back to course
-      </Button>
+    <div className="flex min-h-screen flex-col bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-background px-6 py-3">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            render={<Link href={`/learn/${courseId}`} />}
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+          </Button>
+          <div>
+            <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+              Practice
+            </p>
+            <h1 className="text-lg font-semibold">{group.title}</h1>
+          </div>
+        </div>
+      </header>
 
-      <h1 className="text-2xl font-bold">{group.title}</h1>
-      {group.description && (
-        <p className="text-muted-foreground mt-1">{group.description}</p>
-      )}
-
-      <div className="mt-6 max-w-2xl">
-        <ExercisePlayer variants={variants} />
-      </div>
+      {/* Exercise player */}
+      <ExercisePlayer variants={variants} />
     </div>
   )
 }
