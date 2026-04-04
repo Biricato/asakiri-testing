@@ -7,7 +7,6 @@ import {
   GridTableIcon,
   CheckmarkCircle02Icon,
 } from "@hugeicons/core-free-icons"
-import { Card } from "@heroui/react"
 import { cn } from "@/lib/cn"
 import type { LearningUnit } from "../types"
 
@@ -21,12 +20,10 @@ export function LearningPath({
   return (
     <div className="flex flex-col gap-8">
       {units.map((u, ui) => (
-        <div key={u.id} className="flex flex-col gap-3">
-          {/* Unit header */}
+        <div key={u.id} className="flex flex-col gap-2">
           <h3 className="text-lg font-semibold">{u.title}</h3>
 
-          {/* Nodes */}
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-2">
             {u.nodes.map((n) => {
               const href =
                 n.type === "lesson"
@@ -36,43 +33,42 @@ export function LearningPath({
               const isExercise = n.type === "exercise_group"
 
               return (
-                <Link key={n.id} href={href}>
-                  <Card
+                <Link
+                  key={n.id}
+                  href={href}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-3 py-2.5 transition-opacity hover:opacity-80",
+                    n.completed
+                      ? "bg-surface-secondary"
+                      : isExercise
+                        ? "bg-warning/10"
+                        : "bg-accent/10",
+                  )}
+                >
+                  <div
                     className={cn(
-                      "flex-row items-center gap-3 border-0",
+                      "flex size-8 shrink-0 items-center justify-center rounded-lg",
                       n.completed
-                        ? "bg-surface-secondary"
+                        ? "bg-surface-tertiary text-muted"
                         : isExercise
-                          ? "bg-amber-50 dark:bg-amber-950/30"
-                          : "bg-emerald-50 dark:bg-emerald-950/30",
+                          ? "bg-warning/20 text-warning"
+                          : "bg-accent/20 text-accent",
                     )}
                   >
-                    <div
-                      className={cn(
-                        "flex size-10 shrink-0 items-center justify-center rounded-xl",
-                        n.completed
-                          ? "bg-surface-tertiary text-muted"
-                          : isExercise
-                            ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400"
-                            : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400",
-                      )}
-                    >
-                      {n.completed ? (
-                        <HugeiconsIcon icon={CheckmarkCircle02Icon} size={20} />
-                      ) : isExercise ? (
-                        <HugeiconsIcon icon={GridTableIcon} size={20} />
-                      ) : (
-                        <HugeiconsIcon icon={BookOpen02Icon} size={20} />
-                      )}
-                    </div>
-                    <span className="text-sm font-medium">{n.title}</span>
-                  </Card>
+                    {n.completed ? (
+                      <HugeiconsIcon icon={CheckmarkCircle02Icon} size={18} />
+                    ) : isExercise ? (
+                      <HugeiconsIcon icon={GridTableIcon} size={18} />
+                    ) : (
+                      <HugeiconsIcon icon={BookOpen02Icon} size={18} />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium">{n.title}</span>
                 </Link>
               )
             })}
           </div>
 
-          {/* Separator between units */}
           {ui < units.length - 1 && (
             <div className="my-2 h-px bg-border" />
           )}
