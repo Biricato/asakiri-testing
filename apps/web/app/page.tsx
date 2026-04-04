@@ -106,7 +106,7 @@ export default async function HomePage() {
               {courses.map((c) => (
                 <Link key={c.id} href={`/courses/${c.slug}`}>
                   <Card className="h-full">
-                    {c.coverImageUrl && (
+                    {c.coverImageUrl ? (
                       <div className="relative aspect-square overflow-hidden rounded-t-2xl">
                         <img
                           src={c.coverImageUrl}
@@ -122,33 +122,32 @@ export default async function HomePage() {
                           </Badge>
                         </div>
                       </div>
+                    ) : (
+                      <div className="flex aspect-[4/3] items-center justify-center rounded-t-2xl bg-muted">
+                        <span className="text-4xl font-bold text-muted-foreground/30">
+                          {c.targetLanguage.slice(0, 2).toUpperCase()}
+                        </span>
+                      </div>
                     )}
                     <CardHeader>
                       <div className="flex items-center gap-3">
-                        {c.creatorName && (
-                          <div className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
-                            {c.creatorName[0]}
-                          </div>
-                        )}
+                        <div className="flex size-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                          {(c.creatorName ?? "?")[0]}
+                        </div>
                         <span className="text-muted-foreground text-sm">
                           {c.creatorName ?? "Unknown"}
                         </span>
                       </div>
                       <CardTitle className="text-lg">{c.title}</CardTitle>
                     </CardHeader>
-                    {!c.coverImageUrl && (
-                      <CardContent>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary">{c.targetLanguage}</Badge>
-                          <Badge variant="secondary" className="capitalize">
-                            {c.difficulty}
-                          </Badge>
-                        </div>
-                        <p className="text-muted-foreground mt-2 text-sm">
-                          {c.sourceLanguage} → {c.targetLanguage}
-                        </p>
-                      </CardContent>
-                    )}
+                    <CardContent>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">{c.targetLanguage}</Badge>
+                        <Badge variant="secondary" className="capitalize">
+                          {c.difficulty}
+                        </Badge>
+                      </div>
+                    </CardContent>
                   </Card>
                 </Link>
               ))}
@@ -166,7 +165,7 @@ export default async function HomePage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 md:px-6">
           <p className="text-muted-foreground text-sm">{siteName}</p>
           <p className="text-muted-foreground text-xs">
-            Language learning, made open.
+            {tagline}
           </p>
         </div>
       </footer>

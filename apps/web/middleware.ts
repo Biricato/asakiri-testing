@@ -3,12 +3,14 @@ import { NextRequest, NextResponse } from "next/server"
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
 
-  // Public paths — skip auth check
+  // Public paths — no auth needed
   if (
     path === "/" ||
     path.startsWith("/api/auth") ||
+    path.startsWith("/api/upload") ||
     path.startsWith("/sign-in") ||
-    path.startsWith("/sign-up")
+    path.startsWith("/sign-up") ||
+    path.startsWith("/courses")
   ) {
     return NextResponse.next()
   }
@@ -41,10 +43,6 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/", req.url))
     }
   }
-
-  // /create routes — allow any authenticated user through.
-  // The course_creation setting is checked at the page/action level,
-  // not middleware, since middleware can't query the DB efficiently.
 
   return NextResponse.next()
 }
