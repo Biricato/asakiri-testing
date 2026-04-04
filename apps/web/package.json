@@ -14,7 +14,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "postbuild": "drizzle-kit push && bun run scripts/seed.ts || true",
+    "postbuild": "if [ -n \"$DATABASE_URL\" ]; then drizzle-kit push && bun run scripts/seed.ts; fi",
     "seed": "bun run scripts/seed.ts"
   },
   "dependencies": {
