@@ -20,6 +20,7 @@ export function CourseSettings({ course }: { course: Course }) {
       await updateCourse(course.id, {
         title: fd.get("title") as string,
         subtitle: (fd.get("subtitle") as string) || undefined,
+        description: (fd.get("description") as string) || undefined,
         targetLanguage: fd.get("targetLanguage") as string,
         sourceLanguage: fd.get("sourceLanguage") as string,
         difficulty: fd.get("difficulty") as string,
@@ -46,28 +47,39 @@ export function CourseSettings({ course }: { course: Course }) {
             <Card.Title>Course Settings</Card.Title>
             <Card.Description>Update course metadata.</Card.Description>
           </Card.Header>
-          <Card.Content className="space-y-4">
-            <div className="space-y-2">
+          <Card.Content className="space-y-5">
+            <div className="grid gap-1.5">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" defaultValue={course.title} required />
+              <Input id="title" name="title" defaultValue={course.title} required className="w-full" />
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-1.5">
               <Label htmlFor="subtitle">Subtitle</Label>
-              <Input id="subtitle" name="subtitle" defaultValue={course.subtitle ?? ""} />
+              <Input id="subtitle" name="subtitle" defaultValue={course.subtitle ?? ""} className="w-full" />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="description">Description</Label>
+              <textarea
+                id="description"
+                name="description"
+                defaultValue={typeof course.description === "string" ? course.description : ""}
+                rows={4}
+                className="w-full rounded-lg border border-[var(--field-border)] bg-[var(--field-background)] px-3 py-2 text-sm text-[var(--field-foreground)] placeholder:text-[var(--field-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--focus)]"
+                placeholder="Describe what learners will gain from this course..."
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="grid gap-1.5">
                 <Label htmlFor="targetLanguage">Target language</Label>
-                <Input id="targetLanguage" name="targetLanguage" defaultValue={course.targetLanguage} required />
+                <Input id="targetLanguage" name="targetLanguage" defaultValue={course.targetLanguage} required className="w-full" />
               </div>
-              <div className="space-y-2">
+              <div className="grid gap-1.5">
                 <Label htmlFor="sourceLanguage">Source language</Label>
-                <Input id="sourceLanguage" name="sourceLanguage" defaultValue={course.sourceLanguage} required />
+                <Input id="sourceLanguage" name="sourceLanguage" defaultValue={course.sourceLanguage} required className="w-full" />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="difficulty">Difficulty</Label>
-              <Select name="difficulty" defaultSelectedKey={course.difficulty} aria-label="Difficulty">
+            <div className="grid gap-1.5">
+              <Label>Difficulty</Label>
+              <Select name="difficulty" defaultSelectedKey={course.difficulty} aria-label="Difficulty" className="w-full">
                 <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
                 <Select.Popover>
                   <ListBox>
@@ -85,7 +97,7 @@ export function CourseSettings({ course }: { course: Course }) {
         </Card>
       </form>
 
-      <Card className="border-destructive">
+      <Card>
         <Card.Header>
           <Card.Title>Danger Zone</Card.Title>
           <Card.Description>
