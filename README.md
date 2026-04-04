@@ -143,6 +143,3 @@ bun run db:migrate   # Run migrations
 bun run db:studio    # Open Drizzle Studio
 ```
 
-## License
-
-MIT
