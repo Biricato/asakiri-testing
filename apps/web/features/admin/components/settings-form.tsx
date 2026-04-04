@@ -3,7 +3,7 @@
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "@heroui/react"
-import { Button, Input, TextArea, Select, Card, ListBox } from "@heroui/react"
+import { Button, Input, TextArea, Select, Card, ListBox, Label } from "@heroui/react"
 import { updateSettings } from "../actions/settings"
 import type { SiteSettings } from "../types"
 
@@ -43,64 +43,34 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
             Configure registration, course creation, and default user roles.
           </Card.Description>
         </Card.Header>
-        <Card.Content className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="site_name" className="text-sm font-medium">Site Name</label>
-            <Input
-              id="site_name"
-              name="site_name"
-              defaultValue={settings.site_name}
-            />
-            <p className="text-muted-foreground text-xs">
-              Shown in the header, footer, and browser tab.
-            </p>
+        <Card.Content className="space-y-5">
+          <div className="grid gap-1.5">
+            <Label htmlFor="site_name">Site Name</Label>
+            <Input id="site_name" name="site_name" defaultValue={settings.site_name} className="w-full" />
+            <p className="text-muted text-xs">Shown in the header, footer, and browser tab.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="site_tagline" className="text-sm font-medium">Tagline</label>
-            <Input
-              id="site_tagline"
-              name="site_tagline"
-              defaultValue={settings.site_tagline}
-            />
-            <p className="text-muted-foreground text-xs">
-              Short label shown above the hero title.
-            </p>
+          <div className="grid gap-1.5">
+            <Label htmlFor="site_tagline">Tagline</Label>
+            <Input id="site_tagline" name="site_tagline" defaultValue={settings.site_tagline} className="w-full" />
+            <p className="text-muted text-xs">Short label shown above the hero title.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="hero_title" className="text-sm font-medium">Hero Title</label>
-            <TextArea
-              id="hero_title"
-              name="hero_title"
-              defaultValue={settings.hero_title}
-              rows={2}
-            />
-            <p className="text-muted-foreground text-xs">
-              Main heading on the landing page.
-            </p>
+          <div className="grid gap-1.5">
+            <Label htmlFor="hero_title">Hero Title</Label>
+            <TextArea id="hero_title" name="hero_title" defaultValue={settings.hero_title} rows={2} className="w-full" />
+            <p className="text-muted text-xs">Main heading on the landing page.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="hero_description" className="text-sm font-medium">Hero Description</label>
-            <TextArea
-              id="hero_description"
-              name="hero_description"
-              defaultValue={settings.hero_description}
-              rows={3}
-            />
-            <p className="text-muted-foreground text-xs">
-              Supporting text below the hero title.
-            </p>
+          <div className="grid gap-1.5">
+            <Label htmlFor="hero_description">Hero Description</Label>
+            <TextArea id="hero_description" name="hero_description" defaultValue={settings.hero_description} rows={3} className="w-full" />
+            <p className="text-muted text-xs">Supporting text below the hero title.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="registration_mode" className="text-sm font-medium">Registration Mode</label>
-            <Select
-              name="registration_mode"
-              defaultSelectedKey={settings.registration_mode}
-              aria-label="Registration Mode"
-            >
+          <div className="grid gap-1.5">
+            <Label>Registration Mode</Label>
+            <Select name="registration_mode" defaultSelectedKey={settings.registration_mode} aria-label="Registration Mode" className="w-full">
               <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
               <Select.Popover>
                 <ListBox>
@@ -109,18 +79,12 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
                 </ListBox>
               </Select.Popover>
             </Select>
-            <p className="text-muted-foreground text-xs">
-              Controls whether anyone can sign up or only invited users.
-            </p>
+            <p className="text-muted text-xs">Controls whether anyone can sign up or only invited users.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="course_creation" className="text-sm font-medium">Course Creation Policy</label>
-            <Select
-              name="course_creation"
-              defaultSelectedKey={settings.course_creation}
-              aria-label="Course Creation Policy"
-            >
+          <div className="grid gap-1.5">
+            <Label>Course Creation Policy</Label>
+            <Select name="course_creation" defaultSelectedKey={settings.course_creation} aria-label="Course Creation Policy" className="w-full">
               <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
               <Select.Popover>
                 <ListBox>
@@ -130,18 +94,12 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
                 </ListBox>
               </Select.Popover>
             </Select>
-            <p className="text-muted-foreground text-xs">
-              Who can create new courses on the platform.
-            </p>
+            <p className="text-muted text-xs">Who can create new courses on the platform.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="default_role" className="text-sm font-medium">Default New User Role</label>
-            <Select
-              name="default_role"
-              defaultSelectedKey={settings.default_role}
-              aria-label="Default New User Role"
-            >
+          <div className="grid gap-1.5">
+            <Label>Default New User Role</Label>
+            <Select name="default_role" defaultSelectedKey={settings.default_role} aria-label="Default New User Role" className="w-full">
               <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
               <Select.Popover>
                 <ListBox>
@@ -150,9 +108,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
                 </ListBox>
               </Select.Popover>
             </Select>
-            <p className="text-muted-foreground text-xs">
-              Role assigned to new users when they sign up.
-            </p>
+            <p className="text-muted text-xs">Role assigned to new users when they sign up.</p>
           </div>
 
           <Button type="submit" isDisabled={pending}>
