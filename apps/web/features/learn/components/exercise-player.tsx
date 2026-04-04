@@ -129,21 +129,19 @@ export function ExercisePlayer({
       {/* Main content */}
       <div className="flex flex-1 justify-center px-4 py-8">
         <div className="w-full max-w-2xl">
-          {/* Exercise card */}
-          <div className="rounded-3xl border p-6">
-            {/* Progress header */}
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Exercise {currentIndex + 1} of {variants.length}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {remaining} left
-              </p>
-            </div>
-            <ProgressBar value={progress} className="mb-6 h-2" aria-label="Exercise progress" />
+          {/* Progress header */}
+          <div className="mb-4 flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Exercise {currentIndex + 1} of {variants.length}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {remaining} left
+            </p>
+          </div>
+          <ProgressBar value={progress} className="mb-6 h-2" aria-label="Exercise progress" />
 
-            {/* Prompt */}
-            <div className="rounded-2xl border p-5">
+          {/* Prompt */}
+          <div className="rounded-2xl border p-5">
               {variant.type === "word_cloze" && (
                 <>
                   <p className="text-muted-foreground text-sm">Fill in the missing word.</p>
@@ -277,7 +275,6 @@ export function ExercisePlayer({
                 )}
               </div>
             )}
-          </div>
         </div>
       </div>
 
