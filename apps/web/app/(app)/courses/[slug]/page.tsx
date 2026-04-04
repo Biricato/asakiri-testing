@@ -3,7 +3,7 @@ import Link from "next/link"
 import { getCourseBySlug } from "@/features/publish/actions/catalog"
 import { getMyEnrollment } from "@/features/publish/actions/enroll"
 import { EnrollButton } from "@/features/publish/components/enroll-button"
-import { Badge } from "@heroui/react"
+import { Chip } from "@heroui/react"
 import { Button } from "@heroui/react"
 import { Card } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -52,13 +52,13 @@ export default async function CourseDetailPage({
           )}
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <Badge variant="secondary" className="capitalize">
+            <Chip variant="secondary" className="capitalize">
               {course.difficulty}
-            </Badge>
-            <Badge variant="secondary">
+            </Chip>
+            <Chip variant="secondary">
               {course.sourceLanguage} → {course.targetLanguage}
-            </Badge>
-            <Badge variant="secondary">v{course.version}</Badge>
+            </Chip>
+            <Chip variant="secondary">v{course.version}</Chip>
           </div>
 
           {course.creatorName && (

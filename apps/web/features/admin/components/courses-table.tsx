@@ -3,7 +3,7 @@
 import { useTransition } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "@heroui/react"
-import { Table, Badge, Button, Input, Dropdown } from "@heroui/react"
+import { Table, Chip, Button, Input, Dropdown } from "@heroui/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { MoreHorizontalIcon } from "@hugeicons/core-free-icons"
 import { togglePublish, deleteCourse } from "../actions/courses"
@@ -111,9 +111,9 @@ export function CoursesTable({
                   </Table.Cell>
                   <Table.Cell>
                     {c.isPublished ? (
-                      <Badge>Published</Badge>
+                      <Chip>Published</Chip>
                     ) : (
-                      <Badge variant="secondary">Draft</Badge>
+                      <Chip variant="secondary">Draft</Chip>
                     )}
                   </Table.Cell>
                   <Table.Cell>

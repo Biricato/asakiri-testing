@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Card, Badge } from "@heroui/react"
+import { Card, Chip } from "@heroui/react"
 import type { EnrolledCourse } from "../types"
 
 export function EnrolledCourses({ courses }: { courses: EnrolledCourse[] }) {
@@ -29,9 +29,9 @@ export function EnrolledCourses({ courses }: { courses: EnrolledCourse[] }) {
               <Card.Description>
                 {c.sourceLanguage} → {c.targetLanguage}
               </Card.Description>
-              <Badge variant="secondary" className="w-fit capitalize">
+              <Chip variant="secondary" className="w-fit capitalize">
                 {c.difficulty}
-              </Badge>
+              </Chip>
             </Card.Header>
           </Card>
         </Link>

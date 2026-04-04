@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Card, Badge } from "@heroui/react"
+import { Card, Chip } from "@heroui/react"
 import type { Course } from "../types"
 
 export function CourseList({ courses }: { courses: Course[] }) {
@@ -22,9 +22,9 @@ export function CourseList({ courses }: { courses: Course[] }) {
               <div className="flex items-center justify-between">
                 <Card.Title className="text-base">{c.title}</Card.Title>
                 {c.isPublished ? (
-                  <Badge>Published</Badge>
+                  <Chip color="success">Published</Chip>
                 ) : (
-                  <Badge variant="secondary">Draft</Badge>
+                  <Chip variant="secondary">Draft</Chip>
                 )}
               </div>
               <Card.Description>

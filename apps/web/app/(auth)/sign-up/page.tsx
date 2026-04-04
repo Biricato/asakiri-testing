@@ -43,7 +43,7 @@ export default function SignUpPage() {
           </Link>
         </div>
         <div className="relative">
-          <div className="rounded-xl border border-border/70 bg-background/50 p-6 shadow-lg backdrop-blur">
+          <div className="rounded-xl border border-border/70 bg-background/50 p-6">
             <p className="text-sm leading-relaxed">
               &ldquo;Creating courses on Asakiri is incredibly intuitive.
               I was able to build a full Cornish language course with

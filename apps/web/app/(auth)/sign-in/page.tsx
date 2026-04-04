@@ -42,7 +42,7 @@ export default function SignInPage() {
           </Link>
         </div>
         <div className="relative">
-          <div className="rounded-xl border border-border/70 bg-background/50 p-6 shadow-lg backdrop-blur">
+          <div className="rounded-xl border border-border/70 bg-background/50 p-6">
             <p className="text-sm leading-relaxed">
               &ldquo;Asakiri has completely changed how I teach Okinawan.
               The spaced repetition exercises keep my students engaged and

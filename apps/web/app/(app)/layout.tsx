@@ -36,7 +36,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-svh flex-col">
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
         <div className="flex w-full items-center justify-between px-4 py-3 md:px-6">
           {/* Left: logo + nav */}
           <div className="flex items-center gap-3 md:gap-6">
