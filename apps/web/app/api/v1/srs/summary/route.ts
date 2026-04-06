@@ -2,7 +2,7 @@ import { NextRequest } from "next/server"
 import { eq, and, sql, count } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { srsReview } from "@/schema/learning"
-import { json, error, requireSession } from "../../../helpers"
+import { json, error, requireSession } from "../../helpers"
 
 export async function GET(req: NextRequest) {
   try {
