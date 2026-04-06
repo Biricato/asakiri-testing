@@ -150,7 +150,7 @@ export default async function HomePage() {
 
         {/* How it works */}
         {howItWorks.length > 0 && (
-          <section className="border-t border-border bg-muted/30">
+          <section className="border-t border-border">
             <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
               <h2 className="text-center text-2xl font-semibold">How it works</h2>
               <p className="text-muted-foreground mx-auto mt-2 max-w-lg text-center">
@@ -221,7 +221,7 @@ export default async function HomePage() {
 
         {/* Features */}
         {features.length > 0 && (
-          <section className="border-t border-border bg-muted/30">
+          <section className="border-t border-border">
             <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
               <h2 className="text-center text-2xl font-semibold">Everything you need to succeed</h2>
               <p className="text-muted-foreground mx-auto mt-2 max-w-lg text-center">
@@ -267,7 +267,7 @@ export default async function HomePage() {
 
         {/* FAQ */}
         {faqItems.length > 0 && (
-          <section className="border-t border-border bg-muted/30">
+          <section className="border-t border-border">
             <div className="mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-24">
               <h2 className="text-center text-2xl font-semibold">Frequently asked questions</h2>
               <p className="text-muted-foreground mx-auto mt-2 max-w-lg text-center">
