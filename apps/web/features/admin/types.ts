@@ -9,6 +9,8 @@ export type SiteSettings = {
   default_role: "learner" | "creator"
   site_name: string
   site_tagline: string
+  site_logo: string
+  site_favicon: string
   hero_title: string
   hero_description: string
   github_url: string
@@ -34,6 +36,8 @@ export const defaultSettings: SiteSettings = {
   default_role: "learner",
   site_name: "Asakiri",
   site_tagline: "Language Learning Platform",
+  site_logo: "",
+  site_favicon: "",
   hero_title: "Master languages through interactive courses built by expert teachers",
   hero_description: "Create engaging courses and learn through interactive exercises with spaced repetition. Learn at your own pace, track your progress, and master vocabulary naturally.",
   github_url: "https://github.com/AsakiriLingo/asakiri",

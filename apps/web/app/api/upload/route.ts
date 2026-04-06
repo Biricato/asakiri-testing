@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { put } from "@vercel/blob"
 import { auth } from "@/lib/auth"
 
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/x-icon", "image/vnd.microsoft.icon"]
 const AUDIO_TYPES = ["audio/mpeg", "audio/ogg", "audio/wav", "audio/mp4"]
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
 const MAX_AUDIO_SIZE = 20 * 1024 * 1024 // 20MB

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "@heroui/react"
 import { Button, Input, TextArea, Select, Card, ListBox, Label } from "@heroui/react"
 import { updateSettings } from "../actions/settings"
+import { ImageUpload } from "./image-upload"
 import type { SiteSettings } from "../types"
 
 export function SettingsForm({ settings }: { settings: SiteSettings }) {
@@ -22,6 +23,8 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
         default_role: formData.get("default_role") as SiteSettings["default_role"],
         site_name: formData.get("site_name") as string,
         site_tagline: formData.get("site_tagline") as string,
+        site_logo: formData.get("site_logo") as string,
+        site_favicon: formData.get("site_favicon") as string,
         hero_title: formData.get("hero_title") as string,
         hero_description: formData.get("hero_description") as string,
         github_url: formData.get("github_url") as string,
@@ -64,6 +67,16 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           <div className="grid gap-1.5">
             <Label htmlFor="site_tagline">Tagline</Label>
             <Input id="site_tagline" name="site_tagline" defaultValue={settings.site_tagline} className="w-full" />
+          </div>
+          <div className="grid gap-1.5">
+            <Label>Site Logo</Label>
+            <ImageUpload name="site_logo" value={settings.site_logo} accept="image/svg+xml,image/png,image/jpeg,image/webp" label="Site logo" />
+            <p className="text-muted text-xs">Shown in headers. Falls back to /logo.svg if empty.</p>
+          </div>
+          <div className="grid gap-1.5">
+            <Label>Favicon</Label>
+            <ImageUpload name="site_favicon" value={settings.site_favicon} accept="image/x-icon,image/png,image/svg+xml" label="Favicon" />
+            <p className="text-muted text-xs">Browser tab icon. Falls back to /favicon.ico if empty.</p>
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="support_email">Support / Privacy Email</Label>

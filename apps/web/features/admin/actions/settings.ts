@@ -20,6 +20,8 @@ export async function getSettings(): Promise<SiteSettings> {
       (map.default_role as SiteSettings["default_role"]) ??
       defaultSettings.default_role,
     site_name: map.site_name ?? defaultSettings.site_name,
+    site_logo: map.site_logo ?? defaultSettings.site_logo,
+    site_favicon: map.site_favicon ?? defaultSettings.site_favicon,
     hero_title: map.hero_title ?? defaultSettings.hero_title,
     hero_description: map.hero_description ?? defaultSettings.hero_description,
     site_tagline: map.site_tagline ?? defaultSettings.site_tagline,
