@@ -3,8 +3,25 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin } from "better-auth/plugins/admin"
 import { hashPassword as defaultHash, verifyPassword as defaultVerify } from "better-auth/crypto"
 import bcrypt from "bcryptjs"
+import nodemailer from "nodemailer"
 import { db } from "./db"
 import * as schema from "@/schema"
+
+const smtpConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_FROM)
+
+const transporter = smtpConfigured
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT ?? 587),
+      secure: process.env.SMTP_SECURE === "true",
+      ...(process.env.SMTP_USER && {
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      }),
+    })
+  : null
 
 export const auth = betterAuth({
   baseURL:
@@ -21,6 +38,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: smtpConfigured,
     password: {
       hash: defaultHash,
       verify: async ({ hash, password }) => {
@@ -31,6 +49,19 @@ export const auth = betterAuth({
         // Default scrypt verification for Better Auth native hashes
         return defaultVerify({ hash, password })
       },
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: smtpConfigured,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      if (!transporter) return
+      await transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to: user.email,
+        subject: "Verify your email — Asakiri",
+        html: `<p>Click the link below to verify your email address:</p><p><a href="${url}">Verify email</a></p>`,
+      })
     },
   },
   socialProviders: {

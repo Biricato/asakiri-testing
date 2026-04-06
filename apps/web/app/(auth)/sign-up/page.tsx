@@ -13,13 +13,14 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
     setLoading(true)
 
-    const { error } = await signUp.email({ name, email, password })
+    const { data, error } = await signUp.email({ name, email, password })
 
     if (error) {
       setError(error.message ?? "Failed to sign up")
@@ -27,8 +28,40 @@ export default function SignUpPage() {
       return
     }
 
+    if (data && !data.token) {
+      setEmailSent(true)
+      setLoading(false)
+      return
+    }
+
     router.push("/")
     router.refresh()
+  }
+
+  if (emailSent) {
+    return (
+      <div className="flex min-h-svh items-center justify-center p-4">
+        <Card className="w-full max-w-sm">
+          <Card.Header className="text-center">
+            <Link href="/" className="mx-auto mb-2 flex items-center gap-2">
+              <img src="/logo.svg" alt="Asakiri" className="size-8" />
+            </Link>
+            <Card.Title className="text-xl">Check your email</Card.Title>
+            <Card.Description>
+              We sent a verification link to <strong>{email}</strong>. Click the link to activate your account.
+            </Card.Description>
+          </Card.Header>
+          <Card.Footer className="justify-center">
+            <p className="text-muted text-sm">
+              Already verified?{" "}
+              <Link href="/sign-in" className="text-foreground font-medium underline">
+                Sign in
+              </Link>
+            </p>
+          </Card.Footer>
+        </Card>
+      </div>
+    )
   }
 
   return (
