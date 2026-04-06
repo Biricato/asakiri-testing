@@ -30,7 +30,7 @@ export default async function LearnPage({
       : null,
   ])
 
-  const g = gamification
+  const g = gamification ?? { xp: 0, level: 1, gems: 0, streakCount: 0 }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
@@ -42,7 +42,7 @@ export default async function LearnPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {g && (
+          {session && (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5" title="Streak">
                 <HugeiconsIcon icon={FireIcon} size={18} className={g.streakCount > 0 ? "text-danger" : "text-muted"} />
