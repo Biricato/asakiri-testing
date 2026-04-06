@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-nati
 import { router, useFocusEffect } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { HugeiconsIcon } from "@hugeicons/react-native"
-import { Logout01Icon, ArrowRight01Icon, DiamondIcon, FireIcon, StarIcon } from "@hugeicons/core-free-icons"
+import { Logout01Icon, ArrowRight01Icon, DiamondIcon, FireIcon, StarIcon, BookOpen02Icon, GridTableIcon, RepeatIcon } from "@hugeicons/core-free-icons"
 import { api, getServerUrl } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { useColors } from "@/lib/use-colors"
@@ -216,9 +216,11 @@ export default function ProfileScreen() {
                     backgroundColor: a.unlocked ? colors.primary + "20" : colors.border,
                     alignItems: "center", justifyContent: "center",
                   }}>
-                    <Text style={{ fontSize: 18 }}>
-                      {a.icon === "fire" ? "🔥" : a.icon === "book" ? "📖" : a.icon === "grid" ? "🎯" : a.icon === "repeat" ? "🔄" : "⭐"}
-                    </Text>
+                    <HugeiconsIcon
+                      icon={a.icon === "fire" ? FireIcon : a.icon === "book" ? BookOpen02Icon : a.icon === "grid" ? GridTableIcon : a.icon === "repeat" ? RepeatIcon : StarIcon}
+                      size={20}
+                      color={a.unlocked ? colors.primary : colors.muted}
+                    />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>{a.title}</Text>
