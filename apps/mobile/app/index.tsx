@@ -5,6 +5,8 @@ import { useAuth } from "@/lib/auth-context"
 export default function Index() {
   const { user, loading } = useAuth()
 
+  console.log("[Index] loading:", loading, "user:", user?.email ?? "null")
+
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>

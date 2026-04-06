@@ -1,5 +1,34 @@
-@import "tailwindcss";
-@import "uniwind";
-@import "heroui-native/styles";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
 
-@source "./node_modules/heroui-native/lib";
+@source "./app";
+@source "./components";
+
+@media ios {
+  :root {
+    --font-sans: system-ui;
+    --font-mono: ui-monospace;
+  }
+}
+
+@media android {
+  :root {
+    --font-sans: normal;
+    --font-mono: monospace;
+  }
+}
+
+@layer theme {
+  @theme {
+    --color-primary: #17c964;
+    --color-foreground: #11181c;
+    --color-muted: #889096;
+    --color-background: #ffffff;
+    --color-surface: #f4f4f5;
+    --color-border: #e4e4e7;
+    --color-danger: #f31260;
+    --color-success: #17c964;
+    --color-warning: #f5a524;
+  }
+}

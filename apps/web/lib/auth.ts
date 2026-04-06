@@ -33,6 +33,7 @@ export const auth = betterAuth({
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000"),
   secret: process.env.BETTER_AUTH_SECRET ?? "dev-secret-change-me-in-production",
+  trustedOrigins: ["asakiri://", "exp://", "http://localhost:8081"],
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,

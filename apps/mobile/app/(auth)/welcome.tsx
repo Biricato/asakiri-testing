@@ -1,28 +1,32 @@
-import { View, Text, Image } from "react-native"
+import { View, Text, Image, Pressable } from "react-native"
 import { Link } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Button } from "heroui-native"
+import { s, colors } from "@/lib/styles"
 
 export default function WelcomeScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 items-center justify-center px-6">
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24 }}>
         <Image
           source={require("../../assets/icon.png")}
-          className="mb-6 h-20 w-20"
+          style={{ width: 80, height: 80, marginBottom: 24 }}
           resizeMode="contain"
         />
-        <Text className="text-3xl font-bold text-foreground">Asakiri</Text>
-        <Text className="mt-2 text-center text-base text-muted-foreground">
-          Master languages through interactive courses built by expert teachers
+        <Text style={{ fontSize: 28, fontWeight: "bold", color: colors.foreground }}>Asakiri</Text>
+        <Text style={[s.muted, { marginTop: 8, textAlign: "center", fontSize: 16 }]}>
+          Master languages through interactive courses
         </Text>
 
-        <View className="mt-10 w-full gap-3">
+        <View style={{ marginTop: 40, width: "100%", gap: 12 }}>
           <Link href="/(auth)/sign-in" asChild>
-            <Button size="lg">Sign in</Button>
+            <Pressable style={s.buttonPrimary}>
+              <Text style={[s.buttonPrimaryText, { fontSize: 16 }]}>Sign in</Text>
+            </Pressable>
           </Link>
           <Link href="/(auth)/sign-up" asChild>
-            <Button variant="outline" size="lg">Create account</Button>
+            <Pressable style={s.buttonOutline}>
+              <Text style={[s.buttonOutlineText, { fontSize: 16 }]}>Create account</Text>
+            </Pressable>
           </Link>
         </View>
       </View>

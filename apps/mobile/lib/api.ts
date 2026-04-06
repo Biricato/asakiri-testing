@@ -1,13 +1,15 @@
 import * as SecureStore from "expo-secure-store"
 
-const API_URL = __DEV__
-  ? "http://localhost:3000"
-  : "https://asakiri.com"
+const API_URL = "https://asakiri.com"
 
-let sessionToken: string | null = null
+export let sessionToken: string | null = null
 
 export async function loadToken() {
-  sessionToken = await SecureStore.getItemAsync("session_token")
+  try {
+    sessionToken = await SecureStore.getItemAsync("session_token")
+  } catch {
+    sessionToken = null
+  }
 }
 
 export async function saveToken(token: string) {
@@ -33,10 +35,14 @@ export async function api<T = any>(
     headers["Cookie"] = `better-auth.session_token=${sessionToken}`
   }
 
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 10000)
+
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     headers,
-  })
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeout))
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }))

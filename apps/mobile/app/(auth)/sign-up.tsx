@@ -1,9 +1,9 @@
 import { useState } from "react"
-import { View, Text, KeyboardAvoidingView, Platform } from "react-native"
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native"
 import { Link, router } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Button, TextField } from "heroui-native"
 import { useAuth } from "@/lib/auth-context"
+import { s, colors } from "@/lib/styles"
 
 export default function SignUpScreen() {
   const { signUp } = useAuth()
@@ -28,50 +28,42 @@ export default function SignUpScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 justify-center px-6"
+        style={{ flex: 1, justifyContent: "center", paddingHorizontal: 24 }}
       >
-        <Text className="mb-2 text-2xl font-bold text-foreground">Create account</Text>
-        <Text className="mb-6 text-base text-muted-foreground">Start learning or creating courses.</Text>
+        <Text style={s.h1}>Create account</Text>
+        <Text style={[s.muted, { marginBottom: 24 }]}>Start learning or creating courses.</Text>
 
         {error ? (
-          <View className="mb-4 rounded-xl bg-danger/10 px-4 py-3">
-            <Text className="text-sm text-danger">{error}</Text>
+          <View style={s.errorBox}>
+            <Text style={s.errorText}>{error}</Text>
           </View>
         ) : null}
 
-        <View className="gap-4">
-          <TextField
-            label="Display name"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-          />
-          <TextField
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="email"
-          />
-          <TextField
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          <Button onPress={handleSubmit} isDisabled={loading}>
-            {loading ? "Creating account..." : "Create account"}
-          </Button>
+        <View style={{ gap: 16 }}>
+          <View style={{ gap: 6 }}>
+            <Text style={s.label}>Display name</Text>
+            <TextInput style={s.input} value={name} onChangeText={setName} autoCapitalize="words" placeholder="Your name" placeholderTextColor={colors.muted} />
+          </View>
+          <View style={{ gap: 6 }}>
+            <Text style={s.label}>Email</Text>
+            <TextInput style={s.input} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoComplete="email" placeholder="you@example.com" placeholderTextColor={colors.muted} />
+          </View>
+          <View style={{ gap: 6 }}>
+            <Text style={s.label}>Password</Text>
+            <TextInput style={s.input} value={password} onChangeText={setPassword} secureTextEntry placeholder="Min 8 characters" placeholderTextColor={colors.muted} />
+          </View>
+          <Pressable style={[s.buttonPrimary, loading && { opacity: 0.5 }]} onPress={handleSubmit} disabled={loading}>
+            <Text style={s.buttonPrimaryText}>{loading ? "Creating account..." : "Create account"}</Text>
+          </Pressable>
         </View>
 
-        <View className="mt-6 flex-row items-center justify-center gap-1">
-          <Text className="text-sm text-muted-foreground">Already have an account?</Text>
+        <View style={{ marginTop: 24, flexDirection: "row", justifyContent: "center", gap: 4 }}>
+          <Text style={s.muted}>Already have an account?</Text>
           <Link href="/(auth)/sign-in">
-            <Text className="text-sm font-medium text-foreground underline">Sign in</Text>
+            <Text style={s.link}>Sign in</Text>
           </Link>
         </View>
       </KeyboardAvoidingView>

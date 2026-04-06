@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { View, Text, KeyboardAvoidingView, Platform } from "react-native"
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native"
 import { Link } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Button, TextField } from "heroui-native"
-import { api } from "@/lib/api"
+import { s, colors } from "@/lib/styles"
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("")
@@ -16,14 +15,11 @@ export default function ForgotPasswordScreen() {
     setError("")
     setLoading(true)
     try {
-      await fetch(
-        `${__DEV__ ? "http://localhost:3000" : "https://asakiri.com"}/api/auth/request-password-reset`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.trim(), redirectTo: "/reset-password" }),
-        },
-      )
+      await fetch("https://asakiri.com/api/auth/request-password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), redirectTo: "/reset-password" }),
+      })
       setSent(true)
     } catch (e: any) {
       setError(e.message ?? "Failed to send reset email")
@@ -34,14 +30,14 @@ export default function ForgotPasswordScreen() {
 
   if (sent) {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View className="flex-1 items-center justify-center px-6">
-          <Text className="text-2xl font-bold text-foreground">Check your email</Text>
-          <Text className="mt-2 text-center text-base text-muted-foreground">
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24 }}>
+          <Text style={s.h1}>Check your email</Text>
+          <Text style={[s.muted, { marginTop: 8, textAlign: "center" }]}>
             If an account exists for {email}, we sent a password reset link.
           </Text>
-          <Link href="/(auth)/sign-in" className="mt-6">
-            <Text className="text-sm font-medium text-foreground underline">Back to sign in</Text>
+          <Link href="/(auth)/sign-in" style={{ marginTop: 24 }}>
+            <Text style={s.link}>Back to sign in</Text>
           </Link>
         </View>
       </SafeAreaView>
@@ -49,35 +45,32 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 justify-center px-6"
+        style={{ flex: 1, justifyContent: "center", paddingHorizontal: 24 }}
       >
-        <Text className="mb-2 text-2xl font-bold text-foreground">Forgot password</Text>
-        <Text className="mb-6 text-base text-muted-foreground">Enter your email to receive a reset link.</Text>
+        <Text style={s.h1}>Forgot password</Text>
+        <Text style={[s.muted, { marginBottom: 24 }]}>Enter your email to receive a reset link.</Text>
 
         {error ? (
-          <View className="mb-4 rounded-xl bg-danger/10 px-4 py-3">
-            <Text className="text-sm text-danger">{error}</Text>
+          <View style={s.errorBox}>
+            <Text style={s.errorText}>{error}</Text>
           </View>
         ) : null}
 
-        <View className="gap-4">
-          <TextField
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Button onPress={handleSubmit} isDisabled={loading}>
-            {loading ? "Sending..." : "Send reset link"}
-          </Button>
+        <View style={{ gap: 16 }}>
+          <View style={{ gap: 6 }}>
+            <Text style={s.label}>Email</Text>
+            <TextInput style={s.input} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholder="you@example.com" placeholderTextColor={colors.muted} />
+          </View>
+          <Pressable style={[s.buttonPrimary, loading && { opacity: 0.5 }]} onPress={handleSubmit} disabled={loading}>
+            <Text style={s.buttonPrimaryText}>{loading ? "Sending..." : "Send reset link"}</Text>
+          </Pressable>
         </View>
 
-        <Link href="/(auth)/sign-in" className="mt-6 self-center">
-          <Text className="text-sm text-muted-foreground underline">Back to sign in</Text>
+        <Link href="/(auth)/sign-in" style={{ marginTop: 24, alignSelf: "center" }}>
+          <Text style={[s.muted, { textDecorationLine: "underline" }]}>Back to sign in</Text>
         </Link>
       </KeyboardAvoidingView>
     </SafeAreaView>

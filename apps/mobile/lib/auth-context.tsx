@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
-import { api, loadToken, clearToken, signIn as apiSignIn, signUp as apiSignUp, signOut as apiSignOut } from "./api"
+import { api, loadToken, clearToken, sessionToken, signIn as apiSignIn, signUp as apiSignUp, signOut as apiSignOut } from "./api"
 
 type User = {
   id: string
@@ -41,9 +41,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    loadToken()
-      .then(refresh)
-      .finally(() => setLoading(false))
+    const init = async () => {
+      try {
+        await loadToken()
+        console.log("[Auth] token loaded:", sessionToken ? "yes" : "none")
+        if (sessionToken) await refresh()
+      } catch (e) {
+        console.log("[Auth] init error:", e)
+      }
+      console.log("[Auth] setting loading false")
+      setLoading(false)
+    }
+    init()
   }, [refresh])
 
   const signIn = async (email: string, password: string) => {

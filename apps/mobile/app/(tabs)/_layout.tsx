@@ -3,7 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react-native"
 import { BookOpen02Icon, RepeatIcon, Compass01Icon, UserIcon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/lib/auth-context"
 import { useColors } from "@/lib/use-colors"
-import { ActivityIndicator, View } from "react-native"
+import { ActivityIndicator, View } from "@/tw"
 
 export default function TabLayout() {
   const { user, loading } = useAuth()
@@ -19,16 +19,16 @@ export default function TabLayout() {
 
   if (!user) return <Redirect href="/(auth)/welcome" />
 
+  const screenOptions = {
+    headerShown: false as const,
+    tabBarActiveTintColor: colors.primary,
+    tabBarInactiveTintColor: colors.muted,
+    tabBarStyle: { paddingBottom: 4, height: 56, backgroundColor: colors.background, borderTopColor: colors.border },
+    tabBarLabelStyle: { fontSize: 11, fontWeight: "600" as const },
+  }
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.muted,
-        tabBarStyle: { paddingBottom: 4, height: 56, backgroundColor: colors.background, borderTopColor: colors.border },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
-      }}
-    >
+    <Tabs screenOptions={screenOptions}>
       <Tabs.Screen
         name="learn"
         options={{
