@@ -4,6 +4,7 @@ import { admin } from "better-auth/plugins/admin"
 import { hashPassword as defaultHash, verifyPassword as defaultVerify } from "better-auth/crypto"
 import bcrypt from "bcryptjs"
 import nodemailer from "nodemailer"
+import { eq } from "drizzle-orm"
 import { db } from "./db"
 import * as schema from "@/schema"
 
@@ -47,6 +48,13 @@ export const auth = betterAuth({
         subject: "Reset your password — Asakiri",
         html: `<p>Click the link below to reset your password:</p><p><a href="${url}">Reset password</a></p>`,
       })
+    },
+    afterResetPassword: async (user: { id: string }) => {
+      // Clicking a reset link proves email ownership — mark as verified
+      await db
+        .update(schema.user)
+        .set({ emailVerified: true })
+        .where(eq(schema.user.id, user.id))
     },
     password: {
       hash: defaultHash,
