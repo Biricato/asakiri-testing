@@ -10,6 +10,8 @@ export async function middleware(req: NextRequest) {
     path.startsWith("/api/upload") ||
     path.startsWith("/sign-in") ||
     path.startsWith("/sign-up") ||
+    path.startsWith("/forgot-password") ||
+    path.startsWith("/reset-password") ||
     path.startsWith("/courses")
   ) {
     return NextResponse.next()

@@ -39,6 +39,15 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: smtpConfigured,
+    sendResetPassword: async ({ user, url }) => {
+      if (!transporter) return
+      await transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to: user.email,
+        subject: "Reset your password — Asakiri",
+        html: `<p>Click the link below to reset your password:</p><p><a href="${url}">Reset password</a></p>`,
+      })
+    },
     password: {
       hash: defaultHash,
       verify: async ({ hash, password }) => {

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { signUp } from "@/lib/auth-client"
+import { signUp, sendVerificationEmail } from "@/lib/auth-client"
 import { Button, Input, Label, Card } from "@heroui/react"
 
 export default function SignUpPage() {
@@ -38,6 +38,16 @@ export default function SignUpPage() {
     router.refresh()
   }
 
+  const [resending, setResending] = useState(false)
+  const [resent, setResent] = useState(false)
+
+  async function handleResend() {
+    setResending(true)
+    await sendVerificationEmail({ email })
+    setResent(true)
+    setResending(false)
+  }
+
   if (emailSent) {
     return (
       <div className="flex min-h-svh items-center justify-center p-4">
@@ -51,6 +61,15 @@ export default function SignUpPage() {
               We sent a verification link to <strong>{email}</strong>. Click the link to activate your account.
             </Card.Description>
           </Card.Header>
+          <Card.Content className="flex justify-center">
+            <Button
+              variant="outline"
+              onPress={handleResend}
+              isDisabled={resending || resent}
+            >
+              {resent ? "Email sent!" : resending ? "Sending..." : "Resend email"}
+            </Button>
+          </Card.Content>
           <Card.Footer className="justify-center">
             <p className="text-muted text-sm">
               Already verified?{" "}
