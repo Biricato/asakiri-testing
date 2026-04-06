@@ -161,8 +161,8 @@ export async function checkLearnerMembership(
 export function getPatreonOAuthUrl(role: "creator" | "learner", state: string): string {
   const scopes =
     role === "creator"
-      ? "identity campaigns campaigns.members"
-      : "identity identity.memberships"
+      ? "identity campaigns"
+      : "identity"
 
   const redirectUri = `${process.env.BETTER_AUTH_URL ?? "http://localhost:3000"}/api/patreon/callback`
 
@@ -202,15 +202,33 @@ export async function exchangePatreonCode(code: string): Promise<{
 export async function getPatreonIdentity(
   accessToken: string,
 ): Promise<{ userId: string; campaignId: string | null }> {
-  const res = await fetch(
-    `${PATREON_API}/identity?include=campaign&fields%5Buser%5D=`,
+  // Get user ID
+  const identityRes = await fetch(
+    `${PATREON_API}/identity?fields%5Buser%5D=email,full_name`,
     { headers: { Authorization: `Bearer ${accessToken}` } },
   )
-  if (!res.ok) throw new Error("Failed to get Patreon identity")
+  if (!identityRes.ok) {
+    const body = await identityRes.text().catch(() => "")
+    throw new Error(`Patreon identity failed (${identityRes.status}): ${body}`)
+  }
 
-  const data = await res.json()
-  const userId = data.data.id
-  const campaign = (data.included ?? []).find((i: any) => i.type === "campaign")
+  const identityData = await identityRes.json()
+  const userId = identityData.data.id
 
-  return { userId, campaignId: campaign?.id ?? null }
+  // Try to get campaign ID (only works for creators with the campaigns scope)
+  let campaignId: string | null = null
+  try {
+    const campaignsRes = await fetch(
+      `${PATREON_API}/campaigns`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    )
+    if (campaignsRes.ok) {
+      const campaignsData = await campaignsRes.json()
+      campaignId = campaignsData.data?.[0]?.id ?? null
+    }
+  } catch {
+    // Not a creator or no campaigns scope — that's fine
+  }
+
+  return { userId, campaignId }
 }
