@@ -113,17 +113,17 @@
     transform: translateY(2px);
     box-shadow: 0 2px 0 oklch(0.30 0.12 150);
   }
-  .button[data-variant="outline"] {
+  .button--outline {
     box-shadow: 0 3px 0 oklch(0.86 0 0);
   }
-  .button[data-variant="outline"]:active:not(:disabled) {
+  .button--outline:active:not(:disabled) {
     box-shadow: 0 1px 0 oklch(0.86 0 0);
   }
-  .button[data-variant="ghost"] {
+  .button--ghost {
     box-shadow: none;
     font-weight: 600;
   }
-  .button[data-variant="ghost"]:active:not(:disabled) {
+  .button--ghost:active:not(:disabled) {
     box-shadow: none;
     transform: none;
   }
@@ -231,20 +231,20 @@
   [data-theme="dark"] .button:active:not(:disabled) {
     box-shadow: 0 2px 0 oklch(0.35 0.12 150);
   }
-  .dark .button[data-variant="outline"],
-  [data-theme="dark"] .button[data-variant="outline"] {
+  .dark .button--outline,
+  [data-theme="dark"] .button--outline {
     box-shadow: 0 3px 0 oklch(0.08 0.005 250);
   }
-  .dark .button[data-variant="outline"]:active:not(:disabled),
-  [data-theme="dark"] .button[data-variant="outline"]:active:not(:disabled) {
+  .dark .button--outline:active:not(:disabled),
+  [data-theme="dark"] .button--outline:active:not(:disabled) {
     box-shadow: 0 1px 0 oklch(0.08 0.005 250);
   }
-  .dark .button[data-variant="ghost"],
-  [data-theme="dark"] .button[data-variant="ghost"] {
+  .dark .button--ghost,
+  [data-theme="dark"] .button--ghost {
     box-shadow: none;
   }
-  .dark .button[data-variant="ghost"]:active:not(:disabled),
-  [data-theme="dark"] .button[data-variant="ghost"]:active:not(:disabled) {
+  .dark .button--ghost:active:not(:disabled),
+  [data-theme="dark"] .button--ghost:active:not(:disabled) {
     box-shadow: none;
     transform: none;
   }
