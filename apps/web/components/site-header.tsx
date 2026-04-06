@@ -68,7 +68,7 @@ export async function SiteHeader() {
           {showGithub && <GitHubButton url={githubUrl} />}
           {showDeploy && (
             <a href={`https://vercel.com/new/clone?repository-url=${encodeURIComponent(githubUrl)}`} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm">Deploy</Button>
+              <Button size="sm">Deploy</Button>
             </a>
           )}
           <ThemeToggle />

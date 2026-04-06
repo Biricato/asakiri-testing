@@ -84,7 +84,7 @@ export default async function AppLayout({
                   {showGh && <GitHubButton url={ghUrl} />}
                   {showDep && (
                     <a href={`https://vercel.com/new/clone?repository-url=${encodeURIComponent(ghUrl)}`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm">Deploy</Button>
+                      <Button size="sm">Deploy</Button>
                     </a>
                   )}
                 </>

@@ -31,6 +31,8 @@ export async function getSettings(): Promise<SiteSettings> {
     show_deploy_button:
       (map.show_deploy_button as SiteSettings["show_deploy_button"]) ??
       defaultSettings.show_deploy_button,
+    privacy_policy: map.privacy_policy ?? defaultSettings.privacy_policy,
+    terms_of_service: map.terms_of_service ?? defaultSettings.terms_of_service,
   }
 }
 

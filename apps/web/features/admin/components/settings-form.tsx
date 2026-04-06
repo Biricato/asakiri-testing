@@ -28,6 +28,8 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
         discord_url: formData.get("discord_url") as string,
         show_github_button: formData.get("show_github_button") as SiteSettings["show_github_button"],
         show_deploy_button: formData.get("show_deploy_button") as SiteSettings["show_deploy_button"],
+        privacy_policy: formData.get("privacy_policy") as string,
+        terms_of_service: formData.get("terms_of_service") as string,
       }
 
       const result = await updateSettings(data)
@@ -153,6 +155,18 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
               </Select.Popover>
             </Select>
             <p className="text-muted text-xs">Shows a &ldquo;Deploy your own&rdquo; button in the header linking to the GitHub fork.</p>
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label htmlFor="privacy_policy">Privacy Policy</Label>
+            <TextArea id="privacy_policy" name="privacy_policy" defaultValue={settings.privacy_policy} rows={6} className="w-full" />
+            <p className="text-muted text-xs">Shown at /privacy. Supports plain text. Leave empty to hide the link.</p>
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label htmlFor="terms_of_service">Terms of Service</Label>
+            <TextArea id="terms_of_service" name="terms_of_service" defaultValue={settings.terms_of_service} rows={6} className="w-full" />
+            <p className="text-muted text-xs">Shown at /terms. Supports plain text. Leave empty to hide the link.</p>
           </div>
 
           <Button type="submit" isDisabled={pending}>

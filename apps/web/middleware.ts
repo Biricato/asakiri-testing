@@ -12,6 +12,8 @@ export async function middleware(req: NextRequest) {
     path.startsWith("/sign-up") ||
     path.startsWith("/forgot-password") ||
     path.startsWith("/reset-password") ||
+    path.startsWith("/privacy") ||
+    path.startsWith("/terms") ||
     path.startsWith("/courses")
   ) {
     return NextResponse.next()
