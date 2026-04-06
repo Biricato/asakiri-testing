@@ -6,6 +6,7 @@ import { enrollment, publishedCourse } from "@/schema/learning"
 import { course, unit, unitNode, lesson } from "@/schema/course"
 import { exerciseGroup } from "@/schema/exercise"
 import { lessonProgress } from "@/schema/learning"
+import { lessonPatreonTier } from "@/schema/patreon"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import type { EnrolledCourse, LearningUnit } from "../types"
@@ -99,6 +100,7 @@ export async function getLearningPath(
         nodes.map(async (n) => {
           let title = "Unknown"
           let completed = false
+          let patreonTier: string | null = null
 
           if (n.type === "lesson" && n.lessonId) {
             const rows = await db
@@ -108,6 +110,13 @@ export async function getLearningPath(
               .limit(1)
             title = rows[0]?.title ?? "Untitled lesson"
             completed = completedLessonIds.has(n.lessonId)
+
+            const tierRows = await db
+              .select()
+              .from(lessonPatreonTier)
+              .where(eq(lessonPatreonTier.lessonId, n.lessonId))
+              .limit(1)
+            patreonTier = tierRows[0]?.tierTitle ?? null
           } else if (n.type === "exercise_group" && n.exerciseGroupId) {
             const rows = await db
               .select()
@@ -117,7 +126,7 @@ export async function getLearningPath(
             title = rows[0]?.title ?? "Exercises"
           }
 
-          return { ...n, title, completed }
+          return { ...n, title, completed, patreonTier }
         }),
       )
 

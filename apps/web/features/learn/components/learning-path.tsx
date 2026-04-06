@@ -6,6 +6,7 @@ import {
   BookOpen02Icon,
   GridTableIcon,
   CheckmarkCircle02Icon,
+  SquareLock02Icon,
 } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/cn"
 import type { LearningUnit } from "../types"
@@ -64,6 +65,12 @@ export function LearningPath({
                     )}
                   </div>
                   <span className="text-sm font-medium">{n.title}</span>
+                  {n.patreonTier && (
+                    <span className="ml-auto flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+                      <HugeiconsIcon icon={SquareLock02Icon} size={12} />
+                      {n.patreonTier}
+                    </span>
+                  )}
                 </Link>
               )
             })}

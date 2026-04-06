@@ -18,6 +18,7 @@ export type LearningNode = {
   order: number
   title: string
   completed: boolean
+  patreonTier: string | null
 }
 
 export type LearningUnit = {

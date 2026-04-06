@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getCourse } from "@/features/course/actions/courses"
+import { getCoursePatreonLink, getCourseTiers, getLessonTiersForCourse } from "@/features/course/actions/patreon"
 import { UnitList } from "@/features/course/components/unit-list"
 import { PublishButton } from "@/features/publish/components/publish-button"
 import { PageHeader } from "@/components/page-header"
@@ -17,6 +18,10 @@ export default async function CourseOverviewPage({
   const course = await getCourse(courseId)
   if (!course) notFound()
 
+  const patreonLink = await getCoursePatreonLink(courseId).catch(() => null)
+  const patreonTiers = patreonLink ? await getCourseTiers(courseId).catch(() => []) : []
+  const lessonTiers = patreonLink ? await getLessonTiersForCourse(courseId).catch(() => ({})) : {}
+
   return (
     <div className="flex min-h-svh flex-col">
       <PageHeader backHref="/create" label="Course Builder" title={course.title}>
@@ -27,7 +32,7 @@ export default async function CourseOverviewPage({
       </PageHeader>
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-3xl">
-          <UnitList courseId={courseId} units={course.units} />
+          <UnitList courseId={courseId} units={course.units} patreonTiers={patreonTiers} lessonTiers={lessonTiers} />
         </div>
       </main>
     </div>
