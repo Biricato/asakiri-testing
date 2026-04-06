@@ -180,6 +180,7 @@ export async function exchangePatreonCode(code: string): Promise<{
   refresh_token: string
   expires_in: number
 }> {
+  const redirectUri = `${process.env.BETTER_AUTH_URL ?? "http://localhost:3000"}/api/patreon/callback`
   const res = await fetch(TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -188,10 +189,13 @@ export async function exchangePatreonCode(code: string): Promise<{
       grant_type: "authorization_code",
       client_id: process.env.PATREON_CLIENT_ID!,
       client_secret: process.env.PATREON_CLIENT_SECRET!,
-      redirect_uri: `${process.env.BETTER_AUTH_URL ?? "http://localhost:3000"}/api/patreon/callback`,
+      redirect_uri: redirectUri,
     }),
   })
-  if (!res.ok) throw new Error("Failed to exchange Patreon code")
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(`Patreon token exchange failed (${res.status}): ${body}`)
+  }
   return res.json()
 }
 

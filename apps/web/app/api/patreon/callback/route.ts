@@ -83,7 +83,9 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.redirect(new URL(state.returnTo, req.url))
-  } catch {
-    return NextResponse.redirect(new URL("/?error=patreon_oauth_failed", req.url))
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "unknown"
+    console.error("Patreon OAuth error:", msg)
+    return NextResponse.redirect(new URL(`/?error=patreon_oauth_failed&detail=${encodeURIComponent(msg)}`, req.url))
   }
 }
