@@ -2,7 +2,7 @@ import { NextRequest } from "next/server"
 import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { exerciseGroup, exerciseVariant, exerciseOption } from "@/schema/exercise"
-import { json, error } from "../../../helpers"
+import { json, error, getSession, checkExercisePatreonGate } from "../../../helpers"
 
 export async function GET(
   req: NextRequest,
@@ -12,6 +12,13 @@ export async function GET(
 
   const rows = await db.select().from(exerciseGroup).where(eq(exerciseGroup.id, groupId)).limit(1)
   if (!rows[0]) return error("Exercise group not found", 404)
+
+  // Check Patreon gate
+  const session = await getSession(req)
+  if (session) {
+    const gate = await checkExercisePatreonGate(groupId, rows[0].courseId, session.user.id)
+    if (gate) return gate
+  }
 
   const rawVariants = await db
     .select({

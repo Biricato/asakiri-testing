@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, ActivityIndicator } from "react-nativ
 import { useLocalSearchParams, router } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { HugeiconsIcon } from "@hugeicons/react-native"
-import { ArrowLeft01Icon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { ArrowLeft01Icon, CheckmarkCircle02Icon, SquareLock02Icon } from "@hugeicons/core-free-icons"
 import { api } from "@/lib/api"
 import { useColors } from "@/lib/use-colors"
 import { s } from "@/lib/styles"
@@ -63,10 +63,26 @@ export default function ExerciseScreen() {
   const [loading, setLoading] = useState(true)
   const [done, setDone] = useState(false)
   const [score, setScore] = useState({ correct: 0, total: 0 })
+  const [patreonGate, setPatreonGate] = useState<{ tierTitle: string; connected: boolean } | null>(null)
 
   useEffect(() => {
-    api<{ group: { title: string }; variants: Variant[] }>(`/api/v1/learn/exercise/${id}`)
-      .then((d) => setVariants(d.variants))
+    fetch(`${require("@/lib/api").getServerUrl()}/api/v1/learn/exercise/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Origin": require("@/lib/api").getServerUrl(),
+        ...(require("@/lib/api").sessionToken ? { "Authorization": `Bearer ${require("@/lib/api").sessionToken}` } : {}),
+      },
+    })
+      .then(async (res) => {
+        if (res.status === 403) {
+          const body = await res.json()
+          setPatreonGate({ tierTitle: body.tierTitle, connected: body.connected })
+          return
+        }
+        if (!res.ok) throw new Error("Failed")
+        const d = await res.json()
+        setVariants(d.variants)
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [id])
@@ -114,6 +130,36 @@ export default function ExerciseScreen() {
       setAnswered(false)
       setIsCorrect(false)
     }
+  }
+
+  if (patreonGate) {
+    return (
+      <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, borderBottomWidth: 1, borderBottomColor: colors.border, paddingHorizontal: 16, paddingVertical: 12 }}>
+          <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={18} color={colors.foreground} />
+          </Pressable>
+          <Text style={{ flex: 1, fontSize: 18, fontWeight: "bold", color: colors.foreground }}>Locked</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24 }}>
+          <HugeiconsIcon icon={SquareLock02Icon} size={48} color={colors.muted} />
+          <Text style={{ marginTop: 16, fontSize: 20, fontWeight: "bold", color: colors.foreground, textAlign: "center" }}>
+            Patreon supporters only
+          </Text>
+          <Text style={{ marginTop: 8, fontSize: 14, color: colors.muted, textAlign: "center" }}>
+            This exercise requires the {patreonGate.tierTitle} tier on Patreon.
+          </Text>
+          {!patreonGate.connected && (
+            <Text style={{ marginTop: 12, fontSize: 13, color: colors.muted, textAlign: "center" }}>
+              Connect your Patreon account in Settings to verify your membership.
+            </Text>
+          )}
+          <Pressable style={[s.buttonOutline, { marginTop: 24, paddingHorizontal: 24 }]} onPress={() => router.back()}>
+            <Text style={s.buttonOutlineText}>Go back</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    )
   }
 
   if (loading) {
