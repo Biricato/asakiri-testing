@@ -28,11 +28,12 @@ export async function api<T = any>(
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    "Origin": API_URL,
     ...(options.headers as Record<string, string>),
   }
 
   if (sessionToken) {
-    headers["Cookie"] = `better-auth.session_token=${sessionToken}`
+    headers["Authorization"] = `Bearer ${sessionToken}`
   }
 
   const controller = new AbortController()
@@ -56,7 +57,7 @@ export async function api<T = any>(
 export async function signIn(email: string, password: string) {
   const res = await fetch(`${API_URL}/api/auth/sign-in/email`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Origin": API_URL },
     body: JSON.stringify({ email, password }),
   })
 
@@ -65,20 +66,26 @@ export async function signIn(email: string, password: string) {
     throw new Error(body.message ?? "Sign in failed")
   }
 
-  // Extract session token from set-cookie
-  const cookies = res.headers.get("set-cookie") ?? ""
-  const match = cookies.match(/better-auth\.session_token=([^;]+)/)
-  if (match?.[1]) {
-    await saveToken(match[1])
+  const data = await res.json()
+
+  // Better Auth returns token in response body
+  const token = data?.token ?? data?.session?.token
+  console.log("[Auth] sign-in response keys:", Object.keys(data))
+  console.log("[Auth] token found:", token ? token.slice(0, 20) + "..." : "none")
+  if (token) {
+    await saveToken(token)
+    console.log("[Auth] token saved from response body")
+  } else {
+    console.log("[Auth] full response:", JSON.stringify(data).slice(0, 500))
   }
 
-  return res.json()
+  return data
 }
 
 export async function signUp(name: string, email: string, password: string) {
   const res = await fetch(`${API_URL}/api/auth/sign-up/email`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Origin": API_URL },
     body: JSON.stringify({ name, email, password }),
   })
 
@@ -87,21 +94,29 @@ export async function signUp(name: string, email: string, password: string) {
     throw new Error(body.message ?? "Sign up failed")
   }
 
-  const cookies = res.headers.get("set-cookie") ?? ""
-  const match = cookies.match(/better-auth\.session_token=([^;]+)/)
-  if (match?.[1]) {
-    await saveToken(match[1])
+  const data = await res.json()
+
+  const token = data?.token ?? data?.session?.token
+  if (token) {
+    await saveToken(token)
+  } else {
+    const cookies = res.headers.get("set-cookie") ?? ""
+    const match = cookies.match(/better-auth\.session_token=([^;]+)/)
+    if (match?.[1]) {
+      await saveToken(match[1])
+    }
   }
 
-  return res.json()
+  return data
 }
 
 export async function signOut() {
   await fetch(`${API_URL}/api/auth/sign-out`, {
     method: "POST",
-    headers: sessionToken
-      ? { Cookie: `better-auth.session_token=${sessionToken}` }
-      : {},
+    headers: {
+      "Origin": API_URL,
+      ...(sessionToken ? { "Authorization": `Bearer ${sessionToken}` } : {}),
+    },
   }).catch(() => {})
   await clearToken()
 }

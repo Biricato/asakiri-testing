@@ -3,7 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react-native"
 import { BookOpen02Icon, RepeatIcon, Compass01Icon, UserIcon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/lib/auth-context"
 import { useColors } from "@/lib/use-colors"
-import { ActivityIndicator, View } from "@/tw"
+import { ActivityIndicator, View } from "react-native"
 
 export default function TabLayout() {
   const { user, loading } = useAuth()
@@ -23,14 +23,14 @@ export default function TabLayout() {
     headerShown: false as const,
     tabBarActiveTintColor: colors.primary,
     tabBarInactiveTintColor: colors.muted,
-    tabBarStyle: { paddingBottom: 4, height: 56, backgroundColor: colors.background, borderTopColor: colors.border },
+    tabBarStyle: { paddingBottom: 24, paddingTop: 0, height: 76, backgroundColor: colors.background, borderTopColor: colors.border, borderTopWidth: 0.5 },
     tabBarLabelStyle: { fontSize: 11, fontWeight: "600" as const },
   }
 
   return (
     <Tabs screenOptions={screenOptions}>
       <Tabs.Screen
-        name="learn"
+        name="learn/index"
         options={{
           title: "Learn",
           tabBarIcon: ({ color, size }) => (
@@ -39,7 +39,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="practice"
+        name="practice/index"
         options={{
           title: "Practice",
           tabBarIcon: ({ color, size }) => (
@@ -48,7 +48,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="explore/index"
         options={{
           title: "Explore",
           tabBarIcon: ({ color, size }) => (
@@ -57,7 +57,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="profile/index"
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => (

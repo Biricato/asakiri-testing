@@ -34,8 +34,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(async () => {
     try {
       const data = await api<{ user: User }>("/api/v1/auth/session")
+      console.log("[Auth] session response:", JSON.stringify(data))
       setUser(data.user)
-    } catch {
+    } catch (e) {
+      console.log("[Auth] session check failed:", e)
       setUser(null)
     }
   }, [])

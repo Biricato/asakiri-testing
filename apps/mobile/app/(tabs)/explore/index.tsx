@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react"
-import { View, Text, ScrollView, Pressable, Image, ActivityIndicator } from "@/tw"
-import { TextInput } from "@/tw"
+import { View, Text, ScrollView, Pressable, Image, ActivityIndicator, TextInput } from "react-native"
 import { router } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Chip } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react-native"
 import { Search01Icon } from "@hugeicons/core-free-icons"
 import { api } from "@/lib/api"
 import { useColors } from "@/lib/use-colors"
+import { s, colors as staticColors } from "@/lib/styles"
 
 type Course = {
   id: string
@@ -38,54 +37,56 @@ export default function ExploreScreen() {
   }, [search])
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="border-b border-border px-4 py-3">
-        <Text className="text-lg font-bold text-foreground">Explore</Text>
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border, paddingHorizontal: 16, paddingVertical: 12 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold", color: colors.foreground }}>Explore</Text>
       </View>
 
-      <View className="flex-row items-center gap-2 border-b border-border px-4 py-2">
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, borderBottomWidth: 1, borderBottomColor: colors.border, paddingHorizontal: 16, paddingVertical: 8 }}>
         <HugeiconsIcon icon={Search01Icon} size={18} color={colors.muted} />
         <TextInput
           placeholder="Search courses..."
-          placeholderTextColor="#999"
+          placeholderTextColor={colors.muted}
           value={search}
           onChangeText={setSearch}
-          className="flex-1 text-sm text-foreground"
+          style={{ flex: 1, fontSize: 14, color: colors.foreground }}
         />
       </View>
 
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" />
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
-        <ScrollView className="flex-1 px-4 py-4" contentContainerStyle={{ paddingBottom: 32 }}>
+        <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }} contentContainerStyle={{ paddingBottom: 32 }}>
           {courses.length === 0 ? (
-            <Text className="mt-8 text-center text-sm text-muted-foreground">No courses found.</Text>
+            <Text style={{ marginTop: 32, textAlign: "center", fontSize: 14, color: colors.muted }}>No courses found.</Text>
           ) : (
-            <View className="gap-4">
+            <View style={{ gap: 16 }}>
               {courses.map((c) => (
                 <Pressable
                   key={c.id}
-                  onPress={() => router.push(`/(tabs)/explore/${c.slug}`)}
-                  className="overflow-hidden rounded-2xl border border-border"
+                  onPress={() => router.push(`/course/${c.slug}`)}
+                  style={{ overflow: "hidden", borderRadius: 16, borderWidth: 1, borderColor: colors.border }}
                 >
                   {c.coverImageUrl && (
                     <Image
                       source={{ uri: c.coverImageUrl }}
-                      className="h-36 w-full"
+                      style={{ height: 144, width: "100%" }}
                       resizeMode="cover"
                     />
                   )}
-                  <View className="p-4">
-                    <Text className="text-base font-semibold text-foreground">{c.title}</Text>
-                    <Text className="mt-1 text-xs text-muted-foreground">
+                  <View style={{ padding: 16 }}>
+                    <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>{c.title}</Text>
+                    <Text style={{ marginTop: 4, fontSize: 12, color: colors.muted }}>
                       {c.sourceLanguage} → {c.targetLanguage}
                     </Text>
-                    <View className="mt-2 flex-row items-center gap-2">
-                      <Chip size="sm">{c.difficulty}</Chip>
+                    <View style={{ marginTop: 8, flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <View style={s.chip}>
+                        <Text style={s.chipText}>{c.difficulty}</Text>
+                      </View>
                       {c.creatorName && (
-                        <Text className="text-xs text-muted-foreground">by {c.creatorName}</Text>
+                        <Text style={{ fontSize: 12, color: colors.muted }}>by {c.creatorName}</Text>
                       )}
                     </View>
                   </View>

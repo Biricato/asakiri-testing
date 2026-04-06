@@ -1,13 +1,13 @@
 import { useState, useCallback } from "react"
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from "@/tw"
+import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native"
 import { router, useFocusEffect } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { Button } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react-native"
 import { Logout01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { api } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { useColors } from "@/lib/use-colors"
+import { s, colors as staticColors } from "@/lib/styles"
 
 type Stats = {
   lessonsCompleted: number
@@ -66,50 +66,58 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" />
+      <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     )
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView className="flex-1 px-4 py-4" contentContainerStyle={{ paddingBottom: 32 }}>
-        <Text className="text-2xl font-bold text-foreground">{profile?.user.name}</Text>
-        <Text className="text-sm text-muted-foreground">{profile?.user.email}</Text>
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }} contentContainerStyle={{ paddingBottom: 32 }}>
+        <Text style={{ fontSize: 24, fontWeight: "bold", color: colors.foreground }}>{profile?.user.name}</Text>
+        <Text style={{ fontSize: 14, color: colors.muted }}>{profile?.user.email}</Text>
 
         {/* Stats */}
-        <View className="mt-6 flex-row gap-3">
-          <View className="flex-1 rounded-2xl bg-surface-secondary p-4">
-            <Text className="text-2xl font-bold text-foreground">{profile?.stats.lessonsCompleted ?? 0}</Text>
-            <Text className="text-xs text-muted-foreground">Lessons</Text>
+        <View style={{ marginTop: 24, flexDirection: "row", gap: 12 }}>
+          <View style={{ flex: 1, borderRadius: 16, backgroundColor: colors.surface, padding: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: "bold", color: colors.foreground }}>{profile?.stats.lessonsCompleted ?? 0}</Text>
+            <Text style={{ fontSize: 12, color: colors.muted }}>Lessons</Text>
           </View>
-          <View className="flex-1 rounded-2xl bg-surface-secondary p-4">
-            <Text className="text-2xl font-bold text-foreground">{profile?.stats.accuracy ?? 0}%</Text>
-            <Text className="text-xs text-muted-foreground">Accuracy</Text>
+          <View style={{ flex: 1, borderRadius: 16, backgroundColor: colors.surface, padding: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: "bold", color: colors.foreground }}>{profile?.stats.accuracy ?? 0}%</Text>
+            <Text style={{ fontSize: 12, color: colors.muted }}>Accuracy</Text>
           </View>
-          <View className="flex-1 rounded-2xl bg-surface-secondary p-4">
-            <Text className="text-2xl font-bold text-foreground">{profile?.stats.dueReviews ?? 0}</Text>
-            <Text className="text-xs text-muted-foreground">Due</Text>
+          <View style={{ flex: 1, borderRadius: 16, backgroundColor: colors.surface, padding: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: "bold", color: colors.foreground }}>{profile?.stats.dueReviews ?? 0}</Text>
+            <Text style={{ fontSize: 12, color: colors.muted }}>Due</Text>
           </View>
         </View>
 
         {/* Course switcher */}
-        <Text className="mb-2 mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <Text style={{ marginBottom: 8, marginTop: 24, fontSize: 12, fontWeight: "600", textTransform: "uppercase", letterSpacing: 1, color: colors.muted }}>
           My Courses
         </Text>
-        <View className="gap-2">
+        <View style={{ gap: 8 }}>
           {courses.map((c) => (
             <Pressable
               key={c.courseId}
               onPress={() => switchCourse(c.courseId)}
-              className="flex-row items-center justify-between rounded-2xl bg-surface-secondary px-4 py-3"
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderRadius: 16,
+                backgroundColor: colors.surface,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
             >
               <View>
-                <Text className="text-sm font-medium text-foreground">{c.title}</Text>
-                <Text className="text-xs text-muted-foreground">
+                <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>{c.title}</Text>
+                <Text style={{ fontSize: 12, color: colors.muted }}>
                   {c.sourceLanguage} → {c.targetLanguage}
                 </Text>
               </View>
@@ -117,15 +125,18 @@ export default function ProfileScreen() {
             </Pressable>
           ))}
           {courses.length === 0 && (
-            <Text className="text-sm text-muted-foreground">No enrolled courses yet.</Text>
+            <Text style={{ fontSize: 14, color: colors.muted }}>No enrolled courses yet.</Text>
           )}
         </View>
 
         {/* Sign out */}
-        <Button variant="outline" className="mt-8" onPress={handleSignOut}>
+        <Pressable
+          style={[s.buttonOutline, { marginTop: 32, flexDirection: "row", justifyContent: "center", gap: 8 }]}
+          onPress={handleSignOut}
+        >
           <HugeiconsIcon icon={Logout01Icon} size={16} color={colors.foreground} />
-          <Text>Sign out</Text>
-        </Button>
+          <Text style={s.buttonOutlineText}>Sign out</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   )
