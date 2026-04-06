@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
 import { headers } from "next/headers"
@@ -13,6 +14,22 @@ import { SignOutButton } from "./(app)/sign-out-button"
 import { CoursePlaceholder } from "@/components/course-placeholder"
 import { Button, Chip, Card } from "@heroui/react"
 import type { HowItWorksStep, Feature, TeacherFeature, FAQ } from "@/features/admin/types"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings().catch(() => null)
+  const siteName = settings?.site_name ?? "Asakiri"
+  const tagline = settings?.site_tagline ?? "Language Learning Platform"
+  const heroDesc = settings?.hero_description ?? "Master languages through interactive courses built by expert teachers."
+
+  return {
+    title: `${siteName} — ${tagline}`,
+    description: heroDesc,
+    openGraph: {
+      title: `${siteName} — ${tagline}`,
+      description: heroDesc,
+    },
+  }
+}
 
 export default async function HomePage() {
   const [session, courses, settings] = await Promise.all([
@@ -38,6 +55,15 @@ export default async function HomePage() {
   const teacherDesc = settings?.for_teachers_description ?? ""
   const teacherCta = settings?.for_teachers_cta ?? ""
   const faqItems: FAQ[] = JSON.parse(settings?.faq ?? "[]")
+
+  const featuredSlugs = [
+    settings?.featured_course_1,
+    settings?.featured_course_2,
+    settings?.featured_course_3,
+  ].filter(Boolean) as string[]
+  const featuredCourses = featuredSlugs.length > 0
+    ? courses.filter((c) => featuredSlugs.includes(c.slug))
+    : []
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -169,6 +195,49 @@ export default async function HomePage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* Featured courses */}
+        {featuredCourses.length > 0 && (
+          <section className="mx-auto max-w-6xl px-4 py-16 md:px-6">
+            <h2 className="text-2xl font-semibold">Featured Courses</h2>
+            <p className="text-muted-foreground mt-2">
+              Hand-picked courses to get you started
+            </p>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredCourses.map((c) => (
+                <Link key={c.id} href={`/courses/${c.slug}`}>
+                  <Card className="h-full gap-2">
+                    {c.coverImageUrl ? (
+                      <img
+                        src={c.coverImageUrl}
+                        alt={c.title}
+                        className="pointer-events-none aspect-[4/3] w-full rounded-2xl object-cover select-none"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <CoursePlaceholder title={c.title} />
+                    )}
+                    <Card.Header>
+                      <Card.Title>{c.title}</Card.Title>
+                      <Card.Description>
+                        {c.sourceLanguage} → {c.targetLanguage}
+                      </Card.Description>
+                    </Card.Header>
+                    <Card.Footer className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <UserAvatar name={c.creatorName ?? "?"} size={20} />
+                        <span className="text-xs">{c.creatorName ?? "Unknown"}</span>
+                      </div>
+                      <Chip variant="soft" className="text-xs capitalize">
+                        {c.difficulty}
+                      </Chip>
+                    </Card.Footer>
+                  </Card>
+                </Link>
+              ))}
             </div>
           </section>
         )}

@@ -28,6 +28,9 @@ export type SiteSettings = {
   for_teachers_description: string
   for_teachers_cta: string
   faq: string
+  featured_course_1: string
+  featured_course_2: string
+  featured_course_3: string
 }
 
 export const defaultSettings: SiteSettings = {
@@ -131,6 +134,9 @@ We may modify these terms at any time. Continued use of the platform after chang
 
 10. Contact
 For questions about these terms, please contact the platform administrator.`,
+  featured_course_1: "",
+  featured_course_2: "",
+  featured_course_3: "",
 }
 
 export type InviteStatus = "pending" | "used" | "expired"

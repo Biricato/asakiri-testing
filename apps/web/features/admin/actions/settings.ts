@@ -43,6 +43,9 @@ export async function getSettings(): Promise<SiteSettings> {
     for_teachers_description: map.for_teachers_description ?? defaultSettings.for_teachers_description,
     for_teachers_cta: map.for_teachers_cta ?? defaultSettings.for_teachers_cta,
     faq: map.faq ?? defaultSettings.faq,
+    featured_course_1: map.featured_course_1 ?? defaultSettings.featured_course_1,
+    featured_course_2: map.featured_course_2 ?? defaultSettings.featured_course_2,
+    featured_course_3: map.featured_course_3 ?? defaultSettings.featured_course_3,
   }
 }
 

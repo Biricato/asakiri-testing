@@ -8,7 +8,9 @@ import { updateSettings } from "../actions/settings"
 import { ImageUpload } from "./image-upload"
 import type { SiteSettings } from "../types"
 
-export function SettingsForm({ settings }: { settings: SiteSettings }) {
+type CourseOption = { slug: string; title: string }
+
+export function SettingsForm({ settings, courses = [] }: { settings: SiteSettings; courses?: CourseOption[] }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
@@ -41,6 +43,9 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
         for_teachers_description: formData.get("for_teachers_description") as string,
         for_teachers_cta: formData.get("for_teachers_cta") as string,
         faq: formData.get("faq") as string,
+        featured_course_1: formData.get("featured_course_1") as string,
+        featured_course_2: formData.get("featured_course_2") as string,
+        featured_course_3: formData.get("featured_course_3") as string,
       }
 
       const result = await updateSettings(data)
@@ -192,6 +197,34 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
             <Label htmlFor="hero_description">Hero Description</Label>
             <TextArea id="hero_description" name="hero_description" defaultValue={settings.hero_description} rows={3} className="w-full" />
           </div>
+        </Card.Content>
+      </Card>
+
+      <Card>
+        <Card.Header>
+          <Card.Title>Homepage — Featured Courses</Card.Title>
+          <Card.Description>Highlight up to 3 courses above the main catalog. Leave empty to hide.</Card.Description>
+        </Card.Header>
+        <Card.Content className="space-y-4">
+          {[1, 2, 3].map((n) => {
+            const key = `featured_course_${n}` as keyof SiteSettings
+            return (
+              <div key={n} className="grid gap-1.5">
+                <Label htmlFor={key}>Featured course {n}</Label>
+                <select
+                  id={key}
+                  name={key}
+                  defaultValue={settings[key]}
+                  className="w-full rounded-lg border border-[var(--field-border)] bg-[var(--field-background)] px-3 py-2 text-sm text-[var(--field-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--focus)]"
+                >
+                  <option value="">None</option>
+                  {courses.map((c) => (
+                    <option key={c.slug} value={c.slug}>{c.title}</option>
+                  ))}
+                </select>
+              </div>
+            )
+          })}
         </Card.Content>
       </Card>
 
