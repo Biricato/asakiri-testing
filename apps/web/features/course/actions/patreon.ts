@@ -12,6 +12,7 @@ import {
   exerciseGroupPatreonTier,
   type PatreonTier,
 } from "@/schema/patreon"
+import { canDeleteCourse } from "./permissions"
 
 export async function getCreatorPatreonStatus(userId: string) {
   const rows = await db
@@ -38,6 +39,9 @@ export async function linkCourseToPatreon(courseId: string) {
     .getSession({ headers: await headers() })
     .catch(() => null)
   if (!session) throw new Error("Unauthorized")
+
+  const isOwner = await canDeleteCourse(courseId, session.user.id, session.user.role ?? undefined)
+  if (!isOwner) throw new Error("Only the course owner can manage Patreon")
 
   const conn = await db
     .select()
@@ -66,6 +70,14 @@ export async function linkCourseToPatreon(courseId: string) {
 }
 
 export async function unlinkCourseFromPatreon(courseId: string) {
+  const session = await auth.api
+    .getSession({ headers: await headers() })
+    .catch(() => null)
+  if (!session) throw new Error("Unauthorized")
+
+  const isOwner = await canDeleteCourse(courseId, session.user.id, session.user.role ?? undefined)
+  if (!isOwner) throw new Error("Only the course owner can manage Patreon")
+
   await db.delete(coursePatreon).where(eq(coursePatreon.courseId, courseId))
   const { lesson } = await import("@/schema/course")
   const { exerciseGroup } = await import("@/schema/exercise")

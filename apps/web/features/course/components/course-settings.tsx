@@ -7,7 +7,7 @@ import { Button, Input, Label, Select, Card, ListBox, AlertDialog } from "@herou
 import { updateCourse, deleteCourse } from "../actions/courses"
 import type { Course } from "../types"
 
-export function CourseSettings({ course }: { course: Course }) {
+export function CourseSettings({ course, isOwner = true }: { course: Course; isOwner?: boolean }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -97,7 +97,7 @@ export function CourseSettings({ course }: { course: Course }) {
         </Card>
       </form>
 
-      <Card>
+      {isOwner && <Card>
         <Card.Header>
           <Card.Title>Danger Zone</Card.Title>
           <Card.Description>
@@ -127,7 +127,7 @@ export function CourseSettings({ course }: { course: Course }) {
             </AlertDialog.Dialog></AlertDialog.Container></AlertDialog.Backdrop>
           </AlertDialog>
         </Card.Content>
-      </Card>
+      </Card>}
     </div>
   )
 }

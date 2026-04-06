@@ -13,9 +13,10 @@ type Props = {
   isConnected: boolean // creator has Patreon connected
   isLinked: boolean // course is linked to Patreon campaign
   tiers: PatreonTier[]
+  isOwner?: boolean
 }
 
-export function PatreonSettings({ courseId, patreonConfigured, isConnected, isLinked, tiers }: Props) {
+export function PatreonSettings({ courseId, patreonConfigured, isConnected, isLinked, tiers, isOwner = true }: Props) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
@@ -91,9 +92,11 @@ export function PatreonSettings({ courseId, patreonConfigured, isConnected, isLi
                 </div>
               </div>
             )}
-            <Button onPress={handleUnlink} isDisabled={pending} variant="danger" size="sm">
-              {pending ? "Unlinking..." : "Unlink Patreon"}
-            </Button>
+            {isOwner && (
+              <Button onPress={handleUnlink} isDisabled={pending} variant="danger" size="sm">
+                {pending ? "Unlinking..." : "Unlink Patreon"}
+              </Button>
+            )}
           </div>
         )}
       </Card.Content>

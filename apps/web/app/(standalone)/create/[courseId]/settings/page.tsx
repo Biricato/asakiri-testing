@@ -51,7 +51,7 @@ export default async function CourseSettingsPage({
       <PageHeader backHref={`/create/${courseId}`} label="Course Details" title={course.title} />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl space-y-6">
-          <CourseSettings course={course} />
+          <CourseSettings course={course} isOwner={isOwner} />
           <CollaboratorSettings
             courseId={courseId}
             collaborators={collaborators}
@@ -59,6 +59,7 @@ export default async function CourseSettingsPage({
           />
           <PatreonSettings
             courseId={courseId}
+            isOwner={isOwner}
             patreonConfigured={patreonConfigured}
             isConnected={!!patreonStatus?.campaignId}
             isLinked={!!coursePatreonLink}
