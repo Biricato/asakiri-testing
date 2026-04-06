@@ -8,6 +8,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
   const githubUrl = settings?.github_url || "https://github.com/AsakiriLingo/asakiri"
   const discordUrl = settings?.discord_url || ""
   const showGithub = (settings?.show_github_button ?? "true") !== "false" && githubUrl
+  const supportEmail = settings?.support_email || ""
   const hasPrivacy = !!settings?.privacy_policy
   const hasTerms = !!settings?.terms_of_service
 
@@ -36,13 +37,16 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
             )}
           </div>
         </div>
-        {(hasPrivacy || hasTerms) && (
+        {(hasPrivacy || hasTerms || supportEmail) && (
           <div className="flex items-center gap-4 border-t border-border pt-4">
             {hasPrivacy && (
               <Link href="/privacy" className="text-muted text-xs hover:underline">Privacy Policy</Link>
             )}
             {hasTerms && (
               <Link href="/terms" className="text-muted text-xs hover:underline">Terms of Service</Link>
+            )}
+            {supportEmail && (
+              <a href={`mailto:${supportEmail}`} className="text-muted text-xs hover:underline">Contact</a>
             )}
           </div>
         )}

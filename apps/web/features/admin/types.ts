@@ -1,3 +1,8 @@
+export type HowItWorksStep = { title: string; description: string }
+export type Feature = { title: string; description: string }
+export type TeacherFeature = { title: string; description: string }
+export type FAQ = { question: string; answer: string }
+
 export type SiteSettings = {
   registration_mode: "open" | "invite_only"
   course_creation: "open" | "approved" | "admin_only"
@@ -8,10 +13,19 @@ export type SiteSettings = {
   hero_description: string
   github_url: string
   discord_url: string
+  support_email: string
   show_github_button: "true" | "false"
   show_deploy_button: "true" | "false"
   privacy_policy: string
   terms_of_service: string
+  // Homepage sections (stored as JSON strings in DB)
+  how_it_works: string
+  features: string
+  for_teachers: string
+  for_teachers_title: string
+  for_teachers_description: string
+  for_teachers_cta: string
+  faq: string
 }
 
 export const defaultSettings: SiteSettings = {
@@ -24,8 +38,38 @@ export const defaultSettings: SiteSettings = {
   hero_description: "Create engaging courses and learn through interactive exercises with spaced repetition. Learn at your own pace, track your progress, and master vocabulary naturally.",
   github_url: "https://github.com/AsakiriLingo/asakiri",
   discord_url: "",
+  support_email: "",
   show_github_button: "true",
   show_deploy_button: "true",
+  how_it_works: JSON.stringify([
+    { title: "Browse courses", description: "Explore courses created by expert teachers. Filter by language, level, and topic to find the perfect course for your goals." },
+    { title: "Enroll and learn", description: "Access structured lessons with rich content. Practice with interactive exercises including multiple choice, fill-in-the-blank, and sentence building." },
+    { title: "Master with SRS", description: "Review vocabulary at optimal intervals using spaced repetition. Track your progress and watch your fluency grow over time." },
+  ] satisfies HowItWorksStep[]),
+  features: JSON.stringify([
+    { title: "Interactive exercises", description: "Practice with multiple question types including MCQ, fill-in-the-blank, sentence builder, and word cloze exercises." },
+    { title: "Spaced repetition", description: "Master vocabulary with our SRS system that schedules reviews at scientifically optimal intervals for long-term retention." },
+    { title: "Progress tracking", description: "Monitor your learning journey with detailed statistics. See your completion rates, streak counts, and improvement over time." },
+    { title: "Rich lesson content", description: "Learn from multimedia lessons featuring text, images, videos, tables, and interactive elements for engaging learning." },
+    { title: "Self-paced learning", description: "Study on your schedule. Access lessons and exercises anytime, anywhere, and progress at your own comfortable pace." },
+    { title: "Expert teachers", description: "Learn from passionate educators who design structured courses with proven teaching methods and authentic materials." },
+  ] satisfies Feature[]),
+  for_teachers: JSON.stringify([
+    { title: "Rich lesson editor", description: "Create engaging lessons with our powerful editor. Add text formatting, images, videos, tables, and more with an intuitive interface." },
+    { title: "Exercise builder", description: "Design interactive exercises with multiple formats. Build word banks, create MCQs, design sentence builders, and set up spaced repetition schedules." },
+    { title: "Collaboration tools", description: "Invite co-authors to your courses. Work together with other teachers, manage permissions, and build comprehensive learning experiences." },
+  ] satisfies TeacherFeature[]),
+  for_teachers_title: "Share your expertise with the world",
+  for_teachers_description: "Asakiri provides powerful authoring tools to help you create professional language courses. Design structured lessons, build interactive exercises, and reach learners globally.",
+  for_teachers_cta: "Start creating your course",
+  faq: JSON.stringify([
+    { question: "Is Asakiri free to use?", answer: "Learners can browse and enroll in courses for free. Teachers can create and publish courses for free." },
+    { question: "What languages can I learn?", answer: "Asakiri supports courses for any language. The available languages depend on what our community of teachers has created. Browse the course catalog to see current offerings." },
+    { question: "How does spaced repetition work?", answer: "Spaced repetition (SRS) is a scientifically proven learning technique. Asakiri schedules vocabulary reviews at increasing intervals based on how well you remember each item. Words you struggle with appear more frequently, while mastered words are reviewed less often." },
+    { question: "Can I create my own course?", answer: "Yes! Any registered user can become a teacher. Use our powerful authoring tools to create lessons with rich content, design interactive exercises, and publish your course for learners worldwide." },
+    { question: "Do I need to complete courses in order?", answer: "That depends on how the teacher structured the course. Most courses are designed with a recommended order, but you can typically navigate to any lesson within an enrolled course and learn at your own pace." },
+    { question: "Can I track my learning progress?", answer: "Absolutely! Asakiri tracks your completion status for lessons, exercise performance, review streaks, and SRS schedules. You can monitor your progress through your learner dashboard." },
+  ] satisfies FAQ[]),
   privacy_policy: `Last updated: April 6, 2026
 
 1. Information We Collect

@@ -25,6 +25,7 @@ export async function getSettings(): Promise<SiteSettings> {
     site_tagline: map.site_tagline ?? defaultSettings.site_tagline,
     github_url: map.github_url ?? defaultSettings.github_url,
     discord_url: map.discord_url ?? defaultSettings.discord_url,
+    support_email: map.support_email ?? defaultSettings.support_email,
     show_github_button:
       (map.show_github_button as SiteSettings["show_github_button"]) ??
       defaultSettings.show_github_button,
@@ -33,6 +34,13 @@ export async function getSettings(): Promise<SiteSettings> {
       defaultSettings.show_deploy_button,
     privacy_policy: map.privacy_policy ?? defaultSettings.privacy_policy,
     terms_of_service: map.terms_of_service ?? defaultSettings.terms_of_service,
+    how_it_works: map.how_it_works ?? defaultSettings.how_it_works,
+    features: map.features ?? defaultSettings.features,
+    for_teachers: map.for_teachers ?? defaultSettings.for_teachers,
+    for_teachers_title: map.for_teachers_title ?? defaultSettings.for_teachers_title,
+    for_teachers_description: map.for_teachers_description ?? defaultSettings.for_teachers_description,
+    for_teachers_cta: map.for_teachers_cta ?? defaultSettings.for_teachers_cta,
+    faq: map.faq ?? defaultSettings.faq,
   }
 }
 

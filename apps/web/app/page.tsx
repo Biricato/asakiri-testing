@@ -8,9 +8,11 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { UserAvatar } from "@/components/user-avatar"
 import { GitHubButton } from "@/components/github-button"
 import { SiteFooter } from "@/components/site-footer"
+import { FAQSection } from "@/components/faq-section"
 import { SignOutButton } from "./(app)/sign-out-button"
 import { CoursePlaceholder } from "@/components/course-placeholder"
 import { Button, Chip, Card } from "@heroui/react"
+import type { HowItWorksStep, Feature, TeacherFeature, FAQ } from "@/features/admin/types"
 
 export default async function HomePage() {
   const [session, courses, settings] = await Promise.all([
@@ -28,6 +30,14 @@ export default async function HomePage() {
     ["admin", "creator"].includes(session.user.role ?? "") ||
     settings?.course_creation === "open"
   )
+
+  const howItWorks: HowItWorksStep[] = JSON.parse(settings?.how_it_works ?? "[]")
+  const features: Feature[] = JSON.parse(settings?.features ?? "[]")
+  const teacherFeatures: TeacherFeature[] = JSON.parse(settings?.for_teachers ?? "[]")
+  const teacherTitle = settings?.for_teachers_title ?? ""
+  const teacherDesc = settings?.for_teachers_description ?? ""
+  const teacherCta = settings?.for_teachers_cta ?? ""
+  const faqItems: FAQ[] = JSON.parse(settings?.faq ?? "[]")
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -138,13 +148,34 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* How it works */}
+        {howItWorks.length > 0 && (
+          <section className="border-t border-border bg-muted/30">
+            <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+              <h2 className="text-center text-2xl font-semibold">How it works</h2>
+              <p className="text-muted-foreground mx-auto mt-2 max-w-lg text-center">
+                Start your language learning journey in three simple steps
+              </p>
+              <div className="mt-12 grid gap-8 sm:grid-cols-3">
+                {howItWorks.map((step, i) => (
+                  <div key={i} className="text-center">
+                    <div className="bg-primary text-primary-foreground mx-auto flex size-10 items-center justify-center rounded-full text-lg font-semibold">
+                      {i + 1}
+                    </div>
+                    <h3 className="mt-4 font-semibold">{step.title}</h3>
+                    <p className="text-muted-foreground mt-2 text-sm">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Course catalog */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 md:px-6">
-          <h2 className="text-2xl font-semibold">Start learning today</h2>
+        <section className="mx-auto max-w-6xl px-4 py-16 md:px-6">
+          <h2 className="text-2xl font-semibold">Explore Courses</h2>
           <p className="text-muted-foreground mt-2">
-            Browse courses created by expert teachers. Each course includes structured
-            lessons, interactive exercises, and progress tracking to help you master
-            your target language.
+            Start learning with courses created by expert teachers
           </p>
 
           {courses.length > 0 ? (
@@ -187,6 +218,67 @@ export default async function HomePage() {
             </p>
           )}
         </section>
+
+        {/* Features */}
+        {features.length > 0 && (
+          <section className="border-t border-border bg-muted/30">
+            <div className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+              <h2 className="text-center text-2xl font-semibold">Everything you need to succeed</h2>
+              <p className="text-muted-foreground mx-auto mt-2 max-w-lg text-center">
+                Powerful features designed to make language learning effective and enjoyable
+              </p>
+              <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {features.map((f, i) => (
+                  <div key={i} className="rounded-xl border border-border p-6">
+                    <h3 className="font-semibold">{f.title}</h3>
+                    <p className="text-muted-foreground mt-2 text-sm">{f.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* For Teachers */}
+        {teacherFeatures.length > 0 && teacherTitle && (
+          <section className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-muted-foreground mb-2 text-xs font-semibold uppercase tracking-[0.3em]">For Teachers</p>
+              <h2 className="text-2xl font-semibold">{teacherTitle}</h2>
+              <p className="text-muted-foreground mt-3">{teacherDesc}</p>
+            </div>
+            <div className="mt-12 grid gap-6 sm:grid-cols-3">
+              {teacherFeatures.map((f, i) => (
+                <div key={i} className="rounded-xl border border-border p-6">
+                  <h3 className="font-semibold">{f.title}</h3>
+                  <p className="text-muted-foreground mt-2 text-sm">{f.description}</p>
+                </div>
+              ))}
+            </div>
+            {teacherCta && (
+              <div className="mt-10 text-center">
+                <Link href={session ? "/create" : "/sign-up"}>
+                  <Button size="lg">{teacherCta}</Button>
+                </Link>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* FAQ */}
+        {faqItems.length > 0 && (
+          <section className="border-t border-border bg-muted/30">
+            <div className="mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-24">
+              <h2 className="text-center text-2xl font-semibold">Frequently asked questions</h2>
+              <p className="text-muted-foreground mx-auto mt-2 max-w-lg text-center">
+                Everything you need to know about learning and teaching on {siteName}
+              </p>
+              <div className="mt-10">
+                <FAQSection items={faqItems} supportEmail={settings?.support_email || undefined} />
+              </div>
+            </div>
+          </section>
+        )}
       </main>
 
       <SiteFooter settings={settings} />
