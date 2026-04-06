@@ -6,6 +6,9 @@ export type SiteSettings = {
   site_tagline: string
   hero_title: string
   hero_description: string
+  github_url: string
+  discord_url: string
+  show_deploy_button: "true" | "false"
 }
 
 export const defaultSettings: SiteSettings = {
@@ -16,6 +19,9 @@ export const defaultSettings: SiteSettings = {
   site_tagline: "Language Learning Platform",
   hero_title: "Master languages through interactive courses built by expert teachers",
   hero_description: "Create engaging courses and learn through interactive exercises with spaced repetition. Learn at your own pace, track your progress, and master vocabulary naturally.",
+  github_url: "",
+  discord_url: "",
+  show_deploy_button: "false",
 }
 
 export type InviteStatus = "pending" | "used" | "expired"

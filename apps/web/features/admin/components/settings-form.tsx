@@ -24,6 +24,9 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
         site_tagline: formData.get("site_tagline") as string,
         hero_title: formData.get("hero_title") as string,
         hero_description: formData.get("hero_description") as string,
+        github_url: formData.get("github_url") as string,
+        discord_url: formData.get("discord_url") as string,
+        show_deploy_button: formData.get("show_deploy_button") as SiteSettings["show_deploy_button"],
       }
 
       const result = await updateSettings(data)
@@ -109,6 +112,32 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
               </Select.Popover>
             </Select>
             <p className="text-muted text-xs">Role assigned to new users when they sign up.</p>
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label htmlFor="github_url">GitHub URL</Label>
+            <Input id="github_url" name="github_url" defaultValue={settings.github_url} placeholder="https://github.com/your-org/your-repo" className="w-full" />
+            <p className="text-muted text-xs">Shows a GitHub link in the header. Leave empty to hide.</p>
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label htmlFor="discord_url">Discord URL</Label>
+            <Input id="discord_url" name="discord_url" defaultValue={settings.discord_url} placeholder="https://discord.gg/invite-code" className="w-full" />
+            <p className="text-muted text-xs">Shows a Discord link in the header. Leave empty to hide.</p>
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label>Show Deploy Button</Label>
+            <Select name="show_deploy_button" defaultSelectedKey={settings.show_deploy_button} aria-label="Show Deploy Button" className="w-full">
+              <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  <ListBox.Item id="true" textValue="Yes">Yes</ListBox.Item>
+                  <ListBox.Item id="false" textValue="No">No</ListBox.Item>
+                </ListBox>
+              </Select.Popover>
+            </Select>
+            <p className="text-muted text-xs">Shows a &ldquo;Deploy your own&rdquo; button in the header linking to the GitHub fork.</p>
           </div>
 
           <Button type="submit" isDisabled={pending}>

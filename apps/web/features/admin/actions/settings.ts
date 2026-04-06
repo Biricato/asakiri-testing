@@ -23,6 +23,11 @@ export async function getSettings(): Promise<SiteSettings> {
     hero_title: map.hero_title ?? defaultSettings.hero_title,
     hero_description: map.hero_description ?? defaultSettings.hero_description,
     site_tagline: map.site_tagline ?? defaultSettings.site_tagline,
+    github_url: map.github_url ?? defaultSettings.github_url,
+    discord_url: map.discord_url ?? defaultSettings.discord_url,
+    show_deploy_button:
+      (map.show_deploy_button as SiteSettings["show_deploy_button"]) ??
+      defaultSettings.show_deploy_button,
   }
 }
 
