@@ -1,9 +1,11 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { auth } from "@/lib/auth"
-import { AdminSidebar } from "@/features/admin/components/admin-sidebar"
-import { Separator, Button } from "@heroui/react"
+import { AdminNav } from "@/features/admin/components/admin-nav"
+import { MobileMenu } from "@/components/mobile-menu"
+import { Button } from "@heroui/react"
 
 export default async function AdminLayout({
   children,
@@ -16,28 +18,37 @@ export default async function AdminLayout({
 
   if (!session || session.user.role !== "admin") redirect("/")
 
+  const mobileItems = [
+    { href: "/admin", label: "Dashboard" },
+    { href: "/admin/users", label: "Users" },
+    { href: "/admin/courses", label: "Courses" },
+    { href: "/admin/invites", label: "Invites" },
+    { href: "/admin/settings", label: "Settings" },
+  ]
+
   return (
-    <div className="flex min-h-svh">
-      <AdminSidebar />
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-14 items-center gap-2 border-b px-4">
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <div className="flex flex-1 items-center justify-between">
-            <span className="text-muted-foreground text-sm">Admin</span>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-sm">
-                {session.user.name}
-              </span>
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  Back to app
-                </Button>
-              </Link>
-            </div>
+    <div className="flex min-h-svh flex-col">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
+        <div className="relative flex w-full items-center justify-between px-4 py-3 md:px-6">
+          <div className="flex items-center gap-3 md:gap-6">
+            <Link href="/" className="flex shrink-0 items-center gap-2">
+              <Image src="/logo.svg" alt="Asakiri" width={32} height={32} />
+              <span className="hidden text-lg font-semibold sm:inline">Admin</span>
+            </Link>
+            <nav className="hidden items-center gap-0.5 md:flex">
+              <AdminNav />
+            </nav>
           </div>
-        </header>
-        <div className="flex-1">{children}</div>
-      </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <span className="text-muted-foreground hidden text-sm sm:inline">{session.user.name}</span>
+            <Link href="/">
+              <Button variant="ghost" size="sm">Back to app</Button>
+            </Link>
+            <MobileMenu items={mobileItems} />
+          </div>
+        </div>
+      </header>
+      <main className="flex-1">{children}</main>
     </div>
   )
 }
