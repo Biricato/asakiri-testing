@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
-import { api, loadToken, clearToken, sessionToken, signIn as apiSignIn, signUp as apiSignUp, signOut as apiSignOut } from "./api"
+import { api, loadToken, loadServerUrl, clearToken, sessionToken, signIn as apiSignIn, signUp as apiSignUp, signOut as apiSignOut } from "./api"
 
 type User = {
   id: string
@@ -45,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const init = async () => {
       try {
+        await loadServerUrl()
         await loadToken()
         console.log("[Auth] token loaded:", sessionToken ? "yes" : "none")
         if (sessionToken) await refresh()

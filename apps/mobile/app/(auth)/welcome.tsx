@@ -1,9 +1,21 @@
-import { View, Text, Image, Pressable } from "react-native"
+import { useState } from "react"
+import { View, Text, Image, Pressable, TextInput } from "react-native"
 import { Link } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { s, colors } from "@/lib/styles"
+import { getServerUrl, setServerUrl } from "@/lib/api"
 
 export default function WelcomeScreen() {
+  const [showServer, setShowServer] = useState(false)
+  const [serverInput, setServerInput] = useState(getServerUrl())
+  const [saved, setSaved] = useState(false)
+
+  async function handleSaveServer() {
+    await setServerUrl(serverInput)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24 }}>
@@ -29,6 +41,32 @@ export default function WelcomeScreen() {
             </Pressable>
           </Link>
         </View>
+
+        {/* Server URL */}
+        <Pressable onPress={() => setShowServer(!showServer)} style={{ marginTop: 32 }}>
+          <Text style={{ fontSize: 13, color: colors.muted }}>
+            {showServer ? "Hide server settings" : "Connect to a different server"}
+          </Text>
+        </Pressable>
+
+        {showServer && (
+          <View style={{ marginTop: 12, width: "100%", gap: 8 }}>
+            <Text style={[s.label, { fontSize: 12 }]}>Server URL</Text>
+            <TextInput
+              style={[s.input, { fontSize: 14 }]}
+              value={serverInput}
+              onChangeText={setServerInput}
+              placeholder="https://your-asakiri-instance.com"
+              placeholderTextColor={colors.muted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+            />
+            <Pressable style={s.buttonOutline} onPress={handleSaveServer}>
+              <Text style={s.buttonOutlineText}>{saved ? "Saved!" : "Save"}</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   )

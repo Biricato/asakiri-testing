@@ -1,6 +1,21 @@
 import * as SecureStore from "expo-secure-store"
 
-const API_URL = "https://asakiri.com"
+let API_URL = "https://asakiri.com"
+
+export async function loadServerUrl() {
+  const stored = await SecureStore.getItemAsync("server_url").catch(() => null)
+  if (stored) API_URL = stored
+}
+
+export async function setServerUrl(url: string) {
+  const clean = url.replace(/\/+$/, "")
+  API_URL = clean
+  await SecureStore.setItemAsync("server_url", clean)
+}
+
+export function getServerUrl() {
+  return API_URL
+}
 
 export let sessionToken: string | null = null
 

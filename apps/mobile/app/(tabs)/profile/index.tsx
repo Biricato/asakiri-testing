@@ -4,7 +4,7 @@ import { router, useFocusEffect } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { HugeiconsIcon } from "@hugeicons/react-native"
 import { Logout01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
-import { api } from "@/lib/api"
+import { api, getServerUrl } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { useColors } from "@/lib/use-colors"
 import { s, colors as staticColors } from "@/lib/styles"
@@ -129,9 +129,15 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Server */}
+        <View style={{ marginTop: 24, backgroundColor: colors.surface, borderRadius: 16, padding: 16 }}>
+          <Text style={{ fontSize: 12, color: colors.muted, marginBottom: 4 }}>Connected to</Text>
+          <Text style={{ fontSize: 14, color: colors.foreground }}>{getServerUrl()}</Text>
+        </View>
+
         {/* Sign out */}
         <Pressable
-          style={[s.buttonOutline, { marginTop: 32, flexDirection: "row", justifyContent: "center", gap: 8 }]}
+          style={[s.buttonOutline, { marginTop: 16, flexDirection: "row", justifyContent: "center", gap: 8 }]}
           onPress={handleSignOut}
         >
           <HugeiconsIcon icon={Logout01Icon} size={16} color={colors.foreground} />
