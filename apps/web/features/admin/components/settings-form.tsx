@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "@heroui/react"
 import { Button, Input, TextArea, Select, Card, ListBox, Label } from "@heroui/react"
@@ -13,6 +13,9 @@ type CourseOption = { slug: string; title: string }
 export function SettingsForm({ settings, courses = [] }: { settings: SiteSettings; courses?: CourseOption[] }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
+  const [mobileCourses, setMobileCourses] = useState<string[]>(() => {
+    try { return JSON.parse(settings.mobile_courses) } catch { return [] }
+  })
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -46,6 +49,7 @@ export function SettingsForm({ settings, courses = [] }: { settings: SiteSetting
         featured_course_1: formData.get("featured_course_1") as string,
         featured_course_2: formData.get("featured_course_2") as string,
         featured_course_3: formData.get("featured_course_3") as string,
+        mobile_courses: formData.get("mobile_courses") as string,
       }
 
       const result = await updateSettings(data)
@@ -225,6 +229,39 @@ export function SettingsForm({ settings, courses = [] }: { settings: SiteSetting
               </div>
             )
           })}
+        </Card.Content>
+      </Card>
+
+      <Card>
+        <Card.Header>
+          <Card.Title>Mobile App Courses</Card.Title>
+          <Card.Description>Select which courses are visible in the mobile app. If none are selected, all courses will be shown.</Card.Description>
+        </Card.Header>
+        <Card.Content>
+          <input type="hidden" name="mobile_courses" value={JSON.stringify(mobileCourses)} />
+          {courses.length === 0 ? (
+            <p className="text-muted text-sm">No published courses yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {courses.map((c) => (
+                <label key={c.slug} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={mobileCourses.includes(c.slug)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setMobileCourses([...mobileCourses, c.slug])
+                      } else {
+                        setMobileCourses(mobileCourses.filter((s) => s !== c.slug))
+                      }
+                    }}
+                    className="rounded border-border"
+                  />
+                  <span className="text-sm">{c.title}</span>
+                </label>
+              ))}
+            </div>
+          )}
         </Card.Content>
       </Card>
 

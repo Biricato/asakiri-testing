@@ -46,6 +46,7 @@ export async function getSettings(): Promise<SiteSettings> {
     featured_course_1: map.featured_course_1 ?? defaultSettings.featured_course_1,
     featured_course_2: map.featured_course_2 ?? defaultSettings.featured_course_2,
     featured_course_3: map.featured_course_3 ?? defaultSettings.featured_course_3,
+    mobile_courses: map.mobile_courses ?? defaultSettings.mobile_courses,
   }
 }
 

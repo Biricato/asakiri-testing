@@ -31,6 +31,7 @@ export type SiteSettings = {
   featured_course_1: string
   featured_course_2: string
   featured_course_3: string
+  mobile_courses: string // JSON array of course slugs visible on mobile. Empty = all courses
 }
 
 export const defaultSettings: SiteSettings = {
@@ -137,6 +138,7 @@ For questions about these terms, please contact the platform administrator.`,
   featured_course_1: "",
   featured_course_2: "",
   featured_course_3: "",
+  mobile_courses: "[]",
 }
 
 export type InviteStatus = "pending" | "used" | "expired"
