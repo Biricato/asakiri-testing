@@ -9,18 +9,15 @@ import type { PatreonTier } from "@/schema/patreon"
 
 type Props = {
   courseId: string
+  patreonConfigured: boolean // PATREON_CLIENT_ID is set
   isConnected: boolean // creator has Patreon connected
   isLinked: boolean // course is linked to Patreon campaign
   tiers: PatreonTier[]
 }
 
-export function PatreonSettings({ courseId, isConnected, isLinked, tiers }: Props) {
+export function PatreonSettings({ courseId, patreonConfigured, isConnected, isLinked, tiers }: Props) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-
-  if (!process.env.NEXT_PUBLIC_PATREON_ENABLED) {
-    return null
-  }
 
   function handleLink() {
     startTransition(async () => {
@@ -47,7 +44,14 @@ export function PatreonSettings({ courseId, isConnected, isLinked, tiers }: Prop
         </Card.Description>
       </Card.Header>
       <Card.Content className="space-y-4">
-        {!isConnected ? (
+        {!patreonConfigured ? (
+          <div>
+            <p className="text-muted-foreground text-sm">
+              Patreon integration requires <code className="text-xs bg-muted px-1 py-0.5 rounded">PATREON_CLIENT_ID</code> and <code className="text-xs bg-muted px-1 py-0.5 rounded">PATREON_CLIENT_SECRET</code> environment variables.
+              Set them up in your hosting provider to enable tier-based lesson gating.
+            </p>
+          </div>
+        ) : !isConnected ? (
           <div>
             <p className="text-muted-foreground text-sm mb-3">
               Connect your Patreon account to enable tier-based lesson gating.

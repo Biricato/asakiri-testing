@@ -9,6 +9,7 @@ import {
   patreonConnection,
   coursePatreon,
   lessonPatreonTier,
+  exerciseGroupPatreonTier,
   type PatreonTier,
 } from "@/schema/patreon"
 
@@ -66,12 +67,15 @@ export async function linkCourseToPatreon(courseId: string) {
 
 export async function unlinkCourseFromPatreon(courseId: string) {
   await db.delete(coursePatreon).where(eq(coursePatreon.courseId, courseId))
-  // Also remove all lesson tier assignments for this course
-  // We need to get lesson IDs for this course first
   const { lesson } = await import("@/schema/course")
+  const { exerciseGroup } = await import("@/schema/exercise")
   const lessons = await db.select({ id: lesson.id }).from(lesson).where(eq(lesson.courseId, courseId))
   for (const l of lessons) {
     await db.delete(lessonPatreonTier).where(eq(lessonPatreonTier.lessonId, l.id))
+  }
+  const groups = await db.select({ id: exerciseGroup.id }).from(exerciseGroup).where(eq(exerciseGroup.courseId, courseId))
+  for (const g of groups) {
+    await db.delete(exerciseGroupPatreonTier).where(eq(exerciseGroupPatreonTier.exerciseGroupId, g.id))
   }
 }
 
@@ -123,6 +127,45 @@ export async function getLessonTier(lessonId: string) {
     .select()
     .from(lessonPatreonTier)
     .where(eq(lessonPatreonTier.lessonId, lessonId))
+    .limit(1)
+  return rows[0] ?? null
+}
+
+export async function setExerciseGroupTier(
+  exerciseGroupId: string,
+  tier: { id: string; title: string; amountCents: number } | null,
+) {
+  if (!tier) {
+    await db.delete(exerciseGroupPatreonTier).where(eq(exerciseGroupPatreonTier.exerciseGroupId, exerciseGroupId))
+    return
+  }
+
+  const existing = await db
+    .select()
+    .from(exerciseGroupPatreonTier)
+    .where(eq(exerciseGroupPatreonTier.exerciseGroupId, exerciseGroupId))
+    .limit(1)
+
+  if (existing.length > 0) {
+    await db
+      .update(exerciseGroupPatreonTier)
+      .set({ tierId: tier.id, tierTitle: tier.title, tierAmountCents: tier.amountCents })
+      .where(eq(exerciseGroupPatreonTier.exerciseGroupId, exerciseGroupId))
+  } else {
+    await db.insert(exerciseGroupPatreonTier).values({
+      exerciseGroupId,
+      tierId: tier.id,
+      tierTitle: tier.title,
+      tierAmountCents: tier.amountCents,
+    })
+  }
+}
+
+export async function getExerciseGroupTier(exerciseGroupId: string) {
+  const rows = await db
+    .select()
+    .from(exerciseGroupPatreonTier)
+    .where(eq(exerciseGroupPatreonTier.exerciseGroupId, exerciseGroupId))
     .limit(1)
   return rows[0] ?? null
 }

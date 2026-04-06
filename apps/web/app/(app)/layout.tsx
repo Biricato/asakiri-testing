@@ -91,10 +91,12 @@ export default async function AppLayout({
               )
             })()}
             <ThemeToggle />
-            <UserAvatar name={session.user.name ?? "?"} size={32} />
-            <span className="text-muted-foreground hidden text-sm lg:inline">
-              {session.user.name}
-            </span>
+            <Link href="/settings" className="flex items-center gap-1.5">
+              <UserAvatar name={session.user.name ?? "?"} size={32} />
+              <span className="text-muted-foreground hidden text-sm lg:inline">
+                {session.user.name}
+              </span>
+            </Link>
             <SignOutButton />
           </div>
         </div>

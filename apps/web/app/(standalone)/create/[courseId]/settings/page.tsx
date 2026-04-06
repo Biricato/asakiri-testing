@@ -21,13 +21,13 @@ export default async function CourseSettingsPage({
   if (!course) notFound()
 
   const session = await auth.api.getSession({ headers: await headers() }).catch(() => null)
-  const patreonEnabled = !!(process.env.PATREON_CLIENT_ID && process.env.PATREON_CLIENT_SECRET)
+  const patreonConfigured = !!(process.env.PATREON_CLIENT_ID && process.env.PATREON_CLIENT_SECRET)
 
   let patreonStatus = null
   let coursePatreonLink = null
   let tiers: { id: string; title: string; amountCents: number }[] = []
 
-  if (patreonEnabled && session) {
+  if (patreonConfigured && session) {
     ;[patreonStatus, coursePatreonLink, tiers] = await Promise.all([
       getCreatorPatreonStatus(session.user.id),
       getCoursePatreonLink(courseId),
@@ -41,14 +41,13 @@ export default async function CourseSettingsPage({
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl space-y-6">
           <CourseSettings course={course} />
-          {patreonEnabled && (
-            <PatreonSettings
-              courseId={courseId}
-              isConnected={!!patreonStatus?.campaignId}
-              isLinked={!!coursePatreonLink}
-              tiers={tiers}
-            />
-          )}
+          <PatreonSettings
+            courseId={courseId}
+            patreonConfigured={patreonConfigured}
+            isConnected={!!patreonStatus?.campaignId}
+            isLinked={!!coursePatreonLink}
+            tiers={tiers}
+          />
         </div>
       </main>
     </div>

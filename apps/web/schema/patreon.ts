@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core"
 import { user } from "./auth"
 import { course, lesson } from "./course"
+import { exerciseGroup } from "./exercise"
 
 // Creator's Patreon connection — one per user
 export const patreonConnection = pgTable("patreon_connection", {
@@ -69,6 +70,21 @@ export const lessonPatreonTier = pgTable(
     tierAmountCents: integer("tier_amount_cents").notNull().default(0),
   },
   (t) => [unique("lesson_patreon_tier_lesson").on(t.lessonId)],
+)
+
+// Per-exercise-group tier requirement — null means free
+export const exerciseGroupPatreonTier = pgTable(
+  "exercise_group_patreon_tier",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    exerciseGroupId: uuid("exercise_group_id")
+      .notNull()
+      .references(() => exerciseGroup.id, { onDelete: "cascade" }),
+    tierId: text("tier_id").notNull(),
+    tierTitle: text("tier_title").notNull(),
+    tierAmountCents: integer("tier_amount_cents").notNull().default(0),
+  },
+  (t) => [unique("exercise_group_patreon_tier_group").on(t.exerciseGroupId)],
 )
 
 export type PatreonTier = {

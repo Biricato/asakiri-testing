@@ -18,20 +18,14 @@ import { createUnit, deleteUnit, reorderUnits } from "../actions/units"
 import { createLesson, deleteLesson } from "../actions/lessons"
 import { reorderNodes, deleteNode } from "../actions/nodes"
 import { CreateExerciseGroupDialog } from "@/features/exercise/components/exercise-group-panel"
-import { LessonTierSelect } from "./lesson-tier-select"
 import type { UnitWithLessons } from "../types"
-import type { PatreonTier } from "@/schema/patreon"
 
 export function UnitList({
   courseId,
   units,
-  patreonTiers = [],
-  lessonTiers = {},
 }: {
   courseId: string
   units: UnitWithLessons[]
-  patreonTiers?: PatreonTier[]
-  lessonTiers?: Record<string, { tierId: string; tierTitle: string; tierAmountCents: number }>
 }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
@@ -170,13 +164,6 @@ export function UnitList({
                     <Button variant="ghost" isIconOnly size="sm" isDisabled={ni === u.nodes.length - 1 || pending} onPress={() => handleMoveNode(u, ni, 1)}>
                       <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
                     </Button>
-                    {isLesson && patreonTiers.length > 0 && (
-                      <LessonTierSelect
-                        lessonId={n.lesson!.id}
-                        tiers={patreonTiers}
-                        currentTierId={lessonTiers[n.lesson!.id]?.tierId ?? null}
-                      />
-                    )}
                     <Link href={href}>
                       <Button variant="outline" size="sm">Edit</Button>
                     </Link>
