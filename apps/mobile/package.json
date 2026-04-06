@@ -1,7 +1,7 @@
 {
   "name": "mobile",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -9,8 +9,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
     "@gorhom/bottom-sheet": "^5.2.8",
+    "@hugeicons/core-free-icons": "^4.1.1",
+    "@hugeicons/react-native": "^1.0.13",
     "expo": "~54.0.33",
+    "expo-constants": "^55.0.11",
+    "expo-linking": "^55.0.11",
+    "expo-router": "^55.0.10",
+    "expo-secure-store": "^55.0.11",
     "expo-status-bar": "~3.0.9",
     "heroui-native": "^1.0.1",
     "react": "19.1.0",

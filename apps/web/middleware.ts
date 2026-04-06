@@ -9,6 +9,7 @@ export async function middleware(req: NextRequest) {
     path.startsWith("/api/auth") ||
     path.startsWith("/api/upload") ||
     path.startsWith("/api/patreon") ||
+    path.startsWith("/api/v1") ||
     path.startsWith("/sign-in") ||
     path.startsWith("/sign-up") ||
     path.startsWith("/forgot-password") ||
