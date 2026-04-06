@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { eq, and } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { exerciseAttempt, srsReview } from "@/schema/learning"
+import { recordActivity } from "@/lib/gamification"
 import { json, error, requireSession } from "../../../helpers"
 
 export async function POST(req: NextRequest) {
@@ -48,7 +49,8 @@ export async function POST(req: NextRequest) {
     }
     // If SRS entry already exists, don't modify it here — let the /srs/review endpoint handle it
 
-    return json({ success: true })
+    const rewards = await recordActivity(session.user.id, isCorrect ? "exercise_complete" : "exercise_complete")
+    return json({ success: true, ...rewards })
   } catch {
     return error("Unauthorized", 401)
   }

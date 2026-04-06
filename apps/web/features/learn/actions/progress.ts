@@ -6,6 +6,7 @@ import { lessonProgress, exerciseAttempt, srsReview } from "@/schema/learning"
 import { section } from "@/schema/course"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
+import { recordActivity } from "@/lib/gamification"
 
 export async function markLessonComplete(
   lessonId: string,
@@ -32,6 +33,7 @@ export async function markLessonComplete(
       userId: session.user.id,
       lessonId,
     })
+    await recordActivity(session.user.id, "lesson_complete")
   }
 
   return { success: true }
@@ -81,6 +83,7 @@ export async function submitExerciseAttempt(data: {
     })
   }
 
+  await recordActivity(session.user.id, "exercise_complete")
   return { success: true }
 }
 

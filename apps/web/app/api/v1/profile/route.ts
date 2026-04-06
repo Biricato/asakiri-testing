@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { eq, and, count, sql } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { lessonProgress, exerciseAttempt, srsReview } from "@/schema/learning"
+import { userStats } from "@/schema/gamification"
 import { json, error, requireSession } from "../helpers"
 
 export async function GET(req: NextRequest) {
@@ -31,6 +32,14 @@ export async function GET(req: NextRequest) {
         ),
       )
 
+    const gamification = await db
+      .select()
+      .from(userStats)
+      .where(eq(userStats.userId, session.user.id))
+      .limit(1)
+
+    const g = gamification[0]
+
     return json({
       user: {
         id: session.user.id,
@@ -47,6 +56,18 @@ export async function GET(req: NextRequest) {
           ? Math.round(((attemptsResult.correct ?? 0) / attemptsResult.total) * 100)
           : 0,
         dueReviews: dueResult?.count ?? 0,
+      },
+      gamification: {
+        xp: g?.xp ?? 0,
+        level: g?.level ?? 1,
+        gems: g?.gems ?? 0,
+        streakCount: g?.streakCount ?? 0,
+        streakFreezes: g?.streakFreezes ?? 0,
+        longestStreak: g?.longestStreak ?? 0,
+        lastActiveDate: g?.lastActiveDate ?? null,
+        totalLessons: g?.totalLessons ?? 0,
+        totalExercises: g?.totalExercises ?? 0,
+        totalReviews: g?.totalReviews ?? 0,
       },
     })
   } catch {

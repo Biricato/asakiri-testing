@@ -9,6 +9,8 @@ import {
   CheckmarkCircle02Icon,
   SquareLock02Icon,
   ArrowRight01Icon,
+  FireIcon,
+  DiamondIcon,
 } from "@hugeicons/core-free-icons"
 import { api } from "@/lib/api"
 import { useColors } from "@/lib/use-colors"
@@ -46,11 +48,18 @@ export default function LearnScreen() {
   const colors = useColors()
   const [active, setActive] = useState<ActiveCourse | null>(null)
   const [loading, setLoading] = useState(true)
+  const [streak, setStreak] = useState(0)
+  const [gems, setGems] = useState(0)
 
   const loadPath = useCallback(async () => {
     try {
-      const data = await api<{ active: ActiveCourse | null }>("/api/v1/learn/active")
-      setActive(data.active)
+      const [pathData, statsData] = await Promise.all([
+        api<{ active: ActiveCourse | null }>("/api/v1/learn/active"),
+        api<{ stats: { streakCount: number; gems: number } }>("/api/v1/gamification/stats").catch(() => ({ stats: { streakCount: 0, gems: 0 } })),
+      ])
+      setActive(pathData.active)
+      setStreak(statsData.stats.streakCount)
+      setGems(statsData.stats.gems)
     } catch {
       setActive(null)
     } finally {
@@ -98,11 +107,23 @@ export default function LearnScreen() {
 
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border, paddingHorizontal: 16, paddingVertical: 12 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", color: colors.foreground }}>{active.title}</Text>
-        <Text style={{ fontSize: 12, color: colors.muted }}>
-          {active.sourceLanguage} → {active.targetLanguage}
-        </Text>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border, paddingHorizontal: 16, paddingVertical: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <View style={{ flex: 1, marginRight: 12 }}>
+          <Text style={{ fontSize: 18, fontWeight: "bold", color: colors.foreground }} numberOfLines={1}>{active.title}</Text>
+          <Text style={{ fontSize: 12, color: colors.muted }}>
+            {active.sourceLanguage} → {active.targetLanguage}
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", gap: 12, alignItems: "center", flexShrink: 0 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <HugeiconsIcon icon={FireIcon} size={18} color={streak > 0 ? "#ef4444" : colors.muted} />
+            <Text style={{ fontSize: 14, fontWeight: "bold", color: colors.foreground }}>{streak}</Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <HugeiconsIcon icon={DiamondIcon} size={18} color="#3b82f6" />
+            <Text style={{ fontSize: 14, fontWeight: "bold", color: colors.foreground }}>{gems}</Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }} contentContainerStyle={{ paddingBottom: 32 }}>

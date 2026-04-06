@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { eq, and } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { srsReview } from "@/schema/learning"
+import { recordActivity } from "@/lib/gamification"
 import { json, error, requireSession } from "../../helpers"
 
 export async function POST(req: NextRequest) {
@@ -73,7 +74,8 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    return json({ success: true, nextDue: dueAt, interval: newInterval })
+    const rewards = await recordActivity(session.user.id, "srs_review")
+    return json({ success: true, nextDue: dueAt, interval: newInterval, ...rewards })
   } catch {
     return error("Unauthorized", 401)
   }
