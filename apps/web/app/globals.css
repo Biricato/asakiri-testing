@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Asakiri Theme — Duolingo-inspired
- * Green primary, rounded & playful, 3D depth, chunky borders
+ * Asakiri Theme
+ * Green primary (#017321), flat design, no shadows
  */
 
 @layer base {
@@ -24,13 +24,13 @@
     color-scheme: light;
 
     /* Layout */
-    --border-width: 2px;
-    --field-border-width: 2px;
+    --border-width: 1px;
+    --field-border-width: 1px;
     --disabled-opacity: 0.5;
     --ring-offset-width: 2px;
     --cursor-interactive: pointer;
     --cursor-disabled: not-allowed;
-    --radius: 0.875rem;
+    --radius: 0.625rem;
 
     /* Base — off-white background so cards are visible */
     --background: oklch(0.97 0 0);
@@ -54,18 +54,18 @@
     --default: oklch(0.94 0 0);
     --default-foreground: var(--eclipse);
 
-    /* Accent — Asakiri green (slightly brighter for pop) */
-    --accent: oklch(0.45 0.17 150);
+    /* Accent — Asakiri green */
+    --accent: oklch(0.42 0.15 150);
     --accent-foreground: var(--white);
 
     /* Form fields */
     --field-background: var(--white);
     --field-foreground: var(--eclipse);
     --field-placeholder: var(--muted);
-    --field-border: oklch(0.86 0 0);
+    --field-border: oklch(0.90 0 0);
 
     /* Status */
-    --success: oklch(0.45 0.17 150);
+    --success: oklch(0.42 0.15 150);
     --success-foreground: var(--white);
     --warning: oklch(0.75 0.15 85);
     --warning-foreground: var(--eclipse);
@@ -77,7 +77,7 @@
     --segment-foreground: var(--eclipse);
 
     /* Borders */
-    --border: oklch(0.86 0 0);
+    --border: oklch(0.90 0 0);
     --separator: oklch(0.90 0 0);
 
     /* Focus & links */
@@ -87,39 +87,22 @@
     /* Backdrop */
     --backdrop: rgba(0, 0, 0, 0.4);
 
-    /* ── Subtle depth ── */
-    --surface-shadow: 0 2px 0 oklch(0.86 0 0);
-    --overlay-shadow: 0 4px 0 oklch(0.84 0 0);
-    --field-shadow: 0 2px 0 oklch(0.86 0 0);
+    /* ── No shadows ── */
+    --surface-shadow: none;
+    --overlay-shadow: none;
+    --field-shadow: none;
 
     --skeleton-animation: shimmer;
   }
 
-  /* Card — thick border + bottom shadow for depth */
+  /* Card — border instead of shadow */
   .card {
-    border: 2px solid var(--border);
-    box-shadow: 0 2px 0 oklch(0.86 0 0);
+    border: 1px solid var(--border);
   }
 
-  /* Button — 3D pushable effect */
+  /* Button — tighter icon gap */
   .button {
     gap: 0.375rem;
-    font-weight: 700;
-    border-radius: var(--radius);
-    box-shadow: 0 4px 0 oklch(0.30 0.12 150);
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .button:active:not(:disabled) {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 oklch(0.30 0.12 150);
-  }
-  .button[data-variant="outline"],
-  .button[data-variant="ghost"] {
-    box-shadow: 0 4px 0 oklch(0.86 0 0);
-  }
-  .button[data-variant="outline"]:active:not(:disabled),
-  .button[data-variant="ghost"]:active:not(:disabled) {
-    box-shadow: 0 2px 0 oklch(0.86 0 0);
   }
 
   /* TipTap rendered content tables */
@@ -174,7 +157,7 @@
     --default-foreground: var(--snow);
 
     /* Accent — brighter green for dark */
-    --accent: oklch(0.58 0.17 150);
+    --accent: oklch(0.55 0.15 150);
     --accent-foreground: var(--white);
 
     /* Form fields */
@@ -194,7 +177,7 @@
     --segment-foreground: var(--foreground);
 
     /* Borders */
-    --border: oklch(0.28 0.005 250);
+    --border: oklch(0.25 0.005 250);
     --separator: oklch(0.22 0.005 250);
 
     /* Focus & links */
@@ -204,37 +187,9 @@
     /* Backdrop */
     --backdrop: rgba(0, 0, 0, 0.6);
 
-    /* ── Subtle depth (darker bottom edges) ── */
-    --surface-shadow: 0 2px 0 oklch(0.08 0.005 250);
-    --overlay-shadow: 0 4px 0 oklch(0.06 0.005 250);
-    --field-shadow: 0 2px 0 oklch(0.08 0.005 250);
-  }
-
-  /* Dark mode card depth */
-  .dark .card,
-  [data-theme="dark"] .card {
-    box-shadow: 0 2px 0 oklch(0.08 0.005 250);
-  }
-
-  /* Dark mode button 3D effect */
-  .dark .button,
-  [data-theme="dark"] .button {
-    box-shadow: 0 4px 0 oklch(0.35 0.12 150);
-  }
-  .dark .button:active:not(:disabled),
-  [data-theme="dark"] .button:active:not(:disabled) {
-    box-shadow: 0 2px 0 oklch(0.35 0.12 150);
-  }
-  .dark .button[data-variant="outline"],
-  .dark .button[data-variant="ghost"],
-  [data-theme="dark"] .button[data-variant="outline"],
-  [data-theme="dark"] .button[data-variant="ghost"] {
-    box-shadow: 0 4px 0 oklch(0.08 0.005 250);
-  }
-  .dark .button[data-variant="outline"]:active:not(:disabled),
-  .dark .button[data-variant="ghost"]:active:not(:disabled),
-  [data-theme="dark"] .button[data-variant="outline"]:active:not(:disabled),
-  [data-theme="dark"] .button[data-variant="ghost"]:active:not(:disabled) {
-    box-shadow: 0 2px 0 oklch(0.08 0.005 250);
+    /* ── No shadows ── */
+    --surface-shadow: none;
+    --overlay-shadow: none;
+    --field-shadow: none;
   }
 }

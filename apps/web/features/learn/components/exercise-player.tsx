@@ -46,7 +46,7 @@ export function ExercisePlayer({
     const accuracy = results.total > 0 ? Math.round((results.correct / results.total) * 100) : 0
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center">
-        <div className="w-full max-w-md rounded-3xl border-2 p-8 text-center shadow-[0_4px_0_var(--border)]">
+        <div className="w-full max-w-md rounded-3xl border p-8 text-center">
           <h2 className="text-2xl font-semibold">Session Complete</h2>
           <p className="text-muted-foreground mt-2">
             You scored {results.correct} out of {results.total} ({accuracy}%)
@@ -138,10 +138,10 @@ export function ExercisePlayer({
               {remaining} left
             </p>
           </div>
-          <ProgressBar value={progress} className="mb-6 h-3 rounded-full" aria-label="Exercise progress" />
+          <ProgressBar value={progress} className="mb-6 h-2" aria-label="Exercise progress" />
 
           {/* Prompt */}
-          <div className="rounded-2xl border-2 p-5 shadow-[0_3px_0_var(--border)]">
+          <div className="rounded-2xl border p-5">
               {variant.type === "word_cloze" && (
                 <>
                   <p className="text-muted-foreground text-sm">Fill in the missing word.</p>
@@ -169,14 +169,14 @@ export function ExercisePlayer({
                             type="button"
                             onClick={() => !feedback && setAnswer(opt.id)}
                             disabled={!!feedback}
-                            className={`w-full rounded-2xl border-2 px-4 py-3.5 text-left text-sm font-semibold transition-all active:translate-y-[2px] ${
+                            className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
                               showResult && isCorrect
-                                ? "border-green-500 bg-green-50 shadow-[0_3px_0_theme(colors.green.500)] active:shadow-[0_1px_0_theme(colors.green.500)] dark:bg-green-950"
+                                ? "border-green-500 bg-green-50 dark:bg-green-950"
                                 : showResult && selected && !isCorrect
-                                  ? "border-red-500 bg-red-50 shadow-[0_3px_0_theme(colors.red.500)] active:shadow-[0_1px_0_theme(colors.red.500)] dark:bg-red-950"
+                                  ? "border-red-500 bg-red-50 dark:bg-red-950"
                                   : selected
-                                    ? "border-accent bg-accent/5 shadow-[0_3px_0_var(--accent)]"
-                                    : "shadow-[0_3px_0_var(--border)] hover:bg-surface-secondary"
+                                    ? "border-accent bg-accent/5"
+                                    : "hover:bg-surface-secondary"
                             }`}
                           >
                             {opt.label}
@@ -256,7 +256,7 @@ export function ExercisePlayer({
 
             {/* Feedback */}
             {feedback && (
-              <div className={`mt-4 rounded-2xl border-2 p-4 font-semibold ${feedback.correct ? "border-green-500 bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200" : "border-red-500 bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200"}`}>
+              <div className={`mt-4 rounded-xl p-4 ${feedback.correct ? "bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200" : "bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200"}`}>
                 <p className="font-medium">
                   {feedback.correct ? "Correct!" : "Incorrect"}
                 </p>
