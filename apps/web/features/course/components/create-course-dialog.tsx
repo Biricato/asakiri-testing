@@ -46,9 +46,9 @@ export function CreateCourseDialog() {
                 Set up a new language course.
               </p>
               <div className="space-y-4">
-                <div className="space-y-2">
+                <div className="grid gap-1.5">
                   <Label htmlFor="title">Title</Label>
-                  <Input id="title" name="title" placeholder="e.g. Learn Okinawan" required />
+                  <Input id="title" name="title" placeholder="e.g. Learn Okinawan" required className="w-full" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
