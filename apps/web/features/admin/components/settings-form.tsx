@@ -26,6 +26,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
         hero_description: formData.get("hero_description") as string,
         github_url: formData.get("github_url") as string,
         discord_url: formData.get("discord_url") as string,
+        show_github_button: formData.get("show_github_button") as SiteSettings["show_github_button"],
         show_deploy_button: formData.get("show_deploy_button") as SiteSettings["show_deploy_button"],
       }
 
@@ -117,13 +118,27 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
           <div className="grid gap-1.5">
             <Label htmlFor="github_url">GitHub URL</Label>
             <Input id="github_url" name="github_url" defaultValue={settings.github_url} placeholder="https://github.com/your-org/your-repo" className="w-full" />
-            <p className="text-muted text-xs">Shows a GitHub link in the header. Leave empty to hide.</p>
+            <p className="text-muted text-xs">Repository URL used for the GitHub button and Deploy link.</p>
           </div>
 
           <div className="grid gap-1.5">
             <Label htmlFor="discord_url">Discord URL</Label>
             <Input id="discord_url" name="discord_url" defaultValue={settings.discord_url} placeholder="https://discord.gg/invite-code" className="w-full" />
             <p className="text-muted text-xs">Shows a Discord link in the header. Leave empty to hide.</p>
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label>Show GitHub Button</Label>
+            <Select name="show_github_button" defaultSelectedKey={settings.show_github_button} aria-label="Show GitHub Button" className="w-full">
+              <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  <ListBox.Item id="true" textValue="Yes">Yes</ListBox.Item>
+                  <ListBox.Item id="false" textValue="No">No</ListBox.Item>
+                </ListBox>
+              </Select.Popover>
+            </Select>
+            <p className="text-muted text-xs">Shows the GitHub button with star count in the header.</p>
           </div>
 
           <div className="grid gap-1.5">

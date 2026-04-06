@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { signIn } from "@/lib/auth-client"
+import { signIn, sendVerificationEmail } from "@/lib/auth-client"
 import { Button, Input, Label, Card } from "@heroui/react"
 
 export default function SignInPage() {
@@ -12,22 +12,37 @@ export default function SignInPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [emailNotVerified, setEmailNotVerified] = useState(false)
+  const [resending, setResending] = useState(false)
+  const [resent, setResent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
+    setEmailNotVerified(false)
     setLoading(true)
 
     const { error } = await signIn.email({ email, password })
 
     if (error) {
-      setError(error.message ?? "Failed to sign in")
+      const msg = error.message ?? "Failed to sign in"
+      if (msg.toLowerCase().includes("email is not verified") || error.code === "EMAIL_NOT_VERIFIED") {
+        setEmailNotVerified(true)
+      }
+      setError(msg)
       setLoading(false)
       return
     }
 
     router.push("/")
     router.refresh()
+  }
+
+  async function handleResendVerification() {
+    setResending(true)
+    await sendVerificationEmail({ email })
+    setResent(true)
+    setResending(false)
   }
 
   return (
@@ -44,7 +59,17 @@ export default function SignInPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger">
-                {error}
+                <p>{error}</p>
+                {emailNotVerified && (
+                  <button
+                    type="button"
+                    className="mt-1 font-medium underline disabled:opacity-50"
+                    onClick={handleResendVerification}
+                    disabled={resending || resent}
+                  >
+                    {resent ? "Verification email sent!" : resending ? "Sending..." : "Resend verification email"}
+                  </button>
+                )}
               </div>
             )}
             <div className="grid gap-1.5">

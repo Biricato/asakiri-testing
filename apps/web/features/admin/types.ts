@@ -8,6 +8,7 @@ export type SiteSettings = {
   hero_description: string
   github_url: string
   discord_url: string
+  show_github_button: "true" | "false"
   show_deploy_button: "true" | "false"
 }
 
@@ -19,9 +20,10 @@ export const defaultSettings: SiteSettings = {
   site_tagline: "Language Learning Platform",
   hero_title: "Master languages through interactive courses built by expert teachers",
   hero_description: "Create engaging courses and learn through interactive exercises with spaced repetition. Learn at your own pace, track your progress, and master vocabulary naturally.",
-  github_url: "",
+  github_url: "https://github.com/AsakiriLingo/asakiri",
   discord_url: "",
-  show_deploy_button: "false",
+  show_github_button: "true",
+  show_deploy_button: "true",
 }
 
 export type InviteStatus = "pending" | "used" | "expired"
