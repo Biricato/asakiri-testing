@@ -4,99 +4,101 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * HeroUI Theme Customization
- * Add this to your global.css after importing @heroui/styles
- * Only includes base variables from variables.css
- * @see https://heroui.com/docs/react/getting-started/theming
+ * Asakiri Theme — Duolingo-inspired
+ * Green primary, rounded & playful, 3D depth, chunky borders
  */
 
-:root,
-.light,
-.default,
-[data-theme="light"],
-[data-theme="default"] {
-  /* Theme Colors (Light Mode) */
-  --accent: oklch(62.00% 0.2000 159.00);
-  --accent-foreground: oklch(99.11% 0 0);
-  --background: oklch(97.02% 0.0010 159.00);
-  --border: oklch(90.00% 0.0010 159.00);
-  --danger: oklch(65.32% 0.2333 14.36);
-  --danger-foreground: oklch(99.11% 0 0);
-  --default: oklch(94.00% 0.0010 159.00);
-  --default-foreground: oklch(21.03% 0.0059 159.00);
-  --field-background: oklch(100.00% 0.0005 159.00);
-  --field-foreground: oklch(21.03% 0.0010 159.00);
-  --field-placeholder: oklch(55.17% 0.0020 159.00);
-  --focus: oklch(62.00% 0.2000 159.00);
-  --foreground: oklch(21.03% 0.0010 159.00);
-  --muted: oklch(55.17% 0.0020 159.00);
-  --overlay: oklch(100.00% 0.0003 159.00);
-  --overlay-foreground: oklch(21.03% 0.0010 159.00);
-  --scrollbar: oklch(87.10% 0.0010 159.00);
-  --segment: oklch(100.00% 0.0010 159.00);
-  --segment-foreground: oklch(21.03% 0.0010 159.00);
-  --separator: oklch(92.00% 0.0010 159.00);
-  --success: oklch(73.29% 0.1939 139.43);
-  --success-foreground: oklch(21.03% 0.0059 139.43);
-  --surface: oklch(100.00% 0.0005 159.00);
-  --surface-foreground: oklch(21.03% 0.0010 159.00);
-  --surface-secondary: oklch(95.24% 0.0008 159.00);
-  --surface-secondary-foreground: oklch(21.03% 0.0010 159.00);
-  --surface-tertiary: oklch(93.73% 0.0008 159.00);
-  --surface-tertiary-foreground: oklch(21.03% 0.0010 159.00);
-  --warning: oklch(78.19% 0.1588 60.95);
-  --warning-foreground: oklch(21.03% 0.0059 60.95);
-
-  /* Border Radius */
-  --radius: 0.25rem;
-  --field-radius: 0.75rem;
-
-  /* Font Family */
-  /* Make sure to load Varela Round font in your app */
-  --font-sans: var(--font-varela-round);
-}
-
-.dark,
-[data-theme="dark"] {
-  color-scheme: dark;
-  /* Theme Colors (Dark Mode) */
-  --accent: oklch(62.00% 0.2000 159.00);
-  --accent-foreground: oklch(99.11% 0 0);
-  --background: oklch(12.00% 0.0010 159.00);
-  --border: oklch(28.00% 0.0010 159.00);
-  --danger: oklch(59.40% 0.1971 13.25);
-  --danger-foreground: oklch(99.11% 0 0);
-  --default: oklch(27.40% 0.0010 159.00);
-  --default-foreground: oklch(99.11% 0 0);
-  --field-background: oklch(21.03% 0.0020 159.00);
-  --field-foreground: oklch(99.11% 0.0010 159.00);
-  --field-placeholder: oklch(70.50% 0.0020 159.00);
-  --focus: oklch(62.00% 0.2000 159.00);
-  --foreground: oklch(99.11% 0.0010 159.00);
-  --muted: oklch(70.50% 0.0020 159.00);
-  --overlay: oklch(21.03% 0.0020 159.00);
-  --overlay-foreground: oklch(99.11% 0.0010 159.00);
-  --scrollbar: oklch(70.50% 0.0010 159.00);
-  --segment: oklch(39.64% 0.0010 159.00);
-  --segment-foreground: oklch(99.11% 0.0010 159.00);
-  --separator: oklch(25.00% 0.0010 159.00);
-  --success: oklch(73.29% 0.1939 139.43);
-  --success-foreground: oklch(21.03% 0.0059 139.43);
-  --surface: oklch(21.03% 0.0020 159.00);
-  --surface-foreground: oklch(99.11% 0.0010 159.00);
-  --surface-secondary: oklch(25.70% 0.0015 159.00);
-  --surface-secondary-foreground: oklch(99.11% 0.0010 159.00);
-  --surface-tertiary: oklch(27.21% 0.0015 159.00);
-  --surface-tertiary-foreground: oklch(99.11% 0.0010 159.00);
-  --warning: oklch(82.03% 0.1391 64.96);
-  --warning-foreground: oklch(21.03% 0.0059 64.96);
-}
-
 @layer base {
+  /* Primitives (shared) */
+  :root {
+    --white: oklch(100% 0 0);
+    --black: oklch(0% 0 0);
+    --snow: oklch(0.9911 0 0);
+    --eclipse: oklch(0.2103 0.0059 285.89);
+    --spacing: 0.25rem;
+    --field-radius: calc(var(--radius) * 1.5);
+  }
+
+  /* ── Light ── */
+  :root, [data-theme="light"] {
+    color-scheme: light;
+
+    /* Layout */
+    --border-width: 2px;
+    --field-border-width: 2px;
+    --disabled-opacity: 0.5;
+    --ring-offset-width: 2px;
+    --cursor-interactive: pointer;
+    --cursor-disabled: not-allowed;
+    --radius: 0.5rem;
+
+    /* Base — off-white background so cards are visible */
+    --background: oklch(0.97 0 0);
+    --foreground: var(--eclipse);
+
+    /* Surface (cards, accordions) — white on off-white bg */
+    --surface: var(--white);
+    --surface-foreground: var(--foreground);
+    --surface-secondary: oklch(0.96 0 0);
+    --surface-secondary-foreground: var(--foreground);
+    --surface-tertiary: oklch(0.94 0 0);
+    --surface-tertiary-foreground: var(--foreground);
+
+    /* Overlay (modals, popovers) */
+    --overlay: var(--white);
+    --overlay-foreground: var(--foreground);
+
+    /* Neutral */
+    --muted: oklch(0.556 0 0);
+    --scrollbar: oklch(0.87 0 0);
+    --default: oklch(0.94 0 0);
+    --default-foreground: var(--eclipse);
+
+    /* Accent — Asakiri green (slightly brighter for pop) */
+    --accent: oklch(0.45 0.17 150);
+    --accent-foreground: var(--white);
+
+    /* Form fields */
+    --field-background: var(--white);
+    --field-foreground: var(--eclipse);
+    --field-placeholder: var(--muted);
+    --field-border: oklch(0.86 0 0);
+
+    /* Status */
+    --success: oklch(0.45 0.17 150);
+    --success-foreground: var(--white);
+    --warning: oklch(0.75 0.15 85);
+    --warning-foreground: var(--eclipse);
+    --danger: oklch(0.6 0.25 27.3);
+    --danger-foreground: var(--snow);
+
+    /* Segments */
+    --segment: var(--white);
+    --segment-foreground: var(--eclipse);
+
+    /* Borders */
+    --border: oklch(0.86 0 0);
+    --separator: oklch(0.90 0 0);
+
+    /* Focus & links */
+    --focus: var(--accent);
+    --link: var(--accent);
+
+    /* Backdrop */
+    --backdrop: rgba(0, 0, 0, 0.4);
+
+    /* ── Subtle depth ── */
+    --surface-shadow: 0 2px 0 oklch(0.86 0 0);
+    --overlay-shadow: 0 4px 0 oklch(0.84 0 0);
+    --field-shadow: 0 2px 0 oklch(0.86 0 0);
+
+    --skeleton-animation: shimmer;
+  }
+
   /* Card — thick border + bottom shadow for depth */
   .card {
     border: 2px solid var(--border);
-    box-shadow: 0 2px 0 var(--border);
+    box-shadow: 0 2px 0 oklch(0.86 0 0);
   }
 
   /* Button — 3D pushable effect */
@@ -104,18 +106,18 @@
     gap: 0.375rem;
     font-weight: 700;
     border-radius: var(--radius);
-    box-shadow: 0 4px 0 oklch(0.30 0.12 159);
+    box-shadow: 0 4px 0 oklch(0.30 0.12 150);
     transition: transform 0.1s, box-shadow 0.1s;
   }
   .button:active:not(:disabled) {
     transform: translateY(2px);
-    box-shadow: 0 2px 0 oklch(0.30 0.12 159);
+    box-shadow: 0 2px 0 oklch(0.30 0.12 150);
   }
   .button--outline {
-    box-shadow: 0 3px 0 var(--border);
+    box-shadow: 0 3px 0 oklch(0.86 0 0);
   }
   .button--outline:active:not(:disabled) {
-    box-shadow: 0 1px 0 var(--border);
+    box-shadow: 0 1px 0 oklch(0.86 0 0);
   }
   .button--ghost {
     box-shadow: none;
@@ -149,5 +151,101 @@
   }
   .prose tr:nth-child(even) td {
     background: var(--surface-secondary);
+  }
+
+  /* ── Dark ── */
+  [data-theme="dark"], .dark {
+    color-scheme: dark;
+
+    /* Base */
+    --background: oklch(0.12 0.005 250);
+    --foreground: var(--snow);
+
+    /* Surface */
+    --surface: oklch(0.16 0.005 250);
+    --surface-foreground: var(--foreground);
+    --surface-secondary: oklch(0.19 0.005 250);
+    --surface-secondary-foreground: var(--foreground);
+    --surface-tertiary: oklch(0.22 0.005 250);
+    --surface-tertiary-foreground: var(--foreground);
+
+    /* Overlay */
+    --overlay: oklch(0.18 0.005 250);
+    --overlay-foreground: var(--foreground);
+
+    /* Neutral */
+    --muted: oklch(0.55 0.01 250);
+    --scrollbar: oklch(0.35 0.005 250);
+    --default: oklch(0.22 0.005 250);
+    --default-foreground: var(--snow);
+
+    /* Accent — brighter green for dark */
+    --accent: oklch(0.58 0.17 150);
+    --accent-foreground: var(--white);
+
+    /* Form fields */
+    --field-background: oklch(0.16 0.005 250);
+    --field-foreground: var(--foreground);
+    --field-placeholder: oklch(0.45 0.005 250);
+    --field-border: oklch(0.28 0.005 250);
+
+    /* Status */
+    --warning: oklch(0.8 0.14 85);
+    --warning-foreground: var(--eclipse);
+    --danger: oklch(0.6 0.25 27.3);
+    --danger-foreground: var(--snow);
+
+    /* Segments */
+    --segment: oklch(0.25 0.005 250);
+    --segment-foreground: var(--foreground);
+
+    /* Borders */
+    --border: oklch(0.28 0.005 250);
+    --separator: oklch(0.22 0.005 250);
+
+    /* Focus & links */
+    --focus: var(--accent);
+    --link: var(--accent);
+
+    /* Backdrop */
+    --backdrop: rgba(0, 0, 0, 0.6);
+
+    /* ── Subtle depth (darker bottom edges) ── */
+    --surface-shadow: 0 2px 0 oklch(0.08 0.005 250);
+    --overlay-shadow: 0 4px 0 oklch(0.06 0.005 250);
+    --field-shadow: 0 2px 0 oklch(0.08 0.005 250);
+  }
+
+  /* Dark mode card depth */
+  .dark .card,
+  [data-theme="dark"] .card {
+    box-shadow: 0 2px 0 oklch(0.08 0.005 250);
+  }
+
+  /* Dark mode button 3D effect */
+  .dark .button,
+  [data-theme="dark"] .button {
+    box-shadow: 0 4px 0 oklch(0.35 0.12 150);
+  }
+  .dark .button:active:not(:disabled),
+  [data-theme="dark"] .button:active:not(:disabled) {
+    box-shadow: 0 2px 0 oklch(0.35 0.12 150);
+  }
+  .dark .button--outline,
+  [data-theme="dark"] .button--outline {
+    box-shadow: 0 3px 0 oklch(0.08 0.005 250);
+  }
+  .dark .button--outline:active:not(:disabled),
+  [data-theme="dark"] .button--outline:active:not(:disabled) {
+    box-shadow: 0 1px 0 oklch(0.08 0.005 250);
+  }
+  .dark .button--ghost,
+  [data-theme="dark"] .button--ghost {
+    box-shadow: none;
+  }
+  .dark .button--ghost:active:not(:disabled),
+  [data-theme="dark"] .button--ghost:active:not(:disabled) {
+    box-shadow: none;
+    transform: none;
   }
 }

@@ -1,11 +1,11 @@
-import { Geist_Mono, Varela_Round } from "next/font/google"
+import { Geist_Mono, Nunito } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toast } from "@heroui/react"
 import { cn } from "@/lib/cn"
 
-const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400", variable: "--font-varela-round" })
+const nunito = Nunito({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -21,7 +21,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", varelaRound.variable)}
+      className={cn("antialiased", fontMono.variable, "font-sans", nunito.variable)}
     >
       <body>
         <ThemeProvider>
