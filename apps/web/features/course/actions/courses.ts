@@ -1,12 +1,13 @@
 "use server"
 
-import { eq, desc, count } from "drizzle-orm"
+import { eq, desc, count, or, inArray } from "drizzle-orm"
 import { db } from "@/lib/db"
-import { course, unit, unitNode, lesson } from "@/schema/course"
+import { course, unit, unitNode, lesson, courseCollaborator } from "@/schema/course"
 import { exerciseGroup } from "@/schema/exercise"
 import { siteSetting } from "@/schema/settings"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
+import { canEditCourse, canDeleteCourse } from "./permissions"
 import type { Course, CourseWithUnits } from "../types"
 
 async function requireCreator() {
@@ -38,7 +39,7 @@ async function requireCreator() {
 const PAGE_SIZE = 12
 
 export async function getMyCourses({ page = 1 }: { page?: number } = {}): Promise<{
-  courses: Course[]
+  courses: (Course & { role: string })[]
   total: number
   page: number
   pageSize: number
@@ -47,24 +48,41 @@ export async function getMyCourses({ page = 1 }: { page?: number } = {}): Promis
   const session = await requireCreator()
   const offset = (page - 1) * PAGE_SIZE
 
+  // Get IDs of courses where user is a collaborator
+  const collabRows = await db
+    .select({ courseId: courseCollaborator.courseId, role: courseCollaborator.role })
+    .from(courseCollaborator)
+    .where(eq(courseCollaborator.userId, session.user.id))
+
+  const collabCourseIds = collabRows.map((r) => r.courseId)
+  const collabRoleMap = Object.fromEntries(collabRows.map((r) => [r.courseId, r.role]))
+
+  // Fetch owned + collaborative courses
+  const whereCondition = collabCourseIds.length > 0
+    ? or(eq(course.createdBy, session.user.id), inArray(course.id, collabCourseIds))!
+    : eq(course.createdBy, session.user.id)
+
   const [courses, totalResult] = await Promise.all([
     db
       .select()
       .from(course)
-      .where(eq(course.createdBy, session.user.id))
+      .where(whereCondition)
       .orderBy(desc(course.updatedAt))
       .limit(PAGE_SIZE)
       .offset(offset),
     db
       .select({ count: count() })
       .from(course)
-      .where(eq(course.createdBy, session.user.id)),
+      .where(whereCondition),
   ])
 
   const total = totalResult[0]?.count ?? 0
 
   return {
-    courses,
+    courses: courses.map((c) => ({
+      ...c,
+      role: c.createdBy === session.user.id ? "owner" : (collabRoleMap[c.id] ?? "viewer"),
+    })),
     total,
     page,
     pageSize: PAGE_SIZE,
@@ -103,7 +121,10 @@ export async function getCourse(courseId: string): Promise<CourseWithUnits | nul
 
   const c = rows[0]
   if (!c) return null
-  if (c.createdBy !== session.user.id && session.user.role !== "admin") return null
+
+  // Check access: owner, admin, or collaborator
+  const hasAccess = await canEditCourse(courseId, session.user.id, session.user.role ?? undefined)
+  if (!hasAccess) return null
 
   const units = await db
     .select()
@@ -166,11 +187,8 @@ export async function updateCourse(
 ): Promise<{ success: boolean }> {
   const session = await requireCreator()
 
-  const rows = await db.select().from(course).where(eq(course.id, courseId)).limit(1)
-  const c = rows[0]
-  if (!c || (c.createdBy !== session.user.id && session.user.role !== "admin")) {
-    throw new Error("Forbidden")
-  }
+  const hasAccess = await canEditCourse(courseId, session.user.id, session.user.role ?? undefined)
+  if (!hasAccess) throw new Error("Forbidden")
 
   await db
     .update(course)
@@ -182,11 +200,8 @@ export async function updateCourse(
 export async function deleteCourse(courseId: string): Promise<{ success: boolean }> {
   const session = await requireCreator()
 
-  const rows = await db.select().from(course).where(eq(course.id, courseId)).limit(1)
-  const c = rows[0]
-  if (!c || (c.createdBy !== session.user.id && session.user.role !== "admin")) {
-    throw new Error("Forbidden")
-  }
+  const hasAccess = await canDeleteCourse(courseId, session.user.id, session.user.role ?? undefined)
+  if (!hasAccess) throw new Error("Forbidden — only the owner can delete a course")
 
   await db.delete(course).where(eq(course.id, courseId))
   return { success: true }

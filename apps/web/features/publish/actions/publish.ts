@@ -6,6 +6,7 @@ import { course } from "@/schema/course"
 import { publishedCourse } from "@/schema/learning"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
+import { canEditCourse } from "@/features/course/actions/permissions"
 
 function toSlug(title: string): string {
   return title
@@ -30,9 +31,10 @@ export async function publishCourse(
     .where(eq(course.id, courseId))
     .limit(1)
   const c = rows[0]
-  if (!c || (c.createdBy !== session.user.id && session.user.role !== "admin")) {
-    throw new Error("Forbidden")
-  }
+  if (!c) throw new Error("Not found")
+
+  const hasAccess = await canEditCourse(courseId, session.user.id, session.user.role ?? undefined)
+  if (!hasAccess) throw new Error("Forbidden")
 
   // Check if already published
   const existing = await db

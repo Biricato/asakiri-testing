@@ -5,7 +5,7 @@ import { Card, Chip } from "@heroui/react"
 import { CoursePlaceholder } from "@/components/course-placeholder"
 import type { Course } from "../types"
 
-export function CourseList({ courses }: { courses: Course[] }) {
+export function CourseList({ courses }: { courses: (Course & { role?: string })[] }) {
   if (courses.length === 0) {
     return (
       <p className="text-muted mt-6">
@@ -36,9 +36,16 @@ export function CourseList({ courses }: { courses: Course[] }) {
               </Card.Description>
             </Card.Header>
             <Card.Footer className="flex items-center justify-between">
-              <Chip variant="secondary" className="capitalize">
-                {c.difficulty}
-              </Chip>
+              <div className="flex items-center gap-1.5">
+                <Chip variant="secondary" className="capitalize">
+                  {c.difficulty}
+                </Chip>
+                {c.role && c.role !== "owner" && (
+                  <Chip variant="soft" className="capitalize text-xs">
+                    {c.role}
+                  </Chip>
+                )}
+              </div>
               {c.isPublished ? (
                 <Chip color="success">Published</Chip>
               ) : (

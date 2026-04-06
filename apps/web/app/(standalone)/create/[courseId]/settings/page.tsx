@@ -7,7 +7,10 @@ import {
   getCoursePatreonLink,
   getCourseTiers,
 } from "@/features/course/actions/patreon"
+import { getCourseRole } from "@/features/course/actions/permissions"
+import { getCollaborators } from "@/features/course/actions/collaborators"
 import { CourseSettings } from "@/features/course/components/course-settings"
+import { CollaboratorSettings } from "@/features/course/components/collaborator-settings"
 import { PatreonSettings } from "@/features/course/components/patreon-settings"
 import { PageHeader } from "@/components/page-header"
 
@@ -21,6 +24,14 @@ export default async function CourseSettingsPage({
   if (!course) notFound()
 
   const session = await auth.api.getSession({ headers: await headers() }).catch(() => null)
+  if (!session) notFound()
+
+  const [myRole, collaborators] = await Promise.all([
+    getCourseRole(courseId, session.user.id),
+    getCollaborators(courseId),
+  ])
+  const isOwner = myRole === "owner" || session.user.role === "admin"
+
   const patreonConfigured = !!(process.env.PATREON_CLIENT_ID && process.env.PATREON_CLIENT_SECRET)
 
   let patreonStatus = null
@@ -41,6 +52,11 @@ export default async function CourseSettingsPage({
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-2xl space-y-6">
           <CourseSettings course={course} />
+          <CollaboratorSettings
+            courseId={courseId}
+            collaborators={collaborators}
+            isOwner={isOwner}
+          />
           <PatreonSettings
             courseId={courseId}
             patreonConfigured={patreonConfigured}

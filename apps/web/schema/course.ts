@@ -28,12 +28,40 @@ export const course = pgTable("course", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
 
+export const courseCollaborator = pgTable(
+  "course_collaborator",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    courseId: uuid("course_id")
+      .notNull()
+      .references(() => course.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("editor"), // owner | editor | viewer
+    invitedAt: timestamp("invited_at").notNull().defaultNow(),
+  },
+  (t) => [unique("course_collaborator_unique").on(t.courseId, t.userId)],
+)
+
+export const courseCollaboratorRelations = relations(courseCollaborator, ({ one }) => ({
+  course: one(course, {
+    fields: [courseCollaborator.courseId],
+    references: [course.id],
+  }),
+  user: one(user, {
+    fields: [courseCollaborator.userId],
+    references: [user.id],
+  }),
+}))
+
 export const courseRelations = relations(course, ({ one, many }) => ({
   creator: one(user, {
     fields: [course.createdBy],
     references: [user.id],
   }),
   units: many(unit),
+  collaborators: many(courseCollaborator),
 }))
 
 export const unit = pgTable(
