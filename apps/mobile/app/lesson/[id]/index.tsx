@@ -64,11 +64,17 @@ export default function LessonScreen() {
         </Text>
       </View>
 
-      <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }} contentContainerStyle={{ paddingBottom: 100 }}>
-        {sections.map((sec) => (
-          <View key={sec.id} style={{ marginBottom: 24 }}>
+      <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }} contentContainerStyle={{ paddingBottom: 16, flexGrow: 0 }}>
+        {sections.map((sec, i) => (
+          <View key={sec.id} style={{
+            marginBottom: i < sections.length - 1 ? 16 : 0,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 16,
+            padding: 16,
+          }}>
             {sec.title && (
-              <Text style={{ marginBottom: 8, fontSize: 18, fontWeight: "600", color: colors.foreground }}>{sec.title}</Text>
+              <Text style={{ marginBottom: 12, fontSize: 18, fontWeight: "700", color: colors.foreground }}>{sec.title}</Text>
             )}
             {renderTipTap(sec.content, tipTapColors)}
           </View>

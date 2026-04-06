@@ -15,23 +15,23 @@ export function renderTipTap(node: any, colors: { foreground: string; muted: str
   const doc = node as TipTapNode
 
   if (doc.type === "doc" && doc.content) {
+    const len = doc.content.length
     return doc.content.map((child, i) => (
-      <View key={i}>{renderNode(child, colors)}</View>
+      <View key={i}>{renderNode(child, colors, i === len - 1)}</View>
     ))
   }
 
-  return renderNode(doc, colors)
+  return renderNode(doc, colors, true)
 }
 
-function renderNode(node: TipTapNode, colors: { foreground: string; muted: string; border: string; surface: string }): React.ReactNode {
+function renderNode(node: TipTapNode, colors: { foreground: string; muted: string; border: string; surface: string }, isLast = false): React.ReactNode {
   switch (node.type) {
     case "paragraph":
       if (!node.content || node.content.length === 0) {
-        // Empty paragraph = line break
-        return <View style={{ height: 16 }} />
+        return isLast ? null : <View style={{ height: 16 }} />
       }
       return (
-        <Text style={{ fontSize: 16, lineHeight: 26, color: colors.foreground, marginBottom: 14 }}>
+        <Text style={{ fontSize: 16, lineHeight: 26, color: colors.foreground, marginBottom: isLast ? 0 : 14 }}>
           {node.content.map((child, i) => renderInline(child, colors, i))}
         </Text>
       )
@@ -48,7 +48,7 @@ function renderNode(node: TipTapNode, colors: { foreground: string; muted: strin
 
     case "bulletList":
       return (
-        <View style={{ marginBottom: 12 }}>
+        <View style={{ marginBottom: isLast ? 0 : 12 }}>
           {node.content?.map((item, i) => (
             <View key={i} style={{ flexDirection: "row", marginBottom: 4 }}>
               <Text style={{ fontSize: 16, color: colors.foreground, marginRight: 8 }}>•</Text>
@@ -64,7 +64,7 @@ function renderNode(node: TipTapNode, colors: { foreground: string; muted: strin
 
     case "orderedList":
       return (
-        <View style={{ marginBottom: 12 }}>
+        <View style={{ marginBottom: isLast ? 0 : 12 }}>
           {node.content?.map((item, i) => (
             <View key={i} style={{ flexDirection: "row", marginBottom: 4 }}>
               <Text style={{ fontSize: 16, color: colors.foreground, marginRight: 8, minWidth: 20 }}>{i + 1}.</Text>

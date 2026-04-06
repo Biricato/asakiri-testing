@@ -56,6 +56,31 @@ export async function submitExerciseAttempt(data: {
     answer: data.answer,
   })
 
+  // Create SRS entry on first attempt
+  const existingSrs = await db
+    .select()
+    .from(srsReview)
+    .where(
+      and(
+        eq(srsReview.userId, session.user.id),
+        eq(srsReview.variantId, data.variantId),
+      ),
+    )
+    .limit(1)
+
+  if (existingSrs.length === 0) {
+    const intervalDays = data.isCorrect ? 1 : 0.17
+    await db.insert(srsReview).values({
+      userId: session.user.id,
+      variantId: data.variantId,
+      dueAt: new Date(Date.now() + intervalDays * 24 * 60 * 60 * 1000),
+      intervalDays: String(intervalDays),
+      easiness: "2.5",
+      repetition: data.isCorrect ? 1 : 0,
+      lastReviewedAt: new Date(),
+    })
+  }
+
   return { success: true }
 }
 

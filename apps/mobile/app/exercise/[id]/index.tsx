@@ -20,8 +20,10 @@ type Variant = {
 function getPromptText(prompt: any): string {
   if (!prompt) return ""
   if (typeof prompt === "string") return prompt
+  if (prompt.stem) return prompt.stem
   if (prompt.clozeText) return prompt.clozeText
   if (prompt.text) return prompt.text
+  if (prompt.prompt) return prompt.prompt
   return JSON.stringify(prompt)
 }
 

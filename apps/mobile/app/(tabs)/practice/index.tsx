@@ -32,9 +32,11 @@ type Summary = {
 function toText(value: any): string {
   if (!value) return ""
   if (typeof value === "string") return value
+  if (value.stem) return value.stem
   if (value.clozeText) return value.clozeText
   if (value.text) return value.text
   if (value.prompt) return value.prompt
+  if (value.correctAnswer) return value.correctAnswer
   return JSON.stringify(value)
 }
 
@@ -301,11 +303,11 @@ export default function PracticeScreen() {
                 burned: "Burned",
               }
               const descriptions = {
-                apprentice: "Just learning — reviews every few hours",
-                guru: "Getting familiar — reviews every few days",
-                master: "Solid recall — reviews weekly",
-                enlightened: "Near mastery — reviews monthly",
-                burned: "Mastered — no more reviews needed",
+                apprentice: "Just learning, reviews every few hours",
+                guru: "Getting familiar, reviews every few days",
+                master: "Solid recall, reviews weekly",
+                enlightened: "Near mastery, reviews monthly",
+                burned: "Mastered, no more reviews needed",
               }
 
               return (
